@@ -31,8 +31,20 @@ function installPackage(pkg, callback) {
   stream.on('finish', () => {
     fs.removeSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}`);
     fs.renameSync(`./diamond/tmp/${match[3]}-${match[5] || 'master'}`, `./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}`);
-    if (fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`)) {
-      const config = yaml.readSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`);
+    if (fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`) || fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.json`)) {
+      let config;
+
+      if (fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`)) {
+        config = yaml.readSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`);
+        if (!config) config = {};
+      } else {
+        try {
+          config = JSON.parse(fs.readFileSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.json`));
+        } catch (err) {
+          config = {};
+        }
+      }
+
       if (!config.dependencies) {
         config.dependencies = [];
       }
@@ -92,10 +104,20 @@ program
     let packages = pkgs;
 
     let config;
+    let yamlConfig = false;
     if (fs.existsSync('./diamond.yml')) {
       config = yaml.readSync('./diamond.yml');
+      if (!config) config = {};
+      yamlConfig = true;
+    } else if (fs.existsSync('./diamond.json')) {
+      try {
+        config = JSON.parse(fs.readFileSync('./diamond.json'));
+      } catch (err) {
+        config = {};
+      }
     } else {
       config = {};
+      yamlConfig = true;
     }
 
     if (!config.dependencies) {
@@ -114,14 +136,15 @@ program
       process.exit(0);
     }
 
-    fs.ensureFileSync('./diamond.yml');
     fs.ensureDirSync('./diamond/packages');
     fs.ensureDirSync('./diamond/tmp');
 
     async.each(packages, (pkg, callback) => {
       installPackage(pkg, callback);
     }, () => {
-      yaml.writeSync('./diamond.yml', config);
+      if (yamlConfig) yaml.writeSync('./diamond.yml', config);
+      else fs.writeFileSync('./diamond.json', JSON.stringify(config));
+
       log.info('ok');
       process.exit(0);
     });
