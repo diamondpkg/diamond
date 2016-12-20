@@ -23,7 +23,7 @@ Packages are hosted on github, and their names look like this
 
 If no branch, tag, or commit is provided, the latest commit from `master` is used.
 
-## diamond.yml
+## diamond.yml/diamond.json
 A typical diamond.yml file will look like this:
 ```yaml
 main: import.sass
