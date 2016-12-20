@@ -31,6 +31,16 @@ type: stylesheet
 dependencies:
   - somePerson/someRepo
 ```
+or in JSON
+```json
+{
+  "main": "import.sass",
+  "type": "stylesheet",
+  "dependencies": [
+    "somePerson/someRepo"
+  ]
+}
+```
 
 ### main
 This is the main file that will be imported and converted if the package is a stylesheet (see `type` below).
