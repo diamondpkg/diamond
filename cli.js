@@ -61,7 +61,7 @@ function installPackage(pkg, callback) {
                 indentedSyntax: mime.lookup(config.main) === 'text/x-sass',
               });
               const regex = new RegExp(`${mime.extension(mime.lookup(config.main))}$`);
-              writeFiles(config, match, regex, ['less', 'css', 'styl'], result);
+              writeFiles(config, match, regex, ['less', 'css', 'styl'], result.css);
             } else if (mime.lookup(config.main) === 'text/less') {
               const result = childProcess.execSync(`"node_modules/.bin/lessc" --include-path="diamond:diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}" diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/${config.main}`);
               const regex = new RegExp(`${mime.extension(mime.lookup(config.main))}$`);
