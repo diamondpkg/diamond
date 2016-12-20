@@ -1,0 +1,13 @@
+{
+  "extends": "airbnb",
+  "parserOptions": {
+    "emcaVersion": 6
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+
+  }
+}
