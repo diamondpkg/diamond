@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+'use strict';
+
 const fs = require('fs-extra');
 const log = require('npmlog');
 const program = require('commander');
