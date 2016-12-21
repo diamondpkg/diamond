@@ -108,7 +108,7 @@ function installPackage(pkg, callback) {
                           process.exit(1);
                         } else {
                           throw e;
-                        }  
+                        }
                       }
                     } else {
                       throw err;
