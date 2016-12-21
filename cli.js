@@ -10,6 +10,7 @@ const async = require('async');
 const mime = require('mime-types');
 const sass = require('node-sass');
 const childProcess = require('child_process');
+const ProgressBar = require('progress');
 
 function writeFiles(config, match, regex, extensions, result) {
   for (const extension of extensions) {
@@ -26,7 +27,28 @@ function installPackage(pkg, callback) {
 
   const match = pkg.match(/((.+)\/([^#@\s]+))(#?@?(.+)?)/);
   const stream = targz().createWriteStream('./diamond/tmp');
-  const read = superagent.get(`https://github.com/${match[2]}/${match[3]}/archive/${match[5] || 'master'}.tar.gz`);
+  const req = superagent.get(`https://github.com/${match[2]}/${match[3]}/archive/${match[5] || 'master'}.tar.gz`);
+
+  req.on('response', (res) => {
+    if (res.status !== 200) {
+      log.error('error while downloading', pkg);
+      log.error('not ok');
+      process.exit(1);
+    }
+
+    const len = parseInt(res.headers['content-length'], 10);
+
+    const bar = new ProgressBar(`:etas :percent [:bar] ${pkg}`, {
+      complete: '=',
+      incomplete: ' ',
+      width: 20,
+      total: len,
+    });
+
+    res.on('data', (chunk) => {
+      bar.tick(chunk.length);
+    });
+  });
 
   stream.on('finish', () => {
     fs.removeSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}`);
@@ -91,7 +113,7 @@ function installPackage(pkg, callback) {
     }
   });
 
-  read.pipe(stream);
+  req.pipe(stream);
 }
 
 program

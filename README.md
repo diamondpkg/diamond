@@ -6,6 +6,10 @@ diamond can be installed with [npm](https://npmjs.org)
 ```
 npm i -g diamondpkg
 ```
+or if you want to install the development version
+```
+npm i -g Hackzzila/diamond
+```
 
 ## Cli
 To install a package, use the `install` command.
