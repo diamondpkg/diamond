@@ -16,7 +16,7 @@ To install a package, use the `install` command.
 ```
 diamond install [packages...]
 ```
-If no packages are provided, diamond will install the packages in your `diamond.yml` file.  
+If no packages are provided, diamond will install the packages in your `diamond.yml` or `diamond.json` file.  
 
 ### Package Format
 All packages are hosted on github. Package names follow the following format `owner/repo@ref`  
