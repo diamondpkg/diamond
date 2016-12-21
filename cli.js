@@ -94,7 +94,35 @@ function installPackage(pkg, callback) {
               const regex = new RegExp(`${mime.extension(mime.lookup(config.main))}$`);
               writeFiles(config, match, regex, ['scss', 'css', 'styl'], result);
             } else if (mime.lookup(config.main) === 'text/stylus') {
-              const result = childProcess.execSync(`"node_modules/.bin/stylus" -I diamond -I diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'} -p diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+              let result;
+              try {
+                result = childProcess.execSync(`"${__dirname}../.bin/stylus" -I diamond -I diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'} -p diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+              } catch (error) {
+                if (error.status === 127) {
+                  try {
+                    result = childProcess.execSync(`"${__dirname}/node_modules/.bin/stylus" -I diamond -I diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'} -p diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+                  } catch (err) {
+                    if (err.status === 127) {
+                      try {
+                        result = childProcess.execSync(`stylus -I diamond -I diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'} -p diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+                      } catch (e) {
+                        if (e.status === 127) {
+                          log.error('stylus executable not found');
+                          log.error('not ok');
+                          process.exit(1);
+                        } else {
+                          throw e;
+                        }  
+                      }
+                    } else {
+                      throw err;
+                    }
+                  }
+                } else {
+                  throw error;
+                }
+              }
+
               const regex = /styl$|stylus$/;
               writeFiles(config, match, regex, ['scss', 'css', 'less'], result);
             } else if (mime.lookup(config.main) === 'text/css') {
