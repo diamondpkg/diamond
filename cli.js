@@ -90,13 +90,41 @@ function installPackage(pkg, callback) {
               const regex = new RegExp(`${mime.extension(mime.lookup(config.main))}$`);
               writeFiles(config, match, regex, ['less', 'css', 'styl'], result.css);
             } else if (mime.lookup(config.main) === 'text/less') {
-              const result = childProcess.execSync(`"node_modules/.bin/lessc" --include-path="diamond:diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}" diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+              let result;
+              try {
+                result = childProcess.execSync(`"${__dirname}/../.bin/lessc" --include-path="diamond:diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}" diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+              } catch (error) {
+                if (error.status === 127) {
+                  try {
+                    result = childProcess.execSync(`"${__dirname}/node_modules/.bin/lessc" --include-path="diamond:diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}" diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+                  } catch (err) {
+                    if (err.status === 127) {
+                      try {
+                        result = childProcess.execSync(`lessc --include-path="diamond:diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}" diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+                      } catch (e) {
+                        if (e.status === 127) {
+                          log.error('stylus executable not found');
+                          log.error('not ok');
+                          process.exit(1);
+                        } else {
+                          throw e;
+                        }  
+                      }
+                    } else {
+                      throw err;
+                    }
+                  }
+                } else {
+                  throw error;
+                }
+              }
+
               const regex = new RegExp(`${mime.extension(mime.lookup(config.main))}$`);
               writeFiles(config, match, regex, ['scss', 'css', 'styl'], result);
             } else if (mime.lookup(config.main) === 'text/stylus') {
               let result;
               try {
-                result = childProcess.execSync(`"${__dirname}../.bin/stylus" -I diamond -I diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'} -p diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
+                result = childProcess.execSync(`"${__dirname}/../.bin/stylus" -I diamond -I diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'} -p diamond/packages/${match[2]}/${match[3]}@${match[5] || 'master'}/${config.main}`);
               } catch (error) {
                 if (error.status === 127) {
                   try {
@@ -112,7 +140,7 @@ function installPackage(pkg, callback) {
                           process.exit(1);
                         } else {
                           throw e;
-                        }  
+                        }
                       }
                     } else {
                       throw err;
