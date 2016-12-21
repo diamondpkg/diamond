@@ -65,7 +65,12 @@ A array of dependencies for the package, in the format listed above.
 
 ## Importing Dependencies
 Once packages are installed, they go in `diamond/packages/owner/repo@ref`. All package names are all lower case.
-To ensure compatibility, please import packages the following way.
+All diamond packages go into an autoload file, which you can import like so. (NEVER import this file as a package)
+```sass
+@import autoload
+```
+
+Or to import manually.
 
 ```sass
 @import 'packages/owner/repo@ref/mainfile'
