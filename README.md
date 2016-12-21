@@ -64,15 +64,15 @@ Almost none of this can be compiled to CSS and should be used by the preprocesso
 A array of dependencies for the package, in the format listed above.
 
 ## Importing Dependencies
-Once packages are installed, they go in `diamond/packages/owner/repo/ref`. All package names are all lower case.
+Once packages are installed, they go in `diamond/packages/owner/repo@ref`. All package names are all lower case.
 To ensure compatibility, please import packages the following way.
 
 ```sass
-@import 'packages/owner/repo/ref/mainfile'
+@import 'packages/owner/repo@ref/mainfile'
 ```
 eg.
 ```sass
-@import 'packages/hackzzila/sector/master/import'
+@import 'packages/hackzzila/sector@master/import'
 ```
 
 Always add `diamond` as an import path, like so.
