@@ -14,7 +14,7 @@ const ProgressBar = require('progress');
 
 function writeFiles(config, match, regex, extensions, result) {
   for (const extension of extensions) {
-    fs.writeFileSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/${config.main.replace(regex, extension)}`, result);
+    fs.writeFileSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/${config.main.replace(regex, extension)}`, result);
   }
 }
 
@@ -51,17 +51,18 @@ function installPackage(pkg, callback) {
   });
 
   stream.on('finish', () => {
-    fs.removeSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}`);
-    fs.renameSync(`./diamond/tmp/${match[3]}-${match[5] || 'master'}`, `./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}`);
-    if (fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`) || fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.json`)) {
+    fs.removeSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}`);
+    fs.ensureDirSync(`./diamond/packages/${match[2]}/${match[3]}`);
+    fs.renameSync(`./diamond/tmp/${match[3]}-${match[5] || 'master'}`, `./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}`);
+    if (fs.existsSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/diamond.yml`) || fs.existsSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/diamond.json`)) {
       let config;
 
-      if (fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`)) {
-        config = yaml.parse(fs.readFileSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`));
+      if (fs.existsSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/diamond.yml`)) {
+        config = yaml.parse(fs.readFileSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/diamond.yml`));
         if (!config) config = {};
       } else {
         try {
-          config = JSON.parse(fs.readFileSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.json`));
+          config = JSON.parse(fs.readFileSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/diamond.json`));
         } catch (err) {
           config = {};
         }
@@ -71,29 +72,31 @@ function installPackage(pkg, callback) {
         config.dependencies = [];
       }
 
+      config.dependencies = config.dependencies.map(p => p.toLowerCase());
+
       async.each(config.dependencies, (p, c) => {
-        installPackage(p, c);
+        installPackage(p.toLowerCase(), c);
       }, () => {
-        if (config.main && fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/${config.main}`)) {
+        if (config.main && fs.existsSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/${config.main}`)) {
           if (!config.type || config.type === 'stylesheet') {
             if (mime.lookup(config.main) === 'text/x-sass' || mime.lookup(config.main) === 'text/x-scss') {
               const result = sass.renderSync({
-                data: fs.readFileSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/${config.main}`, 'utf8'),
-                includePaths: ['.', './diamond', `./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}`],
+                data: fs.readFileSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/${config.main}`, 'utf8'),
+                includePaths: ['.', './diamond', `./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}`],
                 indentedSyntax: mime.lookup(config.main) === 'text/x-sass',
               });
               const regex = new RegExp(`${mime.extension(mime.lookup(config.main))}$`);
               writeFiles(config, match, regex, ['less', 'css', 'styl'], result.css);
             } else if (mime.lookup(config.main) === 'text/less') {
-              const result = childProcess.execSync(`"node_modules/.bin/lessc" --include-path="diamond:diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}" diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/${config.main}`);
+              const result = childProcess.execSync(`"node_modules/.bin/lessc" --include-path="diamond:diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}" diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/${config.main}`);
               const regex = new RegExp(`${mime.extension(mime.lookup(config.main))}$`);
               writeFiles(config, match, regex, ['scss', 'css', 'styl'], result);
             } else if (mime.lookup(config.main) === 'text/stylus') {
-              const result = childProcess.execSync(`"node_modules/.bin/stylus" -I diamond -I diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''} -p diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/${config.main}`);
+              const result = childProcess.execSync(`"node_modules/.bin/stylus" -I diamond -I diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'} -p diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/${config.main}`);
               const regex = /styl$|stylus$/;
               writeFiles(config, match, regex, ['scss', 'css', 'less'], result);
             } else if (mime.lookup(config.main) === 'text/css') {
-              const result = fs.readFileSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/${config.main}`, 'utf8');
+              const result = fs.readFileSync(`./diamond/packages/${match[2]}/${match[3]}/${match[5] || 'master'}/${config.main}`, 'utf8');
               const regex = new RegExp(`${mime.extension(mime.lookup(config.main))}$`);
               writeFiles(config, match, regex, ['less', 'scss', 'styl'], result);
             } else {
@@ -151,6 +154,9 @@ program
     if (packages.length === 0) {
       packages = config.dependencies;
     }
+
+    packages = packages.map(p => p.toLowerCase());
+    config.dependencies = config.dependencies.map(p => p.toLowerCase());
 
     if (packages.length === 0) {
       log.info('no packages to install');

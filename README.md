@@ -19,13 +19,13 @@ diamond install [packages...]
 If no packages are provided, diamond will install the packages in your `diamond.yml` file.  
 
 ### Package Format
-Packages are hosted on github, and their names look like this
+All packages are hosted on github. Package names follow the following format `owner/repo@ref`  
+If no branch, tag, or commit is provided, the latest commit from `master` is used.
+#### Examples: 
 * `Hackzzila/diamond`
 * `Hackzzila/diamond@1.0.0`
 * `Hackzzila/diamond@master`
 * `Hackzzila/diamond@c8578ac59b69ad8caabb4540df27c9c1cd542964`
-
-If no branch, tag, or commit is provided, the latest commit from `master` is used.
 
 ## diamond.yml/diamond.json
 A typical diamond.yml file will look like this:
@@ -62,3 +62,32 @@ Almost none of this can be compiled to CSS and should be used by the preprocesso
 
 ### dependencies
 A array of dependencies for the package, in the format listed above.
+
+## Importing Dependencies
+Once packages are installed, they go in `diamond/packages/owner/repo/ref`. All package names are all lower case.
+To ensure compatibility, please import packages the following way.
+
+```sass
+@import 'packages/owner/repo/ref/mainfile'
+```
+eg.
+```sass
+@import 'packages/hackzzila/sector/master/import'
+```
+
+Always add `diamond` as an import path, like so.
+
+### Sass
+```
+sass -I diamond etc...
+```
+
+### Less
+```
+lessc --include-path="diamond" etc...
+```
+
+### Stylus
+```
+stylus -I diamond etc...
+```
