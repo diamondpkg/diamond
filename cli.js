@@ -35,7 +35,7 @@ function installPackage(pkg, callback) {
       let config;
 
       if (fs.existsSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`)) {
-        config = yaml.readSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`);
+        config = yaml.parse(fs.readFileSync(`./diamond/packages/${match[3]}${match[5] ? `@${match[5]}` : ''}/diamond.yml`));
         if (!config) config = {};
       } else {
         try {
@@ -106,7 +106,7 @@ program
     let config;
     let yamlConfig = false;
     if (fs.existsSync('./diamond.yml')) {
-      config = yaml.readSync('./diamond.yml');
+      config = yaml.parse(fs.readFileSync('./diamond.yml'));
       if (!config) config = {};
       yamlConfig = true;
     } else if (fs.existsSync('./diamond.json')) {
@@ -142,7 +142,7 @@ program
     async.each(packages, (pkg, callback) => {
       installPackage(pkg, callback);
     }, () => {
-      if (yamlConfig) yaml.writeSync('./diamond.yml', config);
+      if (yamlConfig) fs.writeFileSync('./diamond.json', yaml.dump(config));
       else fs.writeFileSync('./diamond.json', JSON.stringify(config));
 
       log.info('ok');
