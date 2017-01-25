@@ -287,7 +287,7 @@ program
         }
       }
 
-      if (yamlConfig) fs.writeFileSync('./diamond.json', yaml.dump(config));
+      if (yamlConfig) fs.writeFileSync('./diamond.yml', yaml.dump(config));
       else fs.writeFileSync('./diamond.json', JSON.stringify(config));
 
       log.info('ok');
