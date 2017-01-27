@@ -29,7 +29,7 @@
   "dependencies": {
     "async": "^2.1.4",
     "commander": "^2.9.0",
-    "fs-extra": "^1.0.0",
+    "fs-extra": "^2.0.0",
     "npmlog": "^4.0.2",
     "opn": "^4.0.2",
     "proper-lockfile": "^2.0.0",
@@ -41,9 +41,9 @@
   },
   "devDependencies": {
     "eslint": "^3.12.0",
-    "eslint-config-airbnb": "^12.0.0",
-    "eslint-plugin-import": "^1.16.0",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
     "eslint-plugin-react": "^6.5.0"
   }
 }
