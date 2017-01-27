@@ -1,6 +1,3 @@
 diamond
-diamond.yml
-diamond.json
-.sass-cache
-assets
 node_modules
+npm-debug.log
