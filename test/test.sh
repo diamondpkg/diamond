@@ -13,7 +13,7 @@ diamond install bootstrap@4.0.0-alpha.2
 printf "\n\nCompiling..."
 output=$(node-sass --importer diamond test/test.sass)
 if [ $? -eq 0 ]; then
-    printf " OK"
+    printf " OK\n"
 else
     printf "\n$output"
 fi
