@@ -37,7 +37,9 @@ module.exports = (pkgs, pkg1) => new Promise((resolve) => {
       }
 
       pkg.version = version.version;
-      pkg.main = version.sass;
+      pkg.main = version.diamond ?
+        version.diamond.main :
+        version.sass || version.style || version.main;
 
       const old = packages.find(p => p.path === pkg.name);
       if (old && old.for && !old.version === pkg.version) {

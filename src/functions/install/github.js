@@ -95,7 +95,7 @@ module.exports = (pkgs, pkg1) => new Promise((resolve) => {
 
       pkg.name = info.name || pkg.source.repo;
       pkg.version = info.version;
-      pkg.main = info.sass;
+      pkg.main = info.diamond ? info.diamond.main : info.sass || info.style || info.main;
 
       download(resolve, packages, pkg);
     })
