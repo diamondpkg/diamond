@@ -1,8 +1,10 @@
 <div align="center">
   <br />
-  <a href="https://diamond.js.org/" target="_blank">
-    <img src="https://cdn.rawgit.com/diamondpkg/website/master/assets/img/DiamondLogo.svg" width="546" alt="diamond" />
-  </a>
+  <p>
+    <a href="https://diamond.js.org/" target="_blank">
+      <img src="https://diamond.js.org/assets/img/DiamondLogo.svg" width="546" alt="diamond" />
+    </a>
+  </p>
   <br />
   <p>Logo by <a href="https://github.com/Programmix">@Programmix</a></p>
   <p>
