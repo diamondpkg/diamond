@@ -75,7 +75,7 @@ module.exports = (file, current) => {
       contents = fs.readFileSync(p).toString();
       return { file: p, contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
     } else if (match[4]) {
-      return { contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p}";` };
+      return { contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
     }
 
     return { file: p };
