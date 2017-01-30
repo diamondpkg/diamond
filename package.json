@@ -1,6 +1,6 @@
 {
-  "name": "diamond",
-  "version": "0.2.0",
+  "name": "diamondpkg",
+  "version": "0.3.0",
   "description": "A package manager for SASS",
   "preferGlobal": true,
   "scripts": {
