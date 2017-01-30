@@ -75,7 +75,7 @@ module.exports = (file, current) => {
       contents = fs.readFileSync(p).toString();
       return { file: p, contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
     } else if (match[4]) {
-      log.warn('namespaces are disabled for packages that use the Sass syntax');
+      return { contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p}";` };
     }
 
     return { file: p };
