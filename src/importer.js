@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const lockfile = require('proper-lockfile');
 
 module.exports = (file, current) => {
-  if (/^\[([^\s/]+)(.+)?]$/.test(file)) {
+  if (/^\[([^\s/]+)(.+)?](\s+as\s+([a-zA-Z]+))?$/.test(file)) {
     fs.ensureDirSync('./diamond/.staging');
     fs.ensureDirSync('./diamond/packages');
     fs.ensureFileSync('./diamond/.internal/packages.lock');
@@ -25,7 +25,7 @@ module.exports = (file, current) => {
       return new Error('no packages installed');
     }
 
-    const match = file.match(/^\[([^\s/]+)(.+)?]$/);
+    const match = file.match(/^\[([^\s/]+)(.+)?](\s+as\s+([a-zA-Z]+))?$/);
 
     let pkg;
     if (/^packages\/([^/]+).+/.test(path.relative(__dirname, current))) {
@@ -49,7 +49,10 @@ module.exports = (file, current) => {
       } catch (err) {
         return new Error(`could not find file '${path.join(match[1].toLowerCase(), match[2].toLowerCase())}'`);
       }
-      return { file: path.join(process.cwd(), 'diamond/packages', pkg.name, match[2]) };
+      return {
+        file: path.join(process.cwd(), 'diamond/packages', pkg.name, match[2]),
+        contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${fs.readFileSync(path.join(process.cwd(), 'diamond/packages', pkg.name, match[2]))}`,
+      };
     } else if (pkg.main) {
       release();
       try {
@@ -57,7 +60,10 @@ module.exports = (file, current) => {
       } catch (err) {
         return new Error(`could not find file '${path.join(match[1].toLowerCase(), pkg.main)}' this is likely a problem with the package itself`);
       }
-      return { file: path.join(process.cwd(), 'diamond/packages', pkg.name, pkg.main) };
+      return {
+        file: path.join(process.cwd(), 'diamond/packages', pkg.name, pkg.main),
+        contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${fs.readFileSync(path.join(process.cwd(), 'diamond/packages', pkg.name, pkg.main))}`,
+      };
     }
 
     release();

@@ -31,6 +31,7 @@
     "async": "^2.1.4",
     "commander": "^2.9.0",
     "fs-extra": "^2.0.0",
+    "klaw-sync": "^1.1.0",
     "npmlog": "^4.0.2",
     "proper-lockfile": "^2.0.0",
     "semver": "^5.3.0",
