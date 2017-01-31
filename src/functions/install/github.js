@@ -12,26 +12,37 @@ log.heading = 'dia';
 function download(resolve, pkgs, pkg1) {
   const pkg = pkg1;
   const packages = pkgs;
+  let index = 0;
 
-  const old = packages.find(p => p.path === pkg.name);
+  const old = packages.find((p, i) => {
+    index = i;
+    return p.path === pkg.name;
+  });
+
   if (old && old.for && !old.version === pkg.version) {
     fs.ensureDirSync(`./diamond/packages/${old.for}/diamond-packages`);
     fs.renameSync(`./diamond/packages/${old.name}`, `./diamond/packages/${old.for}/diamond-packages/${old.name}`);
     old.path = `${old.for}/diamond-packages/${old.name}`;
-    packages[packages.indexOf(old)] = old;
+    packages[index] = old;
   } else if (old) {
-    packages.splice(packages.indexOf(old), 1);
+    packages.splice(index, 1);
   }
 
-  if (pkg.for && packages.find(p => p.name === pkg.name)) {
+  index = 0;
+  const found = packages.find((p, i) => {
+    index = i;
+    return p.name === pkg.name;
+  });
+
+  if (pkg.for && found) {
     fs.ensureDirSync(`./diamond/packages/${pkg.for}/diamond-packages`);
     fs.removeSync(`./diamond/packages/${pkg.for}/diamond-packages/${pkg.name}`);
-    packages.splice(packages.findIndex(p => p.name === pkg.name), 1);
+    packages.splice(index, 1);
     pkg.path = `${pkg.for}/diamond-packages/${pkg.name}`;
   } else {
     fs.removeSync(`./diamond/packages/${pkg.name}`);
-    if (packages.find(p => p.name === pkg.name)) {
-      packages.splice(packages.findIndex(p => p.name === pkg.name), 1);
+    if (found) {
+      packages.splice(index, 1);
     }
     pkg.path = pkg.name;
   }
