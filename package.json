@@ -1,7 +1,7 @@
 {
   "name": "diamondpkg",
   "version": "0.3.0",
-  "description": "A package manager for SASS",
+  "description": "a sassy package manager",
   "preferGlobal": true,
   "scripts": {
     "test": "eslint src/* && bash test/test.sh"

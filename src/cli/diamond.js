@@ -6,10 +6,13 @@ const program = require('commander');
 
 
 program
-  .version('0.1.0');
+  .version(require('../../package.json').version);
 
 program
-  .command('install [packages...]', 'install one or more packages', { isDefault: true });
+  .command('install [packages...]')
+  .alias('i')
+  .description('install one or more packages')
+  .action(require('./install'));
 
 program
   .command('compile [args...]', 'compile SASS with the diamond importer, all args are passed to node-sass');
