@@ -6,13 +6,9 @@ const program = require('commander');
 
 
 program
-  .version(require('../../package.json').version);
-
-program
-  .command('install [packages...]')
-  .alias('i')
-  .description('install one or more packages')
-  .action(require('./install'));
-
-program
+  .version(require('../../package.json').version)
+  .command('install [packages...]', 'install one or more packages')
+  .command('i [packages...]', 'install one or more packages')
+  .command('compile <file>', 'compile a Sass file')
+  .command('c <file>', 'compile a Sass file')
   .parse(process.argv);
