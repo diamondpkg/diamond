@@ -15,7 +15,4 @@ program
   .action(require('./install'));
 
 program
-  .command('compile [args...]', 'compile SASS with the diamond importer, all args are passed to node-sass');
-
-program
   .parse(process.argv);
