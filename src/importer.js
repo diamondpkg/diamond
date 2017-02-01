@@ -73,9 +73,9 @@ module.exports = (file, current) => {
 
     if (/\.scss$/.test(pkg.main)) {
       contents = fs.readFileSync(p).toString();
-      return { file: p, contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
+      return { file: p, contents: `$__${pkg.name.toLowerCase().replace(/\./g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
     } else if (match[4]) {
-      return { contents: `$__${pkg.name.toLowerCase()}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
+      return { contents: `$__${pkg.name.toLowerCase().replace(/\./g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
     }
 
     return { file: p };

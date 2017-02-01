@@ -31,10 +31,10 @@ module.exports = pkg1 => new Promise((resolve) => {
       if (!/\.sass|\.scss$/.test(p.path)) continue;
       fs.writeFileSync(p.path, fs.readFileSync(p.path).toString().replace(/(\.)(-?[_a-zA-Z]+[\w-]*\s*[^;"'\d]?\n)|(@extend\s+)(\.)(-?[_a-zA-Z]+[\w-]*)/g, (match, p1, p2, p3, p4, p5) => {
         if (p1) {
-          return `.#{$__${pkg.name}__namespace__}${p2}`;
+          return `.#{$__${pkg.name.replace(/\./g, '')}__namespace__}${p2}`;
         }
 
-        return `${p3}.#{$__${pkg.name}__namespace__}${p5}`;
+        return `${p3}.#{$__${pkg.name.replace(/\./g, '')}__namespace__}${p5}`;
       }));
     }
 
