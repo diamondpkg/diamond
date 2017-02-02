@@ -51,21 +51,21 @@ module.exports = (file, current) => {
     if (match[2]) {
       release();
       try {
-        fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.name, match[2]));
+        fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, match[2]));
       } catch (err) {
         return new Error(`could not find file '${path.join(match[1].toLowerCase(), match[2].toLowerCase())}'`);
       }
 
-      p = path.join(process.cwd(), 'diamond/packages', pkg.name, match[2]);
+      p = path.join(process.cwd(), 'diamond/packages', pkg.path, match[2]);
     } else if (pkg.main) {
       release();
       try {
-        fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.name, pkg.main));
+        fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main));
       } catch (err) {
         return new Error(`could not find file '${path.join(match[1].toLowerCase(), pkg.main)}' this is likely a problem with the package itself`);
       }
 
-      p = path.join(process.cwd(), 'diamond/packages', pkg.name, pkg.main);
+      p = path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main);
     } else {
       release();
       return new Error('the package has no mainfile! you need to import files from this package manually');

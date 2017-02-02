@@ -40,6 +40,9 @@ module.exports = (pkgs, pkg1) => new Promise((resolve) => {
       pkg.main = version.diamond ?
         version.diamond.main :
         version.sass || version.style || version.main;
+      pkg.postCompile = version.diamond ? version.diamond.postCompile : null;
+      pkg.functions = version.diamond ? version.diamond.functions : null;
+      pkg.importer = version.diamond ? version.diamond.importer : null;
 
       const old = packages.find(p => p.path === pkg.name);
       if (old && old.for && !old.version === pkg.version) {
