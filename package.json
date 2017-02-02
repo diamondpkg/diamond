@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hackzzila/diamond.git"
+    "url": "git+https://github.com/diamondkpkg/diamond.git"
   },
   "keywords": [
     "diamond",
@@ -24,9 +24,9 @@
   "author": "Hackzzila",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hackzzila/diamond/issues"
+    "url": "https://github.com/diamondkpkg/diamond/issues"
   },
-  "homepage": "https://github.com/hackzzila/diamond#readme",
+  "homepage": "https://github.com/diamondkpkg/diamond#readme",
   "dependencies": {
     "async": "^2.1.4",
     "commander": "^2.9.0",
