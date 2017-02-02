@@ -54,7 +54,7 @@ release();
 sass.render({
   file: program.args[0],
   outputStyle: program.outputStyle,
-  importer: [importer, ...importers],
+  importer: [importer].concat(importers),
   functions,
 }, (error, result) => {
   if (error) {
