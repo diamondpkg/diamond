@@ -1,8 +1,10 @@
+#! /bin/bash
+
 # Exit on errors
 set -e
 
 # Check dependencies
-printf "Checking dependencies\n"
+printf "\n\nChecking dependencies\n"
 depcheck --ignores=eslint,eslint-config-airbnb,eslint-plugin-import,eslint-plugin-jsx-a11y,eslint-plugin-react
 
 # Install
