@@ -4,7 +4,7 @@
 set -e
 
 # Check dependencies
-printf "\n\nChecking dependencies\n"
+printf "Checking dependencies\n"
 depcheck --ignores=eslint,eslint-config-airbnb,eslint-plugin-import,eslint-plugin-jsx-a11y,eslint-plugin-react
 
 # Install
