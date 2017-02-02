@@ -1,3 +1,5 @@
+'use strict';
+
 const program = require('commander');
 const sass = require('node-sass');
 const log = require('npmlog');
