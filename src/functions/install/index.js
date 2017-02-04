@@ -45,24 +45,22 @@ module.exports = pkg1 => new Promise((resolve) => {
       }
     }
 
-    fs.ensureDirSync(path.join('./diamond/packages', pkg.path, 'diamond/dist'))
+    fs.ensureDirSync(path.join('./diamond/packages', pkg.path, 'diamond/dist'));
 
     // Not Finished.
-    new Promise((resolve) => {
+    new Promise((rsolve) => {
       if (mime.lookup(pkg.main) === 'text/x-sass' || mime.lookup(pkg.main) === 'text/x-scss') {
-        fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), 
+        fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'),
           sass.renderSync({ file: path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), outputStyle: 'compressed' }).css);
-        resolve();
+        rsolve();
       } else if (mime.lookup(pkg.main) === 'text/less') {
-        console.log('no');
         less.render(fs.readFileSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main)).toString(), {
           filename: path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main),
         }).then((result) => {
           fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), result.css);
-          console.log('lol');
-          resolve();
-        }).catch(console.error);
-      } else resolve();
+          rsolve();
+        }).catch(console.error); // eslint-disable-line
+      } else rsolve();
     }).then(() => {
       for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
         if (!/\.sass|\.scss$/.test(p.path)) continue;
