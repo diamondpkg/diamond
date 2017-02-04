@@ -7,7 +7,7 @@ const fs = require('fs-extra');
 const lockfile = require('proper-lockfile');
 const path = require('path');
 const async = require('async');
-const importer = require('../importer');
+const importer = require('../importers/sass');
 
 program
   .option('-o, --output <file>', 'the file to write to')
