@@ -20,9 +20,9 @@ function download(resolve, pkgs, pkg1) {
   });
 
   if (old && old.for && !old.version === pkg.version) {
-    fs.ensureDirSync(`./diamond/packages/${old.for}/diamond-packages`);
-    fs.renameSync(`./diamond/packages/${old.name}`, `./diamond/packages/${old.for}/diamond-packages/${old.name}`);
-    old.path = `${old.for}/diamond-packages/${old.name}`;
+    fs.ensureDirSync(`./diamond/packages/${old.for}/diamond/packages`);
+    fs.renameSync(`./diamond/packages/${old.name}`, `./diamond/packages/${old.for}/diamond/packages/${old.name}`);
+    old.path = `${old.for}/diamond/packages/${old.name}`;
     packages[index] = old;
   } else if (old) {
     packages.splice(index, 1);
@@ -35,10 +35,10 @@ function download(resolve, pkgs, pkg1) {
   });
 
   if (pkg.for && found) {
-    fs.ensureDirSync(`./diamond/packages/${pkg.for}/diamond-packages`);
-    fs.removeSync(`./diamond/packages/${pkg.for}/diamond-packages/${pkg.name}`);
+    fs.ensureDirSync(`./diamond/packages/${pkg.for}/diamond/packages`);
+    fs.removeSync(`./diamond/packages/${pkg.for}/diamond/packages/${pkg.name}`);
     packages.splice(index, 1);
-    pkg.path = `${pkg.for}/diamond-packages/${pkg.name}`;
+    pkg.path = `${pkg.for}/diamond/packages/${pkg.name}`;
   } else {
     fs.removeSync(`./diamond/packages/${pkg.name}`);
     if (found) {
@@ -106,7 +106,7 @@ module.exports = (pkgs, pkg1) => new Promise((resolve) => {
 
       pkg.name = info.name || pkg.source.repo;
       pkg.version = info.version;
-      pkg.main = info.diamond ? info.diamond.main : info.sass || info.style || info.main;
+      pkg.main = info.diamond ? info.diamond.main : info.sass || info.less || info.style || info.main;
       pkg.postCompile = info.diamond ? info.diamond.postCompile : null;
       pkg.functions = info.diamond ? info.diamond.functions : null;
       pkg.importer = info.diamond ? info.diamond.importer : null;

@@ -54,7 +54,7 @@ if (!packages.length) {
 fs.ensureDirSync('./diamond/packages');
 fs.ensureFileSync('./diamond/.internal/packages.lock');
 
-if (!fs.existsSync('./diamond/index.js')) fs.symlinkSync(path.join(__dirname, '../importer.js'), './diamond/index.js');
+if (!fs.existsSync('./diamond/index.js')) fs.writeFileSync(path.join(__dirname, '../importer.js'), './diamond/index.js');
 
 const release = lockfile.lockSync('./diamond/.internal/packages.lock');
 

@@ -8,6 +8,9 @@ const path = require('path');
 const childProcess = require('child_process');
 const log = require('npmlog');
 const lockfile = require('proper-lockfile');
+const mime = require('mime-types');
+const sass = require('node-sass');
+const less = require('less');
 
 module.exports = pkg1 => new Promise((resolve) => {
   let packages;
@@ -42,18 +45,38 @@ module.exports = pkg1 => new Promise((resolve) => {
       }
     }
 
-    for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond-packages' })) {
-      if (!/\.sass|\.scss$/.test(p.path)) continue;
-      fs.writeFileSync(p.path, fs.readFileSync(p.path).toString().replace(/(\.)(-?[_a-zA-Z]+[\w-]*\s*[^;"'\d]?\n)|(@extend\s+)(\.)(-?[_a-zA-Z]+[\w-]*)/g, (match, p1, p2, p3, p4, p5) => {
-        if (p1) {
-          return `.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${p2}`;
-        }
+    fs.ensureDirSync(path.join('./diamond/packages', pkg.path, 'diamond/dist'))
 
-        return `${p3}.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${p5}`;
-      }));
-    }
+    // Not Finished.
+    new Promise((resolve) => {
+      if (mime.lookup(pkg.main) === 'text/x-sass' || mime.lookup(pkg.main) === 'text/x-scss') {
+        fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), 
+          sass.renderSync({ file: path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), outputStyle: 'compressed' }).css);
+        resolve();
+      } else if (mime.lookup(pkg.main) === 'text/less') {
+        console.log('no');
+        less.render(fs.readFileSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main)).toString(), {
+          filename: path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main),
+        }).then((result) => {
+          fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), result.css);
+          console.log('lol');
+          resolve();
+        }).catch(console.error);
+      } else resolve();
+    }).then(() => {
+      for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
+        if (!/\.sass|\.scss$/.test(p.path)) continue;
+        fs.writeFileSync(p.path, fs.readFileSync(p.path).toString().replace(/(\.)(-?[_a-zA-Z]+[\w-]*\s*[^;"'\d]?\n)|(@extend\s+)(\.)(-?[_a-zA-Z]+[\w-]*)/g, (match, p1, p2, p3, p4, p5) => {
+          if (p1) {
+            return `.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${p2}`;
+          }
 
-    fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-    resolve();
+          return `${p3}.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${p5}`;
+        }));
+      }
+
+      fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
+      resolve();
+    });
   });
 });

@@ -39,26 +39,26 @@ module.exports = (pkgs, pkg1) => new Promise((resolve) => {
       pkg.version = version.version;
       pkg.main = version.diamond ?
         version.diamond.main :
-        version.sass || version.style || version.main;
+        version.sass || version.less || version.style || version.main;
       pkg.postCompile = version.diamond ? version.diamond.postCompile : null;
       pkg.functions = version.diamond ? version.diamond.functions : null;
       pkg.importer = version.diamond ? version.diamond.importer : null;
 
       const old = packages.find(p => p.path === pkg.name);
       if (old && old.for && !old.version === pkg.version) {
-        fs.ensureDirSync(`./diamond/packages/${old.for}/diamond-packages`);
-        fs.renameSync(`./diamond/packages/${old.name}`, `./diamond/packages/${old.for}/diamond-packages/${old.name}`);
-        old.path = `${old.for}/diamond-packages/${old.name}`;
+        fs.ensureDirSync(`./diamond/packages/${old.for}/diamond/packages`);
+        fs.renameSync(`./diamond/packages/${old.name}`, `./diamond/packages/${old.for}/diamond/packages/${old.name}`);
+        old.path = `${old.for}/diamond/packages/${old.name}`;
         packages[packages.indexOf(old)] = old;
       } else if (old) {
         packages.splice(packages.indexOf(old), 1);
       }
 
       if (pkg.for && packages.find(p => p.name === pkg.name)) {
-        fs.ensureDirSync(`./diamond/packages/${pkg.for}/diamond-packages`);
-        fs.removeSync(`./diamond/packages/${pkg.for}/diamond-packages/${pkg.name}`);
+        fs.ensureDirSync(`./diamond/packages/${pkg.for}/diamond/packages`);
+        fs.removeSync(`./diamond/packages/${pkg.for}/diamond/packages/${pkg.name}`);
         packages.splice(packages.findIndex(p => p.name === pkg.name), 1);
-        pkg.path = `${pkg.for}/diamond-packages/${pkg.name}`;
+        pkg.path = `${pkg.for}/diamond/packages/${pkg.name}`;
       } else {
         fs.removeSync(`./diamond/packages/${pkg.name}`);
         if (packages.find(p => p.name === pkg.name)) {
