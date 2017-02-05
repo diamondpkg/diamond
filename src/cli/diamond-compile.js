@@ -15,7 +15,6 @@ program
   .parse(process.argv);
 
 log.heading = 'dia';
-log.info('it worked if it ends with', 'ok');
 
 if (!program.args[0]) {
   log.error('you must provide a file to compile');
@@ -98,11 +97,9 @@ sass.render({
   }, () => {
     if (program.output) {
       fs.writeFileSync(program.output, css);
-      log.info('ok');
       process.exit(0);
     } else {
-      console.log(css); //eslint-disable-line
-      log.info('ok');
+      console.log(css);
       process.exit(0);
     }
   });

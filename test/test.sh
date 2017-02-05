@@ -12,10 +12,10 @@ printf "\n\nInstalling bootstrap@4.0.0-alpha.2\n"
 diamond install bootstrap@4.0.0-alpha.2
 
 # Test
-printf "\n\nCompiling...\n"
+printf "\nCompiling..."
 output=$(diamond c test/test.sass)
 if [ $? -eq 0 ]; then
-    printf ""
+    printf " OK"
 else
     printf "\n$output"
 fi
@@ -28,10 +28,10 @@ printf "\n\nInstalling bootstrap@3.3.7\n"
 diamond install bootstrap@3.3.7
 
 # Test
-printf "\n\nCompiling...\n"
+printf "\nCompiling..."
 output=$(diamond c test/test.sass)
 if [ $? -eq 0 ]; then
-    printf ""
+    printf " OK"
 else
     printf "\n$output"
 fi

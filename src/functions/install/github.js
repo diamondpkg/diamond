@@ -60,6 +60,8 @@ function download(resolve, pkgs, pkg1) {
     }
   });
 
+  log.enableProgress();
+
   extract.on('entry', (header, stream, next) => {
     let write;
 
@@ -68,6 +70,9 @@ function download(resolve, pkgs, pkg1) {
       fs.ensureFileSync(location);
       write = fs.createWriteStream(location);
       stream.pipe(write);
+      stream.on('data', (c) => {
+        log.gauge.show(`extract: ${header.name.replace(/^package\//, '')}`, c.length / header.size);
+      });
     }
 
     if (write) {
@@ -84,6 +89,7 @@ function download(resolve, pkgs, pkg1) {
   });
 
   extract.on('finish', () => {
+    log.disableProgress();
     resolve([packages, pkg]);
   });
 
@@ -92,9 +98,7 @@ function download(resolve, pkgs, pkg1) {
     .pipe(extract);
 }
 
-module.exports = (pkgs, pkg1) => new Promise((resolve) => {
-  const pkg = pkg1;
-  const packages = pkgs;
+module.exports = (packages, pkg) => new Promise((resolve) => {
   superagent.get(`https://raw.githubusercontent.com/${pkg.source.owner}/${pkg.source.repo}/${pkg.source.ref}/package.json`)
     .then((res) => {
       let info;

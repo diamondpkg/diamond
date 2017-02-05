@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/diamondpkg/diamond#readme",
   "dependencies": {
+    "archy": "^1.0.0",
     "async": "^2.1.4",
     "commander": "^2.9.0",
     "fs-extra": "^2.0.0",

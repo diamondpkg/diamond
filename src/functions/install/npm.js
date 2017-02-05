@@ -10,9 +10,7 @@ const path = require('path');
 
 log.heading = 'dia';
 
-module.exports = (pkgs, pkg1) => new Promise((resolve) => {
-  const pkg = pkg1;
-  const packages = pkgs;
+module.exports = (packages, pkg) => new Promise((resolve) => {
   superagent.get(`https://registry.npmjs.org/${pkg.name}`)
     .then((res) => {
       let version;
@@ -80,6 +78,8 @@ module.exports = (pkgs, pkg1) => new Promise((resolve) => {
         }
       });
 
+      log.enableProgress();
+
       extract.on('entry', (header, stream, next) => {
         let write;
 
@@ -88,6 +88,9 @@ module.exports = (pkgs, pkg1) => new Promise((resolve) => {
           fs.ensureFileSync(location);
           write = fs.createWriteStream(location);
           stream.pipe(write);
+          stream.on('data', (c) => {
+            log.gauge.show(`extract: ${header.name.replace(/^package\//, '')}`, c.length / header.size);
+          });
         }
 
         if (write) {
@@ -104,6 +107,7 @@ module.exports = (pkgs, pkg1) => new Promise((resolve) => {
       });
 
       extract.on('finish', () => {
+        log.disableProgress();
         resolve([packages, pkg]);
       });
 

@@ -12,9 +12,8 @@ const mime = require('mime-types');
 const sass = require('node-sass');
 const less = require('less');
 
-module.exports = pkg1 => new Promise((resolve) => {
+module.exports = (pkg, node) => new Promise((resolve) => {
   let packages;
-  let pkg = pkg1;
 
   try {
     packages = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
@@ -50,18 +49,25 @@ module.exports = pkg1 => new Promise((resolve) => {
     // Not Finished.
     new Promise((rsolve) => {
       if (mime.lookup(pkg.main) === 'text/x-sass' || mime.lookup(pkg.main) === 'text/x-scss') {
+        log.enableProgress();
+        log.gauge.show('compiling', 0);
         fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'),
           sass.renderSync({ file: path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), outputStyle: 'compressed' }).css);
+        log.gauge.show('compiling', 1);
         rsolve();
       } else if (mime.lookup(pkg.main) === 'text/less') {
+        log.enableProgress();
+        log.gauge.show('compiling', 0);
         less.render(fs.readFileSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main)).toString(), {
           filename: path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main),
         }).then((result) => {
           fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), result.css);
+          log.gauge.show('compiling', 1);
           rsolve();
-        }).catch(console.error); // eslint-disable-line
+        }).catch(console.error);
       } else rsolve();
     }).then(() => {
+      log.disableProgress();
       for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
         if (!/\.sass|\.scss$/.test(p.path)) continue;
         fs.writeFileSync(p.path, fs.readFileSync(p.path).toString().replace(/(\.)(-?[_a-zA-Z]+[\w-]*\s*[^;"'\d]?\n)|(@extend\s+)(\.)(-?[_a-zA-Z]+[\w-]*)/g, (match, p1, p2, p3, p4, p5) => {
@@ -73,8 +79,14 @@ module.exports = pkg1 => new Promise((resolve) => {
         }));
       }
 
+      if (pkg.name && pkg.version) {
+        node = `${pkg.name}@${pkg.version}`;
+      } else {
+        node = `${pkg.name}`;
+      }
+
       fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-      resolve();
+      resolve(node);
     });
   });
 });

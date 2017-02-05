@@ -6,6 +6,7 @@ const path = require('path');
 const async = require('async');
 const program = require('commander');
 const lockfile = require('proper-lockfile');
+const archy = require('archy');
 const install = require('../functions/install');
 const parsePackageString = require('../functions/parsePackageString');
 
@@ -14,10 +15,7 @@ program.parse(process.argv);
 const pkgs = program.args;
 
 log.heading = 'dia';
-log.info('it worked if it ends with', 'ok');
 
-// For later
-/*
 let packageJson;
 try {
   packageJson = JSON.parse(fs.readFileSync('./package.json'));
@@ -27,7 +25,8 @@ try {
 }
 
 packageJson = Object.assign({ diamond: { dependencies: {} } }, packageJson);
-*/
+
+log.enableProgress();
 
 const packages = [];
 for (const pkg of pkgs) {
@@ -58,10 +57,27 @@ if (!fs.existsSync('./diamond/index.js')) fs.copySync(path.join(__dirname, '../i
 
 const release = lockfile.lockSync('./diamond/.internal/packages.lock');
 
+let label;
+if (packageJson.name && packageJson.version) {
+  label = `${packageJson.name}@${packageJson.version} ${process.cwd()}`;
+} else if (packageJson.name) {
+  label = `${packageJson.name} ${process.cwd()}`;
+} else {
+  label = process.cwd();
+}
+
+const tree = {
+  label,
+  nodes: [],
+};
+
 async.each(packages, (pkg, done) => {
-  install(pkg).then(done);
+  install(pkg, []).then((node) => {
+    tree.nodes.push(node);
+    done();
+  });
 }, () => {
   release();
-  log.info('ok');
+  console.log(archy(tree));
   process.exit(0);
 });
