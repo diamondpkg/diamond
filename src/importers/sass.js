@@ -65,20 +65,34 @@ module.exports = (file, current) => {
         return new Error(`could not find file '${path.join(match[1].toLowerCase(), pkg.main)}' this is likely a problem with the package itself`);
       }
 
-      p = path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main);
+      if (/\.sass|\.scss$/.test(pkg.main)) {
+        p = path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main);
+      } else {
+        try {
+          fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, 'diamond/dist/main.css'));
+        } catch (err) {
+          return new Error('could not find dist files, try reinstalling');
+        }
+
+        contents = fs.readFileSync(path.join(process.cwd(), 'diamond/packages', pkg.path, 'diamond/dist/main.css')).toString();
+      }
     } else {
       release();
       return new Error('the package has no mainfile! you need to import files from this package manually');
     }
 
-    if (/\.scss$/.test(pkg.main)) {
-      contents = fs.readFileSync(p).toString();
-      return { file: p, contents: `$__${pkg.name.toLowerCase().replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
-    } else if (match[4]) {
-      return { contents: `$__${pkg.name.toLowerCase().replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
+    if (p) {
+      if (/\.scss$/.test(pkg.main)) {
+        contents = fs.readFileSync(p).toString();
+        return { file: p, contents: `$__${pkg.name.toLowerCase().replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
+      } else if (match[4]) {
+        return { contents: `$__${pkg.name.toLowerCase().replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
+      }
+
+      return { file: p };
     }
 
-    return { file: p };
+    return { contents };
   }
 
   return null;

@@ -19,3 +19,19 @@ if [ $? -eq 0 ]; then
 else
     printf "\n$output"
 fi
+
+# Clear
+rm -rf diamond
+
+# Install
+printf "\n\nInstalling bootstrap@3.3.7\n"
+diamond install bootstrap@3.3.7
+
+# Test
+printf "\n\nCompiling...\n"
+output=$(diamond c test/test.sass)
+if [ $? -eq 0 ]; then
+    printf ""
+else
+    printf "\n$output"
+fi
