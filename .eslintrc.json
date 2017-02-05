@@ -14,7 +14,7 @@
     "no-continue": 0,
     "global-require": 0,
     "import/no-dynamic-require": 0,
-    "no-console": 0,
+    "no-console": 2,
     "no-param-reassign": 0
   }
 }

@@ -8,9 +8,7 @@ const path = require('path');
 const childProcess = require('child_process');
 const log = require('npmlog');
 const lockfile = require('proper-lockfile');
-const mime = require('mime-types');
-const sass = require('node-sass');
-const less = require('less');
+const compile = require('../compile');
 
 module.exports = (pkg, node) => new Promise((resolve) => {
   let packages;
@@ -46,25 +44,16 @@ module.exports = (pkg, node) => new Promise((resolve) => {
 
     fs.ensureDirSync(path.join('./diamond/packages', pkg.path, 'diamond/dist'));
 
-    // Not Finished.
     new Promise((rsolve) => {
-      if (mime.lookup(pkg.main) === 'text/x-sass' || mime.lookup(pkg.main) === 'text/x-scss') {
+      if (/\.sass|\.scss|\.less/.test(pkg.main)) {
         log.enableProgress();
         log.gauge.show('compiling', 0);
-        fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'),
-          sass.renderSync({ file: path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), outputStyle: 'compressed' }).css);
-        log.gauge.show('compiling', 1);
-        rsolve();
-      } else if (mime.lookup(pkg.main) === 'text/less') {
-        log.enableProgress();
-        log.gauge.show('compiling', 0);
-        less.render(fs.readFileSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main)).toString(), {
-          filename: path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main),
-        }).then((result) => {
-          fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), result.css);
-          log.gauge.show('compiling', 1);
-          rsolve();
-        }).catch(console.error);
+        compile(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), { outputStyle: 'compressed' })
+          .then((css) => {
+            fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), css);
+            log.gauge.show('compiling', 1);
+            rsolve();
+          });
       } else rsolve();
     }).then(() => {
       log.disableProgress();

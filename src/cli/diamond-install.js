@@ -78,6 +78,6 @@ async.each(packages, (pkg, done) => {
   });
 }, () => {
   release();
-  console.log(archy(tree));
+  process.stderr.write(archy(tree));
   process.exit(0);
 });
