@@ -9,10 +9,9 @@ const path = require('path');
 
 log.heading = 'dia';
 
-function download(resolve, pkgs, pkg1) {
-  const pkg = pkg1;
-  const packages = pkgs;
+function download(resolve, packages, pkg) {
   let index = 0;
+  const newPkg = !packages.find(p => p.name === pkg.name);
 
   const old = packages.find((p, i) => {
     index = i;
@@ -47,7 +46,6 @@ function download(resolve, pkgs, pkg1) {
     pkg.path = pkg.name;
   }
 
-  const newPkg = !packages.find(p => p.name === pkg.name);
   packages.push(pkg);
 
   const req = superagent.get(`https://github.com/${pkg.source.owner}/${pkg.source.repo}/archive/${pkg.source.ref}.tar.gz`);

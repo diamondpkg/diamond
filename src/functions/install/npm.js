@@ -42,6 +42,8 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
       pkg.functions = version.diamond ? version.diamond.functions : null;
       pkg.importer = version.diamond ? version.diamond.importer : null;
 
+      const newPkg = !packages.find(p => p.name === pkg.name);
+
       const old = packages.find(p => p.path === pkg.name);
       if (old && old.for && !old.version === pkg.version) {
         fs.ensureDirSync(`./diamond/packages/${old.for}/diamond/packages`);
@@ -65,7 +67,6 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
         pkg.path = pkg.name;
       }
 
-      const newPkg = !packages.find(p => p.name === pkg.name);
       packages.push(pkg);
 
       const req = superagent.get(version.dist.tarball);
