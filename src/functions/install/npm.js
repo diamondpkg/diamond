@@ -41,6 +41,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
       pkg.postCompile = version.diamond ? version.diamond.postCompile : null;
       pkg.functions = version.diamond ? version.diamond.functions : null;
       pkg.importer = version.diamond ? version.diamond.importer : null;
+      pkg.dependencies = version.diamond ? version.diamond.dependencies : {};
 
       const newPkg = !packages.find(p => p.name === pkg.name);
 

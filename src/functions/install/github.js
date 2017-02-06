@@ -115,6 +115,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
       pkg.postCompile = info.diamond ? info.diamond.postCompile : null;
       pkg.functions = info.diamond ? info.diamond.functions : null;
       pkg.importer = info.diamond ? info.diamond.importer : null;
+      pkg.dependencies = info.diamond ? info.diamond.dependencies : {};
 
       download(resolve, packages, pkg);
     })

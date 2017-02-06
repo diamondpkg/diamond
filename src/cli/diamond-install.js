@@ -9,6 +9,7 @@ const lockfile = require('proper-lockfile');
 const archy = require('archy');
 const install = require('../functions/install');
 const parsePackageString = require('../functions/parsePackageString');
+const parsePackageObject = require('../functions/parsePackageObject');
 
 program.parse(process.argv);
 
@@ -41,12 +42,25 @@ for (const pkg of pkgs) {
     });
   } else {
     log.error('invalid package', pkg);
+    log.error('not ok');
+    process.exit(1);
+  }
+}
+
+if (!packages.length) {
+  for (const source of parsePackageObject(packageJson.diamond.dependencies)) {
+    packages.push({
+      name: source.name,
+      version: source.version,
+      path: null,
+      for: null,
+      source,
+    });
   }
 }
 
 if (!packages.length) {
   log.info('no packages to install');
-  log.info('ok');
   process.exit(0);
 }
 
@@ -72,7 +86,7 @@ const tree = {
 };
 
 async.each(packages, (pkg, done) => {
-  install(pkg, []).then((node) => {
+  install(pkg).then((node) => {
     tree.nodes.push(node);
     done();
   });
