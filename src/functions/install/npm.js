@@ -65,6 +65,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
         pkg.path = pkg.name;
       }
 
+      const newPkg = !packages.find(p => p.name === pkg.name);
       packages.push(pkg);
 
       const req = superagent.get(version.dist.tarball);
@@ -108,7 +109,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
 
       extract.on('finish', () => {
         log.disableProgress();
-        resolve([packages, pkg]);
+        resolve([packages, pkg, newPkg]);
       });
 
       req

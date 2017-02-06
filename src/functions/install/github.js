@@ -47,6 +47,7 @@ function download(resolve, pkgs, pkg1) {
     pkg.path = pkg.name;
   }
 
+  const newPkg = !packages.find(p => p.name === pkg.name);
   packages.push(pkg);
 
   const req = superagent.get(`https://github.com/${pkg.source.owner}/${pkg.source.repo}/archive/${pkg.source.ref}.tar.gz`);
@@ -90,7 +91,7 @@ function download(resolve, pkgs, pkg1) {
 
   extract.on('finish', () => {
     log.disableProgress();
-    resolve([packages, pkg]);
+    resolve([packages, pkg, newPkg]);
   });
 
   req

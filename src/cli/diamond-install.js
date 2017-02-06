@@ -7,7 +7,6 @@ const async = require('async');
 const program = require('commander');
 const lockfile = require('proper-lockfile');
 const archy = require('archy');
-const chalk = require('chalk');
 const install = require('../functions/install');
 const parsePackageString = require('../functions/parsePackageString');
 
@@ -74,7 +73,7 @@ const tree = {
 
 async.each(packages, (pkg, done) => {
   install(pkg, []).then((node) => {
-    tree.nodes.push(chalk.green(node));
+    tree.nodes.push(node);
     done();
   });
 }, () => {

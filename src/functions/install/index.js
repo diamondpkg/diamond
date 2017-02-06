@@ -8,6 +8,7 @@ const path = require('path');
 const childProcess = require('child_process');
 const log = require('npmlog');
 const lockfile = require('proper-lockfile');
+const chalk = require('chalk');
 const compile = require('../compile');
 
 module.exports = (pkg, node) => new Promise((resolve) => {
@@ -29,6 +30,7 @@ module.exports = (pkg, node) => new Promise((resolve) => {
   promise.then((data) => {
     packages = data[0];
     pkg = data[1];
+    const newPkg = data[2];
 
     if (pkg.postCompile || pkg.functions || pkg.importer) {
       log.info('installing npm dependencies', 'this may take a little while');
@@ -75,7 +77,7 @@ module.exports = (pkg, node) => new Promise((resolve) => {
       }
 
       fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-      resolve(node);
+      resolve(newPkg ? chalk.green(node) : chalk.yellow(node));
     });
   });
 });
