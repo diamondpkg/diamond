@@ -9,8 +9,6 @@ module.exports = {
         super();
 
         this.supportsSync = this.supports;
-        this.resolve = console.log;
-        //this.loadFileSync = this.loadFile;
       }
 
       supports(name) {
