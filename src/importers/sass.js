@@ -34,7 +34,7 @@ module.exports = (file, current) => {
     if (/^packages\/([^/]+).+/.test(path.relative(__dirname, current))) {
       pkg = packages.find((p) => {
         const currentPkg = path.relative(__dirname, current).match(/^packages\/([^/]+).+/)[1];
-        return p.path === `${currentPkg}/diamond-packages/${match[1].toLowerCase()}`;
+        return p.path === `${currentPkg}/diamond/packages/${match[1].toLowerCase()}`;
       }) || packages.find(p => p.path === match[1].toLowerCase());
     } else {
       pkg = packages.find(p => p.path === match[1].toLowerCase());
