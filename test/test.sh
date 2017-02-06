@@ -15,7 +15,7 @@ diamond install bootstrap@4.0.0-alpha.2
 printf "\nCompiling Sass..."
 output=$(diamond c test/test.sass)
 if [ $? -eq 0 ]; then
-    printf " OK"
+    printf " \033[0;32mOK\033[0m"
 else
     printf "\n$output"
 fi
@@ -23,7 +23,7 @@ fi
 printf "\nCompiling Less..."
 output=$(diamond c test/test.less)
 if [ $? -eq 0 ]; then
-    printf " OK\n"
+    printf " \033[0;32mOK\033[0m\n"
 else
     printf "\n$output"
 fi
@@ -40,7 +40,7 @@ diamond install bootstrap@3.3.7
 printf "\nCompiling Sass..."
 output=$(diamond c test/test.sass)
 if [ $? -eq 0 ]; then
-    printf " OK"
+    printf " \033[0;32mOK\033[0m"
 else
     printf "\n$output"
 fi
@@ -48,9 +48,9 @@ fi
 printf "\nCompiling Less..."
 output=$(diamond c test/test.less)
 if [ $? -eq 0 ]; then
-    printf " OK"
+    printf " \033[0;32mOK\033[0m"
 else
     printf "\n$output"
 fi
 
-printf "\n\nTests Complete!\n"
+printf "\n\n\033[0;32mTests Complete!\033[0m\n"
