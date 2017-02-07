@@ -107,7 +107,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
         info = {};
       }
 
-      pkg.name = info.name || pkg.source.repo;
+      pkg.name = pkg.name || info.name || pkg.source.repo;
       pkg.version = info.version;
       pkg.main = info.diamond ?
         info.diamond.main :
@@ -122,7 +122,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
     .catch((res) => {
       if (res.status === 404) {
         log.warn('no package.json', `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
-        pkg.name = pkg.source.repo;
+        pkg.name = pkg.name || pkg.source.repo;
         download(resolve, packages, pkg);
       } else {
         log.error(`error downloading package.json: ${res.status}`, `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);

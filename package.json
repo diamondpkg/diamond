@@ -49,10 +49,5 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^3.0.2",
     "eslint-plugin-react": "^6.5.0"
-  },
-  "diamond": {
-    "dependencies": {
-      "bootstrap": "3.3.7"
-    }
   }
 }
