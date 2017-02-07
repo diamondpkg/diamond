@@ -34,15 +34,15 @@ module.exports = (file, current) => {
     if (/^packages\/([^/]+).+/.test(path.relative(__dirname, current))) {
       pkg = packages.find((p) => {
         const currentPkg = path.relative(__dirname, current).match(/^packages\/([^/]+).+/)[1];
-        return p.path === `${currentPkg}/diamond/packages/${match[1].toLowerCase()}`;
-      }) || packages.find(p => p.path === match[1].toLowerCase());
+        return p.path === `${currentPkg}/diamond/packages/${match[1]}`;
+      }) || packages.find(p => p.path === match[1]);
     } else {
-      pkg = packages.find(p => p.path === match[1].toLowerCase());
+      pkg = packages.find(p => p.path === match[1]);
     }
 
     if (!pkg) {
       release();
-      return new Error(`could not find package '${match[1].toLowerCase()}'`);
+      return new Error(`could not find package '${match[1]}'`);
     }
 
     let p;
@@ -53,7 +53,7 @@ module.exports = (file, current) => {
       try {
         fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, match[2]));
       } catch (err) {
-        return new Error(`could not find file '${path.join(match[1].toLowerCase(), match[2].toLowerCase())}'`);
+        return new Error(`could not find file '${path.join(match[1], match[2])}'`);
       }
 
       p = path.join(process.cwd(), 'diamond/packages', pkg.path, match[2]);
@@ -62,7 +62,7 @@ module.exports = (file, current) => {
       try {
         fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main));
       } catch (err) {
-        return new Error(`could not find file '${path.join(match[1].toLowerCase(), pkg.main)}' this is likely a problem with the package itself`);
+        return new Error(`could not find file '${path.join(match[1], pkg.main)}' this is likely a problem with the package itself`);
       }
 
       if (/\.sass|\.scss$/.test(pkg.main)) {
@@ -84,9 +84,9 @@ module.exports = (file, current) => {
     if (p) {
       if (/\.scss$/.test(pkg.main)) {
         contents = fs.readFileSync(p).toString();
-        return { file: p, contents: `$__${pkg.name.toLowerCase().replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
+        return { file: p, contents: `$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
       } else if (match[4]) {
-        return { contents: `$__${pkg.name.toLowerCase().replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
+        return { contents: `$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
       }
 
       return { file: p };

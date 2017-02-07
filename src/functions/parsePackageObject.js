@@ -14,8 +14,8 @@ module.exports = (dependencies) => {
       const match = dependencies[dep].match(/^(gitlab:|gl:)([^#@\s]+)\/([^#@\s]+)((#|@)(.+))?$/i);
       deps.push({
         type: 'gitlab',
-        owner: match[2].toLowerCase(),
-        repo: match[3].toLowerCase(),
+        owner: match[2],
+        repo: match[3],
         name: dep,
         ref: match[6] || 'master',
       });
@@ -23,8 +23,8 @@ module.exports = (dependencies) => {
       const match = dependencies[dep].match(/^(bitbucket:|bb:)([^#@\s]+)\/([^#@\s]+)((#|@)(.+))?$/i);
       deps.push({
         type: 'bitbucket',
-        owner: match[2].toLowerCase(),
-        repo: match[3].toLowerCase(),
+        owner: match[2],
+        repo: match[3],
         name: dep,
         ref: match[6] || 'master',
       });
@@ -32,21 +32,21 @@ module.exports = (dependencies) => {
       const match = dependencies[dep].match(/^(github:|gh:|)([^#@\s]+)\/([^#@\s]+)((#|@)(.+))?$/i);
       deps.push({
         type: 'github',
-        owner: match[2].toLowerCase(),
-        repo: match[3].toLowerCase(),
+        owner: match[2],
+        repo: match[3],
         name: dep,
         ref: match[6] || 'master',
       });
     } else if (npmValidate(dep).validForOldPackages && semver.validRange(dependencies[dep])) {
       deps.push({
         type: 'npm',
-        name: dep.toLowerCase(),
+        name: dep,
         version: dependencies[dep],
       });
     } else if (npmValidate(dep).validForOldPackages) {
       deps.push({
         type: 'npm',
-        name: dep.toLowerCase(),
+        name: dep,
         tag: dependencies[dep] || 'latest',
       });
     } else {

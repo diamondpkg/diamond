@@ -43,15 +43,15 @@ module.exports = {
         if (/^packages\/([^/]+).+/.test(path.relative(__dirname, currentDirectory))) {
           pkg = packages.find((p) => {
             const currentPkg = path.relative(__dirname, currentDirectory).match(/^packages\/([^/]+).+/)[1];
-            return p.path === `${currentPkg}/diamond/packages/${match[1].toLowerCase()}`;
-          }) || packages.find(p => p.path === match[1].toLowerCase());
+            return p.path === `${currentPkg}/diamond/packages/${match[1]}`;
+          }) || packages.find(p => p.path === match[1]);
         } else {
-          pkg = packages.find(p => p.path === match[1].toLowerCase());
+          pkg = packages.find(p => p.path === match[1]);
         }
 
         if (!pkg) {
           release();
-          return Promise.reject(new Error(`could not find package '${match[1].toLowerCase()}'`));
+          return Promise.reject(new Error(`could not find package '${match[1]}'`));
         }
 
         let p;
@@ -60,7 +60,7 @@ module.exports = {
           try {
             fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, match[2]));
           } catch (err) {
-            return Promise.reject(new Error(`could not find file '${path.join(match[1].toLowerCase(), match[2].toLowerCase())}'`));
+            return Promise.reject(new Error(`could not find file '${path.join(match[1], match[2])}'`));
           }
 
           p = path.join(process.cwd(), 'diamond/packages', pkg.path, match[2]);
@@ -69,7 +69,7 @@ module.exports = {
           try {
             fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main));
           } catch (err) {
-            return Promise.reject(new Error(`could not find file '${path.join(match[1].toLowerCase(), pkg.main)}' this is likely a problem with the package itself`));
+            return Promise.reject(new Error(`could not find file '${path.join(match[1], pkg.main)}' this is likely a problem with the package itself`));
           }
 
           if (/\.less$/.test(pkg.main)) {

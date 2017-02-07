@@ -35,6 +35,8 @@ module.exports = pkg => new Promise((resolve) => {
     pkg = data[1];
     const newPkg = data[2];
 
+    fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
+
     const dependencies = [];
     for (const source of parsePackageObject(pkg.dependencies)) {
       dependencies.push({
