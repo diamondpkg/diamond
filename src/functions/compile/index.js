@@ -7,8 +7,6 @@ const async = require('async');
 const compileSass = require('./sass');
 const compileLess = require('./less');
 
-log.heading = 'dia';
-
 module.exports = (file, options) => new Promise((resolve) => {
   fs.ensureDirSync('./diamond/packages');
   fs.ensureFileSync('./diamond/.internal/packages.lock');

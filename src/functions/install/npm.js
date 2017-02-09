@@ -8,8 +8,6 @@ const tar = require('tar-stream');
 const zlib = require('zlib');
 const path = require('path');
 
-log.heading = 'dia';
-
 module.exports = (packages, pkg) => new Promise((resolve) => {
   superagent.get(`https://registry.npmjs.org/${pkg.name}`)
     .then((res) => {
@@ -92,7 +90,8 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
           write = fs.createWriteStream(location);
           stream.pipe(write);
           stream.on('data', (c) => {
-            log.gauge.show(`extract: ${header.name.replace(/^package\//, '')}`, c.length / header.size);
+            log.gauge.show({ section: 'extract', logline: header.name.replace(/^package\//, '') }, c.length / header.size);
+            log.gauge.pulse();
           });
         }
 

@@ -4,8 +4,6 @@ const semver = require('semver');
 const npmValidate = require('validate-npm-package-name');
 const log = require('npmlog');
 
-log.heading = 'dia';
-
 module.exports = (dependencies) => {
   const deps = [];
 

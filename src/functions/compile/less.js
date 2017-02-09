@@ -6,8 +6,6 @@ const fs = require('fs-extra');
 const lockfile = require('proper-lockfile');
 const importer = require('../../importers/less');
 
-log.heading = 'dia';
-
 module.exports = filename => new Promise((resolve) => {
   lockfile.unlockSync('./diamond/.internal/packages.lock');
 

@@ -7,8 +7,6 @@ const tar = require('tar-stream');
 const zlib = require('zlib');
 const path = require('path');
 
-log.heading = 'dia';
-
 function download(resolve, packages, pkg) {
   let index = 0;
   const newPkg = !packages.find(p => p.name === pkg.name);
@@ -70,7 +68,8 @@ function download(resolve, packages, pkg) {
       write = fs.createWriteStream(location);
       stream.pipe(write);
       stream.on('data', (c) => {
-        log.gauge.show(`extract: ${header.name.replace(/^package\//, '')}`, c.length / header.size);
+        log.gauge.show({ section: 'extract', logline: header.name.replace(/^package\//, '') }, c.length / header.size);
+        log.gauge.pulse();
       });
     }
 

@@ -3,9 +3,6 @@
 const path = require('path');
 const fs = require('fs-extra');
 const lockfile = require('proper-lockfile');
-const log = require('npmlog');
-
-log.heading = 'dia';
 
 module.exports = (file, current) => {
   if (/^\[([^\s/]+)(.+)?](\s+as\s+([a-zA-Z]+))?$/.test(file)) {

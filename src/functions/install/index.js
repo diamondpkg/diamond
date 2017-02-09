@@ -68,18 +68,21 @@ module.exports = pkg => new Promise((resolve) => {
 
       fs.ensureDirSync(path.join('./diamond/packages', pkg.path, 'diamond/dist'));
 
+      const pulse = () => log.gauge.pulse();
       new Promise((rsolve) => {
         if (/\.sass|\.scss|\.less/.test(pkg.main)) {
           log.enableProgress();
-          log.gauge.show('compiling', 0);
+          setInterval(pulse, 100);
+          log.gauge.show({ section: 'compiling', logline: pkg.main }, 0);
           compile(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), { outputStyle: 'compressed' })
             .then((css) => {
               fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), css);
-              log.gauge.show('compiling', 1);
+              log.gauge.show({ section: 'compiling', logline: pkg.main }, 1);
               rsolve();
             });
         } else rsolve();
       }).then(() => {
+        clearInterval(pulse);
         log.disableProgress();
         for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
           if (!/\.sass|\.scss$/.test(p.path)) continue;

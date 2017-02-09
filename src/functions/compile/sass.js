@@ -7,8 +7,6 @@ const path = require('path');
 const lockfile = require('proper-lockfile');
 const importer = require('../../importers/sass');
 
-log.heading = 'dia';
-
 module.exports = (file, options) => new Promise((resolve) => {
   let packages;
   try {
