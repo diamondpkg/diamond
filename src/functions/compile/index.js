@@ -35,10 +35,14 @@ module.exports = (file, options) => new Promise((resolve) => {
         res = postCompile(css);
       } catch (err) {
         if (typeof err === 'string') {
+          log.disableProgress();
+          log.resume();
           log.error('post install', err);
           log.error('not ok');
           process.exit(1);
         } else {
+          log.disableProgress();
+          log.resume();
           log.error('post install', err.message);
           log.error('not ok');
           process.exit(1);
@@ -50,10 +54,14 @@ module.exports = (file, options) => new Promise((resolve) => {
         done();
       }).catch((err) => {
         if (typeof err === 'string') {
+          log.disableProgress();
+          log.resume();
           log.error('post install', err);
           log.error('not ok');
           process.exit(1);
         } else {
+          log.disableProgress();
+          log.resume();
           log.error('post install', err.message);
           log.error('not ok');
           process.exit(1);

@@ -13,6 +13,8 @@ module.exports = filename => new Promise((resolve) => {
   .then((result) => {
     resolve(result.css.toString());
   }).catch((error) => {
+    log.disableProgress();
+    log.resume();
     log.error('less', error.message);
     log.error('not ok');
     process.exit(1);

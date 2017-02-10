@@ -15,6 +15,8 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
       if (pkg.source.tag && res.body['dist-tags'][pkg.source.tag] && res.body.versions[res.body['dist-tags'][pkg.source.tag]]) {
         version = res.body.versions[res.body['dist-tags'][pkg.source.tag]];
       } else if (pkg.source.tag) {
+        log.disableProgress();
+        log.resume();
         log.error(`invalid tag ${pkg.source.tag}`, pkg.name);
         log.error('not ok');
         process.exit(1);
@@ -26,6 +28,8 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
         if (versions.length) {
           version = res.body.versions[versions[0]];
         } else {
+          log.disableProgress();
+          log.resume();
           log.error(`no versions match ${pkg.version}`, pkg.name);
           log.error('not ok');
           process.exit(1);
@@ -73,6 +77,8 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
 
       req.on('response', (r) => {
         if (r.status !== 200) {
+          log.disableProgress();
+          log.resume();
           log.error(`error downloading: ${r.status}`, pkg.name);
           log.error('not ok');
           process.exit(1);
@@ -118,6 +124,8 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
         .pipe(extract);
     })
     .catch((res) => {
+      log.disableProgress();
+      log.resume();
       log.error(`registry error: ${res.status}`, pkg.name);
       log.error('not ok');
       process.exit(1);

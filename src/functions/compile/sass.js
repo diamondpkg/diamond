@@ -36,6 +36,8 @@ module.exports = (file, options) => new Promise((resolve) => {
     functions,
   }, (error, result) => {
     if (error) {
+      log.disableProgress();
+      log.resume();
       log.error('sass', error.message);
       log.error('not ok');
       process.exit(1);

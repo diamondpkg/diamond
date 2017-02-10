@@ -86,12 +86,14 @@ const tree = {
 };
 
 async.each(packages, (pkg, done) => {
+  log.pause();
   install(pkg).then((node) => {
     tree.nodes.push(node);
     done();
   });
 }, () => {
   release();
-  process.stderr.write(archy(tree));
+  process.stderr.write(`${archy(tree)}\n`);
+  log.resume();
   process.exit(0);
 });

@@ -7,7 +7,7 @@ const tar = require('tar-stream');
 const zlib = require('zlib');
 const path = require('path');
 
-function download(resolve, packages, pkg) {
+function download(resolve, packages, pkg, pkgJson) {
   let index = 0;
   const newPkg = !packages.find(p => p.name === pkg.name);
 
@@ -51,9 +51,13 @@ function download(resolve, packages, pkg) {
 
   req.on('response', (r) => {
     if (r.status !== 200) {
+      log.disableProgress();
+      log.resume();
       log.error(`error downloading: ${r.status}`, pkg.name);
       log.error('not ok');
       process.exit(1);
+    } else if (!pkgJson) {
+      log.warn('no package.json', `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
     }
   });
 
@@ -116,14 +120,15 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
       pkg.importer = info.diamond ? info.diamond.importer : null;
       pkg.dependencies = info.diamond ? info.diamond.dependencies : {};
 
-      download(resolve, packages, pkg);
+      download(resolve, packages, pkg, true);
     })
     .catch((res) => {
       if (res.status === 404) {
-        log.warn('no package.json', `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
         pkg.name = pkg.name || pkg.source.repo;
-        download(resolve, packages, pkg);
+        download(resolve, packages, pkg, false);
       } else {
+        log.disableProgress();
+        log.resume();
         log.error(`error downloading package.json: ${res.status}`, `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
         log.error('not ok');
         process.exit(1);

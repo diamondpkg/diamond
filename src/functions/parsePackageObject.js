@@ -48,6 +48,8 @@ module.exports = (dependencies) => {
         tag: dependencies[dep] || 'latest',
       });
     } else {
+      log.disableProgress();
+      log.resume();
       log.error('invalid package', `${dep}: ${dependencies[dep]}`);
       log.error('not ok');
       process.exit(1);

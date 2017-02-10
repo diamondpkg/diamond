@@ -59,6 +59,8 @@ module.exports = pkg => new Promise((resolve) => {
         try {
           childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path) });
         } catch (err) {
+          log.disableProgress();
+          log.resume();
           lockfile.unlockSync('./diamond/.internal/packages.lock');
           log.error('npm', err.message);
           log.error('not ok');
