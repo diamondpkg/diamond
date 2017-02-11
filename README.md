@@ -16,6 +16,20 @@
   </p>
 </div>
 
+## Badge
+[![diamond](https://img.shields.io/badge/install%20with-diamond-4BC8FF.svg)](https://diamond.js.org)  
+Feel free to include this badge in your project.
+
+### Markdown
+```md
+[![diamond](https://img.shields.io/badge/install%20with-diamond-4BC8FF.svg)](https://diamond.js.org)
+```
+
+### Image URL
+```
+https://img.shields.io/badge/install%20with-diamond-4BC8FF.svg
+```
+
 ## Installation
 Using npm:
 ```bash
