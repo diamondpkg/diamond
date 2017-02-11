@@ -26,7 +26,7 @@ and functions.
 Feel free to include this badge in your project.
 
 ### Markdown
-```md
+```markdown
 [![diamond](https://img.shields.io/badge/install%20with-diamond-4BC8FF.svg)](https://diamond.js.org)
 ```
 
