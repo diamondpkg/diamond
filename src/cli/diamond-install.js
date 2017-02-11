@@ -87,6 +87,7 @@ const tree = {
 
 async.each(packages, (pkg, done) => {
   log.pause();
+  log.gauge.enable();
   install(pkg).then((node) => {
     tree.nodes.push(node);
     done();

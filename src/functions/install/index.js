@@ -55,9 +55,8 @@ module.exports = pkg => new Promise((resolve) => {
       });
     }, () => {
       if (pkg.postCompile || pkg.functions || pkg.importer) {
-        log.info('installing npm dependencies', 'this may take a little while');
         try {
-          childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path) });
+          childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'ignore' });
         } catch (err) {
           log.disableProgress();
           log.resume();
@@ -69,6 +68,13 @@ module.exports = pkg => new Promise((resolve) => {
       }
 
       fs.ensureDirSync(path.join('./diamond/packages', pkg.path, 'diamond/dist'));
+
+      log.setGaugeTemplate([
+        { type: 'activityIndicator', kerning: 1, length: 1 },
+        { type: 'section', default: '' },
+        ':',
+        { type: 'logline', kerning: 1, default: '' },
+      ]);
 
       const pulse = () => log.gauge.pulse();
       new Promise((rsolve) => {
@@ -86,6 +92,14 @@ module.exports = pkg => new Promise((resolve) => {
       }).then(() => {
         clearInterval(pulse);
         log.disableProgress();
+        log.setGaugeTemplate([
+          { type: 'progressbar', length: 20 },
+          { type: 'activityIndicator', kerning: 1, length: 1 },
+          { type: 'section', default: '' },
+          ':',
+          { type: 'logline', kerning: 1, default: '' },
+        ]);
+
         for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
           if (!/\.sass|\.scss$/.test(p.path)) continue;
           fs.writeFileSync(p.path, fs.readFileSync(p.path).toString().replace(/(\.)(-?[_a-zA-Z]+[\w-]*\s*[^;"'\d]?\n)|(@extend\s+)(\.)(-?[_a-zA-Z]+[\w-]*)/g, (match, p1, p2, p3, p4, p5) => {
