@@ -22,17 +22,18 @@ Less packages. You can also ship custom functions to be run after compiling, or 
 and functions.
 
 ## Badge
-[![diamond](https://img.shields.io/badge/install%20with-diamond-4BC8FF.svg)](https://diamond.js.org)  
+[![diamond](https://diamond.js.org/badge.svg)](https://diamond.js.org)  
 Feel free to include this badge in your project.
 
 ### Markdown
 ```markdown
-[![diamond](https://img.shields.io/badge/install%20with-diamond-4BC8FF.svg)](https://diamond.js.org)
+[![diamond](https://diamond.js.org/badge.svg)](https://diamond.js.org)
 ```
 
-### Image URL
+### Image URLs
 ```
-https://img.shields.io/badge/install%20with-diamond-4BC8FF.svg
+https://diamond.js.org/badge.svg
+https://diamond.js.org/badge.png
 ```
 
 ## Installation
