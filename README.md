@@ -16,6 +16,11 @@
   </p>
 </div>
 
+## Introduction
+diamond is a package manager for Sass and Less. diamond allows you to mix and match (most of the time) Sass and 
+Less packages. You can also ship custom functions to be run after compiling, or even Less plugins and Sass importers
+and functions.
+
 ## Badge
 [![diamond](https://img.shields.io/badge/install%20with-diamond-4BC8FF.svg)](https://diamond.js.org)  
 Feel free to include this badge in your project.
