@@ -11,4 +11,5 @@ program
   .command('i [packages...]', 'install one or more packages')
   .command('compile <file>', 'compile a Sass file')
   .command('c <file>', 'compile a Sass file')
+  .command('login', 'login to GitHub')
   .parse(process.argv);
