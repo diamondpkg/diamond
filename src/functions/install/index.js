@@ -2,6 +2,7 @@
 
 const npm = require('./npm');
 const github = require('./github');
+const gitlab = require('./gitlab');
 const fs = require('fs-extra');
 const klaw = require('klaw-sync');
 const path = require('path');
@@ -28,6 +29,8 @@ module.exports = pkg => new Promise((resolve) => {
     promise = npm(packages, pkg);
   } else if (pkg.source.type === 'github') {
     promise = github(packages, pkg);
+  } else if (pkg.source.type === 'gitlab') {
+    promise = gitlab(packages, pkg);
   }
 
   promise.then((data) => {

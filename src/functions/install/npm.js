@@ -76,7 +76,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
       const extract = tar.extract();
 
       req.on('response', (r) => {
-        if (r.status !== 200) {
+        if (!r.ok) {
           log.disableProgress();
           log.resume();
           log.error(`error downloading: ${r.status}`, pkg.name);
