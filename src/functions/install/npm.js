@@ -4,7 +4,7 @@ const superagent = require('superagent');
 const semver = require('semver');
 const fs = require('fs-extra');
 const log = require('npmlog');
-const tar = require('tar-stream');
+const tar = require('tar');
 const zlib = require('zlib');
 const path = require('path');
 
@@ -73,7 +73,10 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
       packages.push(pkg);
 
       const req = superagent.get(version.dist.tarball);
-      const extract = tar.extract();
+      const extract = tar.Extract({
+        path: path.join('./diamond/packages', pkg.path),
+        strip: 1,
+      });
 
       req.on('response', (r) => {
         if (!r.ok) {
@@ -85,37 +88,28 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
         }
       });
 
+      log.setGaugeTemplate([
+        { type: 'activityIndicator', kerning: 1, length: 1 },
+        { type: 'section', default: '' },
+        ':',
+        { type: 'logline', kerning: 1, default: '' },
+      ]);
       log.enableProgress();
 
-      extract.on('entry', (header, stream, next) => {
-        let write;
-
-        if (header.type === 'file' && /^package\//.test(header.name)) {
-          const location = path.join('./diamond/packages', pkg.path, header.name.replace(/^package\//, ''));
-          fs.ensureFileSync(location);
-          write = fs.createWriteStream(location);
-          stream.pipe(write);
-          stream.on('data', (c) => {
-            log.gauge.show({ section: 'extract', logline: header.name.replace(/^package\//, '') }, c.length / header.size);
-            log.gauge.pulse();
-          });
-        }
-
-        if (write) {
-          write.on('finish', () => {
-            next();
-          });
-        } else {
-          stream.on('end', () => {
-            next();
-          });
-        }
-
-        stream.resume();
+      extract.on('entry', (entry) => {
+        log.gauge.show({ section: 'extract', logline: entry.path });
+        log.gauge.pulse();
       });
 
-      extract.on('finish', () => {
+      extract.on('end', () => {
         log.disableProgress();
+        log.setGaugeTemplate([
+          { type: 'progressbar', length: 20 },
+          { type: 'activityIndicator', kerning: 1, length: 1 },
+          { type: 'section', default: '' },
+          ':',
+          { type: 'logline', kerning: 1, default: '' },
+        ]);
         resolve([packages, pkg, newPkg]);
       });
 
