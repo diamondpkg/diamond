@@ -18,19 +18,51 @@ app.get('/', (req, res) => {
 });
 
 app.get('/authorize/github', (req, res) => {
-  if (req.query.error) return res.render(path.join(__dirname, '../views/error.html'), { error: req.query.error });
-  if (!req.query.code) return res.render(path.join(__dirname, '../views/error.html'), { error: 'No code.' });
+  if (req.query.error) {
+    return res.render(path.join(__dirname, '../views/error.html'), { error: req.query.error }, (_, html) => {
+      res.send(html);
+      process.exit(0);
+    });
+  }
+
+  if (!req.query.code) {
+    return res.render(path.join(__dirname, '../views/error.html'), { error: 'No code.' }, (_, html) => {
+      res.send(html);
+      process.exit(0);
+    });
+  }
 
   superagent.get(`https://diamondpkg-oauth.herokuapp.com/authenticate/${req.query.code}`)
     .then((r) => {
-      if (r.body.error) return res.render(path.join(__dirname, '../views/error.html'), { error: r.body.error });
-      if (!r.body.token) return res.render(path.join(__dirname, '../views/error.html'), { error: 'Authorization Error.' });
+      if (r.body.error) {
+        return res.render(path.join(__dirname, '../views/error.html'), { error: r.body.error }, (_, html) => {
+          res.send(html);
+          process.exit(0);
+        });
+      }
+
+      if (!r.body.token) {
+        return res.render(path.join(__dirname, '../views/error.html'), { error: 'Authorization Error.' }, (_, html) => {
+          res.send(html);
+          process.exit(0);
+        });
+      }
 
       fs.ensureFile(path.join(os.homedir(), '.diamond/auth.json'), (error) => {
-        if (error) return res.render(path.join(__dirname, '../views/error.html'), { error: error.message });
+        if (error) {
+          return res.render(path.join(__dirname, '../views/error.html'), { error: error.message }, (_, html) => {
+            res.send(html);
+            process.exit(0);
+          });
+        }
 
         fs.readFile(path.join(os.homedir(), '.diamond/auth.json'), (err, contents) => {
-          if (err) return res.render(path.join(__dirname, '../views/error.html'), { error: err.message });
+          if (err) {
+            return res.render(path.join(__dirname, '../views/error.html'), { error: err.message }, (_, html) => {
+              res.send(html);
+              process.exit(0);
+            });
+          }
 
           let auth;
           try {
@@ -42,9 +74,17 @@ app.get('/authorize/github', (req, res) => {
           auth.github = r.body.token;
 
           fs.writeFile(path.join(os.homedir(), '.diamond/auth.json'), JSON.stringify(auth), (e) => {
-            if (e) return res.render(path.join(__dirname, '../views/error.html'), { error: err.message });
+            if (e) {
+              return res.render(path.join(__dirname, '../views/error.html'), { error: err.message }, (_, html) => {
+                res.send(html);
+                process.exit(0);
+              });
+            }
 
-            return res.render(path.join(__dirname, '../views/success.html'));
+            return res.render(path.join(__dirname, '../views/success.html'), (_, html) => {
+              res.send(html);
+              process.exit(0);
+            });
           });
 
           return undefined;
@@ -56,14 +96,16 @@ app.get('/authorize/github', (req, res) => {
       return undefined;
     })
     .catch(() => {
-      res.render(path.join(__dirname, '../views/error.html'), { error: 'Authorization Error.' });
+      res.render(path.join(__dirname, '../views/error.html'), { error: 'Authorization Error.' }, (_, html) => {
+        res.send(html);
+        process.exit(0);
+      });
     });
 
   return undefined;
 });
 
 app.listen(3031, () => {
-  log.info('^C when done');
   log.info('please open', 'http://localhost:3031');
   opn('http://localhost:3031');
 });
