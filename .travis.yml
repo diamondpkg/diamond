@@ -3,8 +3,9 @@ node_js:
   - "node"
   - "7"
   - "6"
+  - "5"
   - "4"
 before_install: npm i -g depcheck
-install: 
+install:
   - npm i
   - npm link
