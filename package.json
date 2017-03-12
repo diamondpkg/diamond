@@ -36,7 +36,7 @@
     "fs-extra": "^2.0.0",
     "klaw-sync": "^1.1.0",
     "less": "^2.7.2",
-    "less-plugin-diamond": "github:diamondpkg/less-plugin-diamond",
+    "less-plugin-diamond": "^0.1.0",
     "mustache-express": "^1.2.4",
     "node-sass": "^4.4.0",
     "npmlog": "^4.0.2",
