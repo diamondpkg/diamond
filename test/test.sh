@@ -8,8 +8,8 @@ printf "Checking dependencies\n"
 depcheck --ignores=eslint,eslint-config-airbnb,eslint-plugin-import,eslint-plugin-jsx-a11y,eslint-plugin-react
 
 # Install
-printf "\n\nInstalling bootstrap@4.0.0-alpha.2\n"
-diamond install bootstrap@4.0.0-alpha.2
+printf "\n\nInstalling bootstrap@4.0.0-alpha.6\n"
+diamond install bootstrap@4.0.0-alpha.6
 
 # Test
 printf "Compiling Sass..."

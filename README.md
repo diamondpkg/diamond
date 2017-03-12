@@ -17,12 +17,12 @@
 </div>
 
 ## Introduction
-diamond is a package manager for Sass and Less. diamond allows you to mix and match (most of the time) Sass and 
+diamond is a package manager for Sass and Less. diamond allows you to mix and match (most of the time) Sass and
 Less packages. You can also ship custom functions to be run after compiling, or even Less plugins and Sass importers
 and functions.
 
 ## Badge
-[![diamond](https://diamond.js.org/badge.svg)](https://diamond.js.org)  
+[![diamond](https://diamond.js.org/badge.svg)](https://diamond.js.org)
 Feel free to include this badge in your project.
 
 ### Markdown
@@ -51,7 +51,7 @@ npm i -g diamondpkg/diamond
 Lets say you want to use Bootstrap in your next project.
 
 ### Installing
-You can find Bootstrap under the package name `bootstrap@next` (`@next` means the next tag on npm, which is in sass, not less)  
+You can find Bootstrap under the package name `bootstrap@next` (`@next` means the next tag on npm, which is in sass, not less)
 You install with the `install` command
 ```bash
 diamond install bootstrap@next
@@ -70,9 +70,9 @@ diamond
 |-- index.js
 ```
 <p class="danger">Do not edit any files in this folder.</p>
-The `diamond/.internal` folder is for files used by diamond.  
-The `diamond/.staging` folder is a temporary location for files durning install.  
-The `diamond/packages` folder is where all of your packages go.  
+The `diamond/.internal` folder is for files used by diamond.
+The `diamond/.staging` folder is a temporary location for files durning install.
+The `diamond/packages` folder is where all of your packages go.
 The `diamond/index.js` file is the JS file that handles all of your importing (See [compiling](#compiling))
 
 ### Importing
@@ -92,13 +92,14 @@ We want to import Bootstrap's main file, so we will use `[bootstrap]`
 ```
 
 ### Compiling
+#### Sass
 Once we have written our sass, we are ready for compiling.
 
 If you try
 ```bash
 node-sass myfile.scss
 ```
-it will give you errors about not being able to find the file `[boostrap]`. 
+it will give you errors about not being able to find the file `[boostrap]`.
 This is because you aren't using diamond's custom importer.
 
 It is recommended to use the compile command to compile your Sass instead of node-sass.
@@ -114,3 +115,17 @@ To compile with node-sass, use the `--importer` flag
 node-sass --importer diamond -o output.css input.scss
 ```
 where `diamond` is the generated `diamond` folder on install.
+
+#### Less
+To compile with Less, either use the compile command, or lessc. (They both have the same features)
+
+##### Compile Command
+```bash
+diamond compile -o output.css input.less
+```
+
+##### lessc
+```bash
+lessc --diamond input.less output.css
+```
+This uses `less-plugin-diamond` as a plugin, which is installed when you install diamond.
