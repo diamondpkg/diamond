@@ -1,111 +1,110 @@
 const os = require('os');
+const url = require('url');
 const opn = require('opn');
 const log = require('npmlog');
 const path = require('path');
+const http = require('http');
 const fs = require('fs-extra');
-const express = require('express');
 const superagent = require('superagent');
-const mustacheExpress = require('mustache-express');
+const querystring = require('querystring');
+const mustache = require('mustache');
 
-const app = express();
+http.createServer((req, res) => {
+  const u = url.parse(req.url);
+  const query = querystring.parse(u.query);
+  if (u.pathname === '/') {
+    res.writeHead(302, 'Redirect', { location: 'https://github.com/login/oauth/authorize?client_id=756bdbe9672e9c6bd2cc' });
+    res.end();
+  } else if (u.pathname === '/authorize/github') {
+    if (query.error) {
+      res.writeHead(400, 'Error');
+      return res.end(mustache.render(fs.readFileSync(path.join(__dirname, '../views/error.html')).toString(), { error: query.error }), () => {
+        process.exit(0);
+      });
+    }
 
-app.engine('html', mustacheExpress());
-app.set('view engine', 'mustache');
-log.heading = 'dia';
+    if (!query.code) {
+      res.writeHead(400, 'Error');
+      return res.end(mustache.render(fs.readFileSync(path.join(__dirname, '../views/error.html')).toString(), { error: 'No code.' }), () => {
+        process.exit(0);
+      });
+    }
 
-app.get('/', (req, res) => {
-  res.redirect('https://github.com/login/oauth/authorize?client_id=756bdbe9672e9c6bd2cc');
-});
-
-app.get('/authorize/github', (req, res) => {
-  if (req.query.error) {
-    return res.render(path.join(__dirname, '../views/error.html'), { error: req.query.error }, (_, html) => {
-      res.send(html);
-      process.exit(0);
-    });
-  }
-
-  if (!req.query.code) {
-    return res.render(path.join(__dirname, '../views/error.html'), { error: 'No code.' }, (_, html) => {
-      res.send(html);
-      process.exit(0);
-    });
-  }
-
-  superagent.get(`https://diamondpkg-oauth.herokuapp.com/authenticate/${req.query.code}`)
-    .then((r) => {
-      if (r.body.error) {
-        return res.render(path.join(__dirname, '../views/error.html'), { error: r.body.error }, (_, html) => {
-          res.send(html);
-          process.exit(0);
-        });
-      }
-
-      if (!r.body.token) {
-        return res.render(path.join(__dirname, '../views/error.html'), { error: 'Authorization Error.' }, (_, html) => {
-          res.send(html);
-          process.exit(0);
-        });
-      }
-
-      fs.ensureFile(path.join(os.homedir(), '.diamond/auth.json'), (error) => {
-        if (error) {
-          return res.render(path.join(__dirname, '../views/error.html'), { error: error.message }, (_, html) => {
-            res.send(html);
+    superagent.get(`https://diamondpkg-oauth.herokuapp.com/authenticate/${query.code}`)
+      .then((r) => {
+        if (r.body.error) {
+          res.writeHead(400, 'Error');
+          return res.end(mustache.render(fs.readFileSync(path.join(__dirname, '../views/error.html')).toString(), { error: r.body.error }), () => {
             process.exit(0);
           });
         }
 
-        fs.readFile(path.join(os.homedir(), '.diamond/auth.json'), (err, contents) => {
-          if (err) {
-            return res.render(path.join(__dirname, '../views/error.html'), { error: err.message }, (_, html) => {
-              res.send(html);
+        if (!r.body.token) {
+          res.writeHead(400, 'Error');
+          return res.end(mustache.render(fs.readFileSync(path.join(__dirname, '../views/error.html')).toString(), { error: 'Authorization Error.' }), () => {
+            process.exit(0);
+          });
+        }
+
+        fs.ensureFile(path.join(os.homedir(), '.diamond/auth.json'), (error) => {
+          if (error) {
+            res.writeHead(400, 'Error');
+            return res.end(mustache.render(fs.readFileSync(path.join(__dirname, '../views/error.html')).toString(), { error: error.message }), () => {
               process.exit(0);
             });
           }
 
-          let auth;
-          try {
-            auth = JSON.parse(contents);
-          } catch (_) {
-            auth = {};
-          }
-
-          auth.github = r.body.token;
-
-          fs.writeFile(path.join(os.homedir(), '.diamond/auth.json'), JSON.stringify(auth), (e) => {
-            if (e) {
-              return res.render(path.join(__dirname, '../views/error.html'), { error: err.message }, (_, html) => {
-                res.send(html);
+          fs.readFile(path.join(os.homedir(), '.diamond/auth.json'), (err, contents) => {
+            if (err) {
+              res.writeHead(400, 'Error');
+              return res.end(mustache.render(fs.readFileSync(path.join(__dirname, '../views/error.html')).toString(), { error: err.message }), () => {
                 process.exit(0);
               });
             }
 
-            return res.render(path.join(__dirname, '../views/success.html'), (_, html) => {
-              res.send(html);
-              process.exit(0);
+            let auth;
+            try {
+              auth = JSON.parse(contents);
+            } catch (_) {
+              auth = {};
+            }
+
+            auth.github = r.body.token;
+
+            fs.writeFile(path.join(os.homedir(), '.diamond/auth.json'), JSON.stringify(auth), (e) => {
+              if (e) {
+                res.writeHead(400, 'Error');
+                return res.end(mustache.render(fs.readFileSync(path.join(__dirname, '../views/error.html')).toString(), { error: err.message }), () => {
+                  process.exit(0);
+                });
+              }
+
+              res.writeHead(200, 'OK');
+              return res.end(mustache.render(fs.readFileSync(path.join(__dirname, '../views/success.html')).toString()), () => {
+                process.exit(0);
+              });
             });
+
+            return undefined;
           });
 
           return undefined;
         });
 
         return undefined;
+      })
+      .catch(() => {
+        res.render(path.join(__dirname, '../views/error.html'), { error: 'Authorization Error.' }, (_, html) => {
+          res.send(html);
+          process.exit(0);
+        });
       });
 
-      return undefined;
-    })
-    .catch(() => {
-      res.render(path.join(__dirname, '../views/error.html'), { error: 'Authorization Error.' }, (_, html) => {
-        res.send(html);
-        process.exit(0);
-      });
-    });
+    return undefined;
+  }
 
   return undefined;
-});
-
-app.listen(3031, () => {
+}).listen(3031, () => {
   log.info('please open', 'http://localhost:3031');
   opn('http://localhost:3031');
 });
