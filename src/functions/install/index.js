@@ -3,6 +3,7 @@
 const npm = require('./npm');
 const github = require('./github');
 const gitlab = require('./gitlab');
+const os = require('os');
 const fs = require('fs-extra');
 const klaw = require('klaw-sync');
 const path = require('path');
@@ -92,78 +93,71 @@ module.exports = pkg => new Promise((resolve) => {
 
     packages.push(pkg);
 
-    const req = superagent.get(url);
-    const extract = tar.Extract({
-      path: path.join('./diamond/packages', pkg.path),
-      strip: 1,
-    });
+    let verString = '';
+    if (pkg.version) verString = `@${pkg.version}`;
+    else if (pkg.ref) verString = `#${pkg.ref}`;
 
-    req.on('response', (r) => {
-      if (!r.ok) {
-        log.disableProgress();
-        log.resume();
-        log.error(`error downloading: ${r.status}`, pkg.name);
-        log.error('not ok');
-        process.exit(1);
-      } else if (!info) {
-        log.warn('no package.json', `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
+    if (fs.existsSync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`))) {
+      fs.copySync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`), path.join('./diamond/packages', pkg.path));
+      pkg.path = pkg.name;
+      packages.push(pkg);
+
+      if (pkg.name && pkg.version) {
+        node.label = `${pkg.name}@${pkg.version}`;
+      } else if (pkg.name && pkg.ref) {
+        node.label = `${pkg.name}#${pkg.ref}`;
+      } else {
+        node.label = `${pkg.name}`;
       }
-    });
 
-    log.setGaugeTemplate([
-      { type: 'activityIndicator', kerning: 1, length: 1 },
-      { type: 'section', default: '' },
-      ':',
-      { type: 'logline', kerning: 1, default: '' },
-    ]);
-    log.enableProgress();
+      node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
+      node.label = `${node.label} ${chalk.cyan('(from cache)')}`;
 
-    extract.on('entry', (entry) => {
-      log.gauge.show({ section: 'extract', logline: entry.path });
-      log.gauge.pulse();
-    });
+      fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
+      resolve(node);
+    } else {
+      const req = superagent.get(url);
+      const extract = tar.Extract({
+        path: path.join('./diamond/packages', pkg.path),
+        strip: 1,
+      });
 
-    extract.on('end', () => {
-      log.disableProgress();
+      req.on('response', (r) => {
+        if (!r.ok) {
+          log.disableProgress();
+          log.resume();
+          log.error(`error downloading: ${r.status}`, pkg.name);
+          log.error('not ok');
+          process.exit(1);
+        } else if (!info) {
+          log.warn('no package.json', `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
+        }
+      });
+
       log.setGaugeTemplate([
-        { type: 'progressbar', length: 20 },
         { type: 'activityIndicator', kerning: 1, length: 1 },
         { type: 'section', default: '' },
         ':',
         { type: 'logline', kerning: 1, default: '' },
       ]);
+      log.enableProgress();
 
-      fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
+      extract.on('entry', (entry) => {
+        log.gauge.show({ section: 'extract', logline: entry.path });
+        log.gauge.pulse();
+      });
 
-      const dependencies = [];
-      for (const source of parsePackageObject(pkg.dependencies)) {
-        dependencies.push({
-          name: source.name,
-          version: source.version,
-          path: null,
-          for: pkg.path,
-          source,
-        });
-      }
+      extract.on('end', () => {
+        log.disableProgress();
+        log.setGaugeTemplate([
+          { type: 'progressbar', length: 20 },
+          { type: 'activityIndicator', kerning: 1, length: 1 },
+          { type: 'section', default: '' },
+          ':',
+          { type: 'logline', kerning: 1, default: '' },
+        ]);
 
-      async.each(dependencies, (dep, cb) => {
-        module.exports(dep).then((n) => {
-          node.nodes.push(n);
-          cb();
-        });
-      }, () => {
-        if (pkg.postCompile || pkg.functions || pkg.importer) {
-          try {
-            childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'ignore' });
-          } catch (err) {
-            log.disableProgress();
-            log.resume();
-            lockfile.unlockSync('./diamond/.internal/packages.lock');
-            log.error('npm', err.message);
-            log.error('not ok');
-            process.exit(1);
-          }
-        }
+        fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
 
         fs.ensureDirSync(path.join('./diamond/packages', pkg.path, 'diamond/dist'));
 
@@ -209,22 +203,58 @@ module.exports = pkg => new Promise((resolve) => {
             }));
           }
 
-          if (pkg.name && pkg.version) {
-            node.label = `${pkg.name}@${pkg.version}`;
-          } else {
-            node.label = `${pkg.name}`;
+          fs.ensureDirSync(path.join(os.homedir(), '.diamond/package-cache'));
+          fs.copySync(path.join('./diamond/packages', pkg.path), path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`));
+
+          const dependencies = [];
+          for (const source of parsePackageObject(pkg.dependencies)) {
+            dependencies.push({
+              name: source.name,
+              version: source.version,
+              path: null,
+              for: pkg.path,
+              source,
+            });
           }
 
-          node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
+          async.each(dependencies, (dep, cb) => {
+            module.exports(dep).then((n) => {
+              node.nodes.push(n);
+              cb();
+            });
+          }, () => {
+            if (pkg.postCompile || pkg.functions || pkg.importer) {
+              try {
+                childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'ignore' });
+              } catch (err) {
+                log.disableProgress();
+                log.resume();
+                lockfile.unlockSync('./diamond/.internal/packages.lock');
+                log.error('npm', err.message);
+                log.error('not ok');
+                process.exit(1);
+              }
+            }
 
-          fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-          resolve(node);
+            if (pkg.name && pkg.version) {
+              node.label = `${pkg.name}@${pkg.version}`;
+            } else if (pkg.name && pkg.ref) {
+              node.label = `${pkg.name}#${pkg.ref}`;
+            } else {
+              node.label = `${pkg.name}`;
+            }
+
+            node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
+
+            fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
+            resolve(node);
+          });
         });
       });
-    });
 
-    req
-      .pipe(zlib.createGunzip())
-      .pipe(extract);
+      req
+        .pipe(zlib.createGunzip())
+        .pipe(extract);
+    }
   });
 });

@@ -37,7 +37,8 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
     .catch((res) => {
       log.disableProgress();
       log.resume();
-      log.error(`registry error: ${res.status}`, pkg.name);
+      if (res.status) log.error(`registry error: ${res.status}`, pkg.name);
+      else throw res;
       log.error('not ok');
       process.exit(1);
     });

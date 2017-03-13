@@ -9,3 +9,7 @@ before_install: npm i -g depcheck
 install:
   - npm i
   - npm link
+cache:
+  directories:
+    - node_modules
+    - diamond
