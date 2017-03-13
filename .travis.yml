@@ -12,4 +12,4 @@ install:
 cache:
   directories:
     - node_modules
-    - diamond
+    - /home/travis/.diamond
