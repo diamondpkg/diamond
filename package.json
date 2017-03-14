@@ -1,6 +1,6 @@
 {
   "name": "diamondpkg",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "a sassy package manager",
   "preferGlobal": true,
   "scripts": {
@@ -19,7 +19,8 @@
     "manager",
     "css",
     "sass",
-    "scss"
+    "scss",
+    "less"
   ],
   "author": "Hackzzila",
   "license": "MIT",
