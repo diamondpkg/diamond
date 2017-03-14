@@ -9,7 +9,7 @@ depcheck --ignores=eslint,eslint-config-airbnb,eslint-plugin-import,eslint-plugi
 
 # Install
 printf "\n\nInstalling bootstrap@4.0.0-alpha.6\n"
-diamond install bootstrap@4.0.0-alpha.6
+diamond install bootstrap@4.0.0-alpha.6 --no-save
 
 # Test
 printf "Compiling Sass..."
@@ -30,7 +30,7 @@ fi
 
 # Install
 printf "\n\nInstalling bootstrap@4.0.0-alpha.6 (uncached)\n"
-diamond install bootstrap@4.0.0-alpha.6 --no-cache
+diamond install bootstrap@4.0.0-alpha.6 --no-cache --no-save
 
 # Test
 printf "Compiling Sass..."
@@ -52,7 +52,7 @@ fi
 
 # Install
 printf "\n\nInstalling bootstrap@3.3.7\n"
-diamond install bootstrap@3.3.7
+diamond install bootstrap@3.3.7 --no-save
 
 # Test
 printf "Compiling Sass..."
@@ -73,7 +73,7 @@ fi
 
 # Install
 printf "\n\nInstalling bootstrap@3.3.7 (uncached)\n"
-diamond install bootstrap@3.3.7 --no-cache
+diamond install bootstrap@3.3.7 --no-cache --no-save
 
 # Test
 printf "Compiling Sass..."

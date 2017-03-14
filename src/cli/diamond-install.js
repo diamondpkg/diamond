@@ -14,6 +14,7 @@ const parsePackageObject = require('../functions/parsePackageObject');
 
 program
   .version(version)
+  .option('--no-save', 'Don\'t save packages in your package.json')
   .option('--no-cache', 'Don\'t pull packages from the package cache')
   .parse(process.argv);
 
@@ -92,12 +93,24 @@ const tree = {
 async.each(packages, (pkg, done) => {
   log.pause();
   log.gauge.enable();
-  install(pkg, program).then((node) => {
-    tree.nodes.push(node);
+  install(pkg, program).then((data) => {
+    tree.nodes.push(data[0]);
+
+    pkg = data[1];
+    if (program.save) {
+      if (pkg.source.type === 'npm') {
+        packageJson.diamond.dependencies[pkg.name] = !pkg.source.def ? pkg.source.version || pkg.source.tag : `^${pkg.version}`;
+      } else {
+        packageJson.diamond.dependencies[pkg.name] = `${pkg.source.type}:${pkg.source.owner}/${pkg.source.repo}${pkg.source.ref ? `#${pkg.source.ref}` : ''}`;
+      }
+    }
+
     done();
   });
 }, () => {
   release();
+  if (program.save) fs.writeFileSync('./package.json', JSON.stringify(packageJson, null, 2));
+
   process.stderr.write(`${archy(tree)}\n`);
   log.resume();
   process.exit(0);

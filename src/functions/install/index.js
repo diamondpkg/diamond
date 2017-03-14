@@ -104,7 +104,29 @@ module.exports = (pkg, options) => new Promise((resolve) => {
     if (options.cache && fs.existsSync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))) {
       const extract = tar.Extract({ path: path.join('./diamond/packages') });
 
+      log.setGaugeTemplate([
+        { type: 'activityIndicator', kerning: 1, length: 1 },
+        { type: 'section', default: '' },
+        ':',
+        { type: 'logline', kerning: 1, default: '' },
+      ]);
+      log.enableProgress();
+
+      extract.on('entry', (entry) => {
+        log.gauge.show({ section: 'extract', logline: entry.path });
+        log.gauge.pulse();
+      });
+
       extract.on('end', () => {
+        log.disableProgress();
+        log.setGaugeTemplate([
+          { type: 'progressbar', length: 20 },
+          { type: 'activityIndicator', kerning: 1, length: 1 },
+          { type: 'section', default: '' },
+          ':',
+          { type: 'logline', kerning: 1, default: '' },
+        ]);
+
         if (pkg.name && pkg.version) {
           node.label = `${pkg.name}@${pkg.version}`;
         } else if (pkg.name && pkg.ref) {
@@ -117,7 +139,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
         node.label = `${node.label} ${chalk.cyan('(from cache)')}`;
 
         fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-        resolve(node);
+        resolve([node, pkg]);
       });
 
       fs.createReadStream(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))
@@ -275,11 +297,10 @@ module.exports = (pkg, options) => new Promise((resolve) => {
                 node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
 
                 fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-                resolve(node);
+                resolve([node, pkg]);
               });
             });
 
-          // This must be a "directory"
           fstream.Reader({ path: path.join('./diamond/packages', pkg.path), type: 'Directory' })
             .pipe(tar.Pack({ noProprietary: true }))
             .pipe(zlib.createGzip())
