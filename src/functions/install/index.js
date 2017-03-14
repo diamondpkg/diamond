@@ -17,6 +17,7 @@ const superagent = require('superagent');
 const tar = require('tar');
 const zlib = require('zlib');
 const crypto = require('crypto');
+const fstream = require('fstream');
 const compile = require('../compile');
 const parsePackageObject = require('../parsePackageObject');
 
@@ -100,22 +101,28 @@ module.exports = (pkg, options) => new Promise((resolve) => {
     if (pkg.version) verString = `@${pkg.version}`;
     else if (pkg.ref) verString = `#${pkg.ref}`;
 
-    if (options.cache && fs.existsSync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`))) {
-      fs.copySync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`), path.join('./diamond/packages', pkg.path));
+    if (options.cache && fs.existsSync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))) {
+      const extract = tar.Extract({ path: path.join('./diamond/packages') });
 
-      if (pkg.name && pkg.version) {
-        node.label = `${pkg.name}@${pkg.version}`;
-      } else if (pkg.name && pkg.ref) {
-        node.label = `${pkg.name}#${pkg.ref}`;
-      } else {
-        node.label = `${pkg.name}`;
-      }
+      extract.on('end', () => {
+        if (pkg.name && pkg.version) {
+          node.label = `${pkg.name}@${pkg.version}`;
+        } else if (pkg.name && pkg.ref) {
+          node.label = `${pkg.name}#${pkg.ref}`;
+        } else {
+          node.label = `${pkg.name}`;
+        }
 
-      node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
-      node.label = `${node.label} ${chalk.cyan('(from cache)')}`;
+        node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
+        node.label = `${node.label} ${chalk.cyan('(from cache)')}`;
 
-      fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-      resolve(node);
+        fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
+        resolve(node);
+      });
+
+      fs.createReadStream(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))
+        .pipe(zlib.createGunzip())
+        .pipe(extract);
     } else {
       const req = superagent.get(url);
       const passthrough = new stream.PassThrough();
@@ -224,51 +231,59 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           }
 
           fs.ensureDirSync(path.join(os.homedir(), '.diamond/package-cache'));
-          fs.copySync(path.join('./diamond/packages', pkg.path), path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`));
 
-          const dependencies = [];
-          for (const source of parsePackageObject(pkg.dependencies)) {
-            dependencies.push({
-              name: source.name,
-              version: source.version,
-              path: null,
-              for: pkg.path,
-              source,
-            });
-          }
-
-          async.each(dependencies, (dep, cb) => {
-            module.exports(dep, options).then((n) => {
-              node.nodes.push(n);
-              cb();
-            });
-          }, () => {
-            if (pkg.postCompile || pkg.functions || pkg.importer) {
-              try {
-                childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'ignore' });
-              } catch (err) {
-                log.disableProgress();
-                log.resume();
-                lockfile.unlockSync('./diamond/.internal/packages.lock');
-                log.error('npm', err.message);
-                log.error('not ok');
-                process.exit(1);
+          const writeStream = fs.createWriteStream(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))
+            .on('finish', () => {
+              const dependencies = [];
+              for (const source of parsePackageObject(pkg.dependencies)) {
+                dependencies.push({
+                  name: source.name,
+                  version: source.version,
+                  path: null,
+                  for: pkg.path,
+                  source,
+                });
               }
-            }
 
-            if (pkg.name && pkg.version) {
-              node.label = `${pkg.name}@${pkg.version}`;
-            } else if (pkg.name && pkg.ref) {
-              node.label = `${pkg.name}#${pkg.ref}`;
-            } else {
-              node.label = `${pkg.name}`;
-            }
+              async.each(dependencies, (dep, cb) => {
+                module.exports(dep, options).then((n) => {
+                  node.nodes.push(n);
+                  cb();
+                });
+              }, () => {
+                if (pkg.postCompile || pkg.functions || pkg.importer) {
+                  try {
+                    childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'ignore' });
+                  } catch (err) {
+                    log.disableProgress();
+                    log.resume();
+                    lockfile.unlockSync('./diamond/.internal/packages.lock');
+                    log.error('npm', err.message);
+                    log.error('not ok');
+                    process.exit(1);
+                  }
+                }
 
-            node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
+                if (pkg.name && pkg.version) {
+                  node.label = `${pkg.name}@${pkg.version}`;
+                } else if (pkg.name && pkg.ref) {
+                  node.label = `${pkg.name}#${pkg.ref}`;
+                } else {
+                  node.label = `${pkg.name}`;
+                }
 
-            fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-            resolve(node);
-          });
+                node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
+
+                fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
+                resolve(node);
+              });
+            });
+
+          // This must be a "directory"
+          fstream.Reader({ path: path.join('./diamond/packages', pkg.path), type: 'Directory' })
+            .pipe(tar.Pack({ noProprietary: true }))
+            .pipe(zlib.createGzip())
+            .pipe(writeStream);
         });
       });
 
