@@ -1,5 +1,6 @@
 'use strict';
 
+const os = require('os');
 const fs = require('fs-extra');
 const log = require('npmlog');
 const path = require('path');
@@ -17,6 +18,9 @@ program
   .option('--no-save', 'Don\'t save packages in your package.json')
   .option('--no-cache', 'Don\'t pull packages from the package cache')
   .parse(process.argv);
+
+fs.ensureDirSync(path.join(os.homedir(), '.diamond'));
+if (!fs.existsSync(path.join(os.homedir(), '.diamond/config.json'))) fs.writeFileSync(path.join(os.homedir(), '.diamond/config.json'), JSON.stringify({ save: true, cache: true }));
 
 const pkgs = program.args;
 

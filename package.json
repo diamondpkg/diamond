@@ -1,4 +1,9 @@
 {
+  "diamond": {
+    "dependencies": {
+      "bootstrap": "^3.3.7"
+    }
+  },
   "name": "diamondpkg",
   "version": "0.8.0",
   "description": "a sassy package manager",
