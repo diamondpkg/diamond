@@ -32,7 +32,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
         }
       }
 
-      resolve([version, version.dist.tarball]);
+      resolve([version, version.dist.tarball, version.dist.shasum]);
     })
     .catch((res) => {
       log.disableProgress();

@@ -7,11 +7,15 @@ const async = require('async');
 const program = require('commander');
 const lockfile = require('proper-lockfile');
 const archy = require('archy');
+const version = require('../../package.json').version;
 const install = require('../functions/install');
 const parsePackageString = require('../functions/parsePackageString');
 const parsePackageObject = require('../functions/parsePackageObject');
 
-program.parse(process.argv);
+program
+  .version(version)
+  .option('--no-cache', 'Don\'t pull packages from the package cache')
+  .parse(process.argv);
 
 const pkgs = program.args;
 
@@ -88,7 +92,7 @@ const tree = {
 async.each(packages, (pkg, done) => {
   log.pause();
   log.gauge.enable();
-  install(pkg).then((node) => {
+  install(pkg, program).then((node) => {
     tree.nodes.push(node);
     done();
   });

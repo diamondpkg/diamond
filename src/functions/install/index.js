@@ -6,6 +6,7 @@ const gitlab = require('./gitlab');
 const os = require('os');
 const fs = require('fs-extra');
 const klaw = require('klaw-sync');
+const stream = require('stream');
 const path = require('path');
 const childProcess = require('child_process');
 const log = require('npmlog');
@@ -15,10 +16,11 @@ const async = require('async');
 const superagent = require('superagent');
 const tar = require('tar');
 const zlib = require('zlib');
+const crypto = require('crypto');
 const compile = require('../compile');
 const parsePackageObject = require('../parsePackageObject');
 
-module.exports = pkg => new Promise((resolve) => {
+module.exports = (pkg, options) => new Promise((resolve) => {
   let packages;
   const node = { nodes: [] };
 
@@ -40,6 +42,7 @@ module.exports = pkg => new Promise((resolve) => {
   promise.then((data) => {
     const info = data[0];
     const url = data[1];
+    const shasum = data[2];
 
     if (info) {
       pkg.name = pkg.name || info.name || pkg.source.repo;
@@ -97,10 +100,8 @@ module.exports = pkg => new Promise((resolve) => {
     if (pkg.version) verString = `@${pkg.version}`;
     else if (pkg.ref) verString = `#${pkg.ref}`;
 
-    if (fs.existsSync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`))) {
+    if (options.cache && fs.existsSync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`))) {
       fs.copySync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}`), path.join('./diamond/packages', pkg.path));
-      pkg.path = pkg.name;
-      packages.push(pkg);
 
       if (pkg.name && pkg.version) {
         node.label = `${pkg.name}@${pkg.version}`;
@@ -117,10 +118,14 @@ module.exports = pkg => new Promise((resolve) => {
       resolve(node);
     } else {
       const req = superagent.get(url);
+      const passthrough = new stream.PassThrough();
+      const gzip = zlib.createGunzip();
       const extract = tar.Extract({
         path: path.join('./diamond/packages', pkg.path),
         strip: 1,
       });
+
+      let contents = Buffer.alloc(0);
 
       req.on('response', (r) => {
         if (!r.ok) {
@@ -133,6 +138,13 @@ module.exports = pkg => new Promise((resolve) => {
           log.warn('no package.json', `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
         }
       });
+
+      passthrough.on('data', (buf) => {
+        contents = Buffer.concat([contents, buf]);
+        gzip.write(buf);
+      });
+
+      passthrough.on('end', () => gzip.end());
 
       log.setGaugeTemplate([
         { type: 'activityIndicator', kerning: 1, length: 1 },
@@ -156,6 +168,14 @@ module.exports = pkg => new Promise((resolve) => {
           ':',
           { type: 'logline', kerning: 1, default: '' },
         ]);
+
+        if (shasum && shasum !== crypto.createHash('sha1').update(contents, 'utf8').digest('hex')) {
+          log.disableProgress();
+          log.resume();
+          log.error('shasum does not match', pkg.name);
+          log.error('not ok');
+          process.exit(1);
+        }
 
         fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
 
@@ -218,7 +238,7 @@ module.exports = pkg => new Promise((resolve) => {
           }
 
           async.each(dependencies, (dep, cb) => {
-            module.exports(dep).then((n) => {
+            module.exports(dep, options).then((n) => {
               node.nodes.push(n);
               cb();
             });
@@ -252,9 +272,8 @@ module.exports = pkg => new Promise((resolve) => {
         });
       });
 
-      req
-        .pipe(zlib.createGunzip())
-        .pipe(extract);
+      gzip.pipe(extract);
+      req.pipe(passthrough);
     }
   });
 });

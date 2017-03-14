@@ -28,13 +28,52 @@ else
     printf "\n$output"
 fi
 
+# Install
+printf "\n\nInstalling bootstrap@4.0.0-alpha.6 (uncached)\n"
+diamond install bootstrap@4.0.0-alpha.6 --no-cache
 
-# Clear
-rm -rf diamond
+# Test
+printf "Compiling Sass..."
+output=$(diamond c test/test.sass)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
+printf "\nCompiling Less..."
+output=$(diamond c test/test.less)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m\n"
+else
+    printf "\n$output"
+fi
+
 
 # Install
 printf "\n\nInstalling bootstrap@3.3.7\n"
 diamond install bootstrap@3.3.7
+
+# Test
+printf "Compiling Sass..."
+output=$(diamond c test/test.sass)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
+printf "\nCompiling Less..."
+output=$(diamond c test/test.less)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
+# Install
+printf "\n\nInstalling bootstrap@3.3.7 (uncached)\n"
+diamond install bootstrap@3.3.7 --no-cache
 
 # Test
 printf "Compiling Sass..."
