@@ -42,7 +42,6 @@ module.exports = (pkg) => {
       type: 'npm',
       name: match[1],
       tag: match[3] || 'latest',
-      def: !match[3],
     };
   }
 

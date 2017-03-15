@@ -103,7 +103,7 @@ async.each(packages, (pkg, done) => {
     pkg = data[1];
     if (program.save) {
       if (pkg.source.type === 'npm') {
-        packageJson.diamond.dependencies[pkg.name] = !pkg.source.def ? pkg.source.version || pkg.source.tag : `^${pkg.version}`;
+        packageJson.diamond.dependencies[pkg.name] = `^${pkg.version}`;
       } else {
         packageJson.diamond.dependencies[pkg.name] = `${pkg.source.type}:${pkg.source.owner}/${pkg.source.repo}${pkg.source.ref ? `#${pkg.source.ref}` : ''}`;
       }
