@@ -252,59 +252,63 @@ module.exports = (pkg, options) => new Promise((resolve) => {
             }));
           }
 
-          fs.ensureDirSync(path.join(os.homedir(), '.diamond/package-cache'));
+          const finish = () => {
+            const dependencies = [];
+            for (const source of parsePackageObject(pkg.dependencies)) {
+              dependencies.push({
+                name: source.name,
+                version: source.version,
+                path: null,
+                for: pkg.path,
+                source,
+              });
+            }
 
-          const writeStream = fs.createWriteStream(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))
-            .on('finish', () => {
-              const dependencies = [];
-              for (const source of parsePackageObject(pkg.dependencies)) {
-                dependencies.push({
-                  name: source.name,
-                  version: source.version,
-                  path: null,
-                  for: pkg.path,
-                  source,
-                });
+            async.each(dependencies, (dep, cb) => {
+              module.exports(dep, options).then((n) => {
+                node.nodes.push(n);
+                cb();
+              });
+            }, () => {
+              if (pkg.postCompile || pkg.functions || pkg.importer) {
+                try {
+                  childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'ignore' });
+                } catch (err) {
+                  log.disableProgress();
+                  log.resume();
+                  lockfile.unlockSync('./diamond/.internal/packages.lock');
+                  log.error('npm', err.message);
+                  log.error('not ok');
+                  process.exit(1);
+                }
               }
 
-              async.each(dependencies, (dep, cb) => {
-                module.exports(dep, options).then((n) => {
-                  node.nodes.push(n);
-                  cb();
-                });
-              }, () => {
-                if (pkg.postCompile || pkg.functions || pkg.importer) {
-                  try {
-                    childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'ignore' });
-                  } catch (err) {
-                    log.disableProgress();
-                    log.resume();
-                    lockfile.unlockSync('./diamond/.internal/packages.lock');
-                    log.error('npm', err.message);
-                    log.error('not ok');
-                    process.exit(1);
-                  }
-                }
+              if (pkg.name && pkg.version) {
+                node.label = `${pkg.name}@${pkg.version}`;
+              } else if (pkg.name && pkg.ref) {
+                node.label = `${pkg.name}#${pkg.ref}`;
+              } else {
+                node.label = `${pkg.name}`;
+              }
 
-                if (pkg.name && pkg.version) {
-                  node.label = `${pkg.name}@${pkg.version}`;
-                } else if (pkg.name && pkg.ref) {
-                  node.label = `${pkg.name}#${pkg.ref}`;
-                } else {
-                  node.label = `${pkg.name}`;
-                }
+              node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
 
-                node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
-
-                fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-                resolve([node, pkg]);
-              });
+              fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
+              resolve([node, pkg]);
             });
+          };
 
-          fstream.Reader({ path: path.join('./diamond/packages', pkg.path), type: 'Directory' })
-            .pipe(tar.Pack({ noProprietary: true }))
-            .pipe(zlib.createGzip())
-            .pipe(writeStream);
+          if (pkg.source.type === 'npm') {
+            fs.ensureDirSync(path.join(os.homedir(), '.diamond/package-cache'));
+
+            const writeStream = fs.createWriteStream(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))
+              .on('finish', finish);
+
+            fstream.Reader({ path: path.join('./diamond/packages', pkg.path), type: 'Directory' })
+              .pipe(tar.Pack({ noProprietary: true }))
+              .pipe(zlib.createGzip())
+              .pipe(writeStream);
+          } else finish();
         });
       });
 
