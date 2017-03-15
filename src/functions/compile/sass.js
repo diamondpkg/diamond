@@ -1,5 +1,6 @@
 'use strict';
 
+const util = require('util');
 const sass = require('node-sass');
 const log = require('npmlog');
 const fs = require('fs-extra');
@@ -16,7 +17,66 @@ module.exports = (file, options) => new Promise((resolve) => {
     packages = [];
   }
 
-  const functions = {};
+  function getValue(obj) {
+    if (obj instanceof sass.types.String || obj instanceof sass.types.Boolean) {
+      return obj.getValue();
+    } else if (obj instanceof sass.types.Null) {
+      return 'null';
+    } else if (obj instanceof sass.types.Number) {
+      return `${obj.getValue()}${obj.getUnit()}`;
+    } else if (obj instanceof sass.types.Color) {
+      return `rgba(${obj.getR()}, ${obj.getG()}, ${obj.getB()}, ${obj.getA()})`;
+    } else if (obj instanceof sass.types.List) {
+      const arr = [];
+      for (let i = 0; i < obj.getLength(); i += 1) {
+        arr.push(getValue(obj.getValue(i)));
+      }
+
+      return `[ ${arr.join(', ')} ]`;
+    } else if (obj instanceof sass.types.Map) {
+      const map = {};
+      for (let i = 0; i < obj.getLength(); i += 1) {
+        map[getValue(obj.getKey(i))] = getValue(obj.getValue(i));
+      }
+
+      return util.inspect(map);
+    }
+
+    return 'Unknown type';
+  }
+
+  const config = {};
+
+  const functions = {
+    'log($obj)': (obj) => {
+      process.stderr.write(`${getValue(obj)}\n`);
+
+      return sass.types.Null.NULL;
+    },
+    'setConfig($pkg, $map)': (pkg, map) => {
+      config[pkg.getValue()] = new Map();
+      for (let i = 0; i < map.getLength(); i += 1) {
+        config[pkg.getValue()].set(map.getKey(i), map.getValue(i));
+      }
+      return sass.types.Null.NULL;
+    },
+    'getConfig($pkg, $default: ())': (pkg, def) => {
+      const map = new Map();
+      for (let i = 0; i < def.getLength(); i += 1) {
+        map.set(def.getKey(i), def.getValue(i));
+      }
+
+      let i = 0;
+      const sassMap = new sass.types.Map((config[pkg.getValue()] || map).size);
+      (config[pkg.getValue()] || map).forEach((val, key) => {
+        sassMap.setKey(i, key);
+        sassMap.setValue(i, val);
+        i += 1;
+      });
+
+      return sassMap;
+    },
+  };
   const postCompiles = packages.filter(o => !!o.postCompile)
     .map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.postCompile)));
 
