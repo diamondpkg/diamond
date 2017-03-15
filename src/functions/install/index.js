@@ -241,6 +241,8 @@ module.exports = (pkg, options) => new Promise((resolve) => {
             { type: 'logline', kerning: 1, default: '' },
           ]);
 
+          /* eslint-disable */
+          /*
           for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
             if (!/\.sass|\.scss$/.test(p.path)) continue;
             fs.writeFileSync(p.path, fs.readFileSync(p.path).toString().replace(/(\.)(-?[_a-zA-Z]+[\w-]*\s*[^;"'\d]?\n)|(@extend\s+)(\.)(-?[_a-zA-Z]+[\w-]*)/g, (match, p1, p2, p3, p4, p5) => {
@@ -251,6 +253,8 @@ module.exports = (pkg, options) => new Promise((resolve) => {
               return `${p3}.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${p5}`;
             }));
           }
+          */
+          /* eslint-enable */
 
           fs.ensureDirSync(path.join(os.homedir(), '.diamond/package-cache'));
 
