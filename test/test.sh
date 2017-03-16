@@ -13,7 +13,7 @@ diamond install bootstrap@4.0.0-alpha.6 --no-save
 
 # Test
 printf "Compiling Sass..."
-output=$(diamond c test/test.sass)
+output=$(diamond c test/bootstrap.sass)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
@@ -21,7 +21,7 @@ else
 fi
 
 printf "\nCompiling Sass (with namespacing)..."
-output=$(diamond c test/namespace.sass)
+output=$(diamond c test/bootstrap-ns.sass)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
@@ -29,7 +29,7 @@ else
 fi
 
 printf "\nCompiling Less..."
-output=$(diamond c test/test.less)
+output=$(diamond c test/bootstrap.less)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m\n"
 else
@@ -42,7 +42,7 @@ diamond install bootstrap@4.0.0-alpha.6 --no-cache --no-save
 
 # Test
 printf "Compiling Sass..."
-output=$(diamond c test/test.sass)
+output=$(diamond c test/bootstrap.sass)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
@@ -50,7 +50,7 @@ else
 fi
 
 printf "\nCompiling Sass (with namespacing)..."
-output=$(diamond c test/namespace.sass)
+output=$(diamond c test/bootstrap-ns.sass)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
@@ -58,7 +58,7 @@ else
 fi
 
 printf "\nCompiling Less..."
-output=$(diamond c test/test.less)
+output=$(diamond c test/bootstrap.less)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m\n"
 else
@@ -72,7 +72,7 @@ diamond install bootstrap@3.3.7 --no-save
 
 # Test
 printf "Compiling Sass..."
-output=$(diamond c test/test.sass)
+output=$(diamond c test/bootstrap.sass)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
@@ -80,7 +80,7 @@ else
 fi
 
 printf "\nCompiling Less..."
-output=$(diamond c test/test.less)
+output=$(diamond c test/bootstrap.less)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
@@ -93,7 +93,7 @@ diamond install bootstrap@3.3.7 --no-cache --no-save
 
 # Test
 printf "Compiling Sass..."
-output=$(diamond c test/test.sass)
+output=$(diamond c test/bootstrap.sass)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
@@ -101,11 +101,33 @@ else
 fi
 
 printf "\nCompiling Less..."
-output=$(diamond c test/test.less)
+output=$(diamond c test/bootstrap.less)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
     printf "\n$output"
 fi
+
+# Install
+printf "\n\nInstalling  ConciseCSS\n"
+diamond install ConciseCSS/concise.css --no-save
+
+# Test
+printf "Compiling Sass..."
+output=$(diamond c test/concise.sass)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
+printf "\nCompiling Less..."
+output=$(diamond c test/concise.less)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
 
 printf "\n\n\033[0;32mTests Complete!\033[0m\n"
