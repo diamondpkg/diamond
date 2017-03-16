@@ -77,8 +77,8 @@ module.exports = (file, options) => new Promise((resolve) => {
       return sassMap;
     },
   };
-  const postCompiles = packages.filter(o => !!o.postCompile)
-    .map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.postCompile)));
+  const postProcessors = packages.filter(o => !!o.postProcessor)
+    .map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.postProcessor)));
 
   packages.filter(o => !!o.functions)
     .forEach((o) => {
@@ -108,10 +108,10 @@ module.exports = (file, options) => new Promise((resolve) => {
 
     let css = result.css.toString();
 
-    async.each(postCompiles, (postCompile, done) => {
+    async.each(postProcessors, (postProcessor, done) => {
       let res;
       try {
-        res = postCompile(css);
+        res = postProcessor(css);
       } catch (err) {
         if (typeof err === 'string') {
           log.disableProgress();

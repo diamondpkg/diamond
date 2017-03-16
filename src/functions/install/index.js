@@ -51,7 +51,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
       pkg.main = info.diamond ?
         info.diamond.main :
         info.sass || info.less || info.style || info.main;
-      pkg.postCompile = info.diamond ?
+      pkg.postProcessor = info.diamond ?
         info.diamond.postProcessor || info.diamond.postCompile :
         null;
       pkg.functions = info.diamond ? info.diamond.functions : null;
@@ -219,7 +219,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           { type: 'logline', kerning: 1, default: '' },
         ]);
 
-        if (pkg.postCompile || pkg.functions || pkg.importer) {
+        if (pkg.postProcessor || pkg.functions || pkg.importer) {
           try {
             childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'inherit' });
           } catch (err) {
