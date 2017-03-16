@@ -51,7 +51,9 @@ module.exports = (pkg, options) => new Promise((resolve) => {
       pkg.main = info.diamond ?
         info.diamond.main :
         info.sass || info.less || info.style || info.main;
-      pkg.postCompile = info.diamond ? info.diamond.postCompile : null;
+      pkg.postCompile = info.diamond ?
+        info.diamond.postProcessor || info.diamond.postCompile :
+        null;
       pkg.functions = info.diamond ? info.diamond.functions : null;
       pkg.importer = info.diamond ? info.diamond.importer : null;
       pkg.dependencies = info.diamond ? info.diamond.dependencies : {};
