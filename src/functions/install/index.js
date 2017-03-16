@@ -219,6 +219,19 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           { type: 'logline', kerning: 1, default: '' },
         ]);
 
+        if (pkg.postCompile || pkg.functions || pkg.importer) {
+          try {
+            childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'inherit' });
+          } catch (err) {
+            log.disableProgress();
+            log.resume();
+            lockfile.unlockSync('./diamond/.internal/packages.lock');
+            log.error('npm', err.message);
+            log.error('not ok');
+            process.exit(1);
+          }
+        }
+
         const pulse = () => log.gauge.pulse();
         new Promise((rsolve) => {
           if (/\.sass|\.scss|\.less/.test(pkg.main)) {
@@ -272,19 +285,6 @@ module.exports = (pkg, options) => new Promise((resolve) => {
                 cb();
               });
             }, () => {
-              if (pkg.postCompile || pkg.functions || pkg.importer) {
-                try {
-                  childProcess.execSync('npm i', { cwd: path.join('./diamond/packages', pkg.path), stdio: 'ignore' });
-                } catch (err) {
-                  log.disableProgress();
-                  log.resume();
-                  lockfile.unlockSync('./diamond/.internal/packages.lock');
-                  log.error('npm', err.message);
-                  log.error('not ok');
-                  process.exit(1);
-                }
-              }
-
               if (pkg.name && pkg.version) {
                 node.label = `${pkg.name}@${pkg.version}`;
               } else if (pkg.name && pkg.ref) {
