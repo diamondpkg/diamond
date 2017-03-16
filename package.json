@@ -3,6 +3,9 @@
   "version": "0.8.0",
   "description": "a sassy package manager",
   "preferGlobal": true,
+  "engines": {
+    "npm": ">=3.0.0"
+  },
   "scripts": {
     "test": "eslint src/* && bash test/test.sh"
   },

@@ -3,6 +3,14 @@
 # Exit on errors
 set -e
 
+if [ "$TRAVIS_NODE_VERSION" == "4" ]; then
+  printf "Installing Latest npm\n"
+  npm i -g npm
+  printf "npm Version: "
+  npm -v
+  printf "\n\n"
+fi
+
 # Check dependencies
 printf "Checking dependencies\n"
 depcheck --ignores=eslint,eslint-config-airbnb,eslint-plugin-import,eslint-plugin-jsx-a11y,eslint-plugin-react
