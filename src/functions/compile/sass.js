@@ -17,6 +17,14 @@ module.exports = (file, options) => new Promise((resolve) => {
     packages = [];
   }
 
+  let packageJson;
+  try {
+    packageJson = JSON.parse(fs.readFileSync('./package.json'));
+  } catch (err) {
+    packageJson = {};
+    log.info('no package.json found');
+  }
+
   function getValue(obj) {
     if (obj instanceof sass.types.String || obj instanceof sass.types.Boolean) {
       return obj.getValue();
@@ -52,12 +60,22 @@ module.exports = (file, options) => new Promise((resolve) => {
       return sass.types.Null.NULL;
     },
   };
-  const postProcessors = packages.filter(o => !!o.postProcessor)
-    .map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.postProcessor)));
+
+  if (packageJson.diamond && packageJson.diamond.sass && packageJson.diamond.sass.functions) {
+    if (typeof packageJson.diamond.sass.functions === 'string') {
+      Object.assign(functions,
+        require(path.join(process.cwd(), packageJson.diamond.sass.functions)));
+    } else {
+      for (const func in packageJson.diamond.sass.functions) {
+        functions[func] = require(path.join(process.cwd(),
+          packageJson.diamond.sass.functions[func]));
+      }
+    }
+  }
 
   packages.filter(o => !!o.functions)
     .forEach((o) => {
-      if (typeof o === 'string') {
+      if (typeof o.functions === 'string') {
         Object.assign(functions, require(path.join(process.cwd(), 'diamond/packages', o.path, o.functions)));
       } else {
         for (const func in o.functions) {
@@ -66,8 +84,19 @@ module.exports = (file, options) => new Promise((resolve) => {
       }
     });
 
-  const importers = packages.filter(o => !!o.importer)
-    .map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.importer)));
+  const postProcessors = packages.filter(o => !!o.postProcessor).map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.postProcessor)))
+    .concat(
+      packageJson.diamond && packageJson.diamond.postProcessor ?
+        [require(path.join(process.cwd(), packageJson.diamond.postProcessor))] :
+        []
+    );
+
+  const importers = packages.filter(o => !!o.importer).map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.importer)))
+    .concat(
+      packageJson.diamond && packageJson.diamond.sass && packageJson.diamond.sass.importer ?
+        [require(path.join(process.cwd(), packageJson.diamond.sass.importer))] :
+        []
+    );
 
   lockfile.unlockSync('./diamond/.internal/packages.lock');
 

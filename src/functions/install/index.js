@@ -54,8 +54,8 @@ module.exports = (pkg, options) => new Promise((resolve) => {
       pkg.postProcessor = info.diamond ?
         info.diamond.postProcessor || info.diamond.postCompile :
         null;
-      pkg.functions = info.diamond ? info.diamond.functions : null;
-      pkg.importer = info.diamond ? info.diamond.importer : null;
+      pkg.functions = info.diamond && info.diamond.sass ? info.diamond.sass.functions : null;
+      pkg.importer = info.diamond && info.diamond.sass ? info.diamond.sass.importer : null;
       pkg.dependencies = info.diamond ? info.diamond.dependencies : {};
     } else {
       pkg.name = pkg.name || pkg.source.repo;
