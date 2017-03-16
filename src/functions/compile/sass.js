@@ -45,36 +45,11 @@ module.exports = (file, options) => new Promise((resolve) => {
     return 'Unknown type';
   }
 
-  const config = {};
-
   const functions = {
     'log($obj)': (obj) => {
       process.stderr.write(`${getValue(obj)}\n`);
 
       return sass.types.Null.NULL;
-    },
-    'setConfig($pkg, $map)': (pkg, map) => {
-      config[pkg.getValue()] = new Map();
-      for (let i = 0; i < map.getLength(); i += 1) {
-        config[pkg.getValue()].set(map.getKey(i), map.getValue(i));
-      }
-      return sass.types.Null.NULL;
-    },
-    'getConfig($pkg, $default: ())': (pkg, def) => {
-      const map = new Map();
-      for (let i = 0; i < def.getLength(); i += 1) {
-        map.set(def.getKey(i), def.getValue(i));
-      }
-
-      let i = 0;
-      const sassMap = new sass.types.Map((config[pkg.getValue()] || map).size);
-      (config[pkg.getValue()] || map).forEach((val, key) => {
-        sassMap.setKey(i, key);
-        sassMap.setValue(i, val);
-        i += 1;
-      });
-
-      return sassMap;
     },
   };
   const postProcessors = packages.filter(o => !!o.postProcessor)
