@@ -57,8 +57,12 @@ module.exports = (file, options) => new Promise((resolve) => {
 
   packages.filter(o => !!o.functions)
     .forEach((o) => {
-      for (const func in o.functions) { //eslint-disable-line
-        functions[func] = require(path.join(process.cwd(), 'diamond/packages', o.path, o.functions[func]));
+      if (typeof o === 'string') {
+        Object.assign(functions, require(path.join(process.cwd(), 'diamond/packages', o.path, o.functions)));
+      } else {
+        for (const func in o.functions) {
+          functions[func] = require(path.join(process.cwd(), 'diamond/packages', o.path, o.functions[func]));
+        }
       }
     });
 
