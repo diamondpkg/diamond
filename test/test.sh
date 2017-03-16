@@ -20,6 +20,14 @@ else
     printf "\n$output"
 fi
 
+printf "\nCompiling Sass (with namespacing)..."
+output=$(diamond c test/namespace.sass)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
 printf "\nCompiling Less..."
 output=$(diamond c test/test.less)
 if [ $? -eq 0 ]; then
@@ -35,6 +43,14 @@ diamond install bootstrap@4.0.0-alpha.6 --no-cache --no-save
 # Test
 printf "Compiling Sass..."
 output=$(diamond c test/test.sass)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
+printf "\nCompiling Sass (with namespacing)..."
+output=$(diamond c test/namespace.sass)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
