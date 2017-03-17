@@ -10,11 +10,16 @@
   <p>
     <a href="https://travis-ci.org/diamondpkg/diamond"><img src="https://travis-ci.org/diamondpkg/diamond.svg?branch=master" alt="Build status" /></a>
     <a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/diamondpkg/diamond.svg" alt="Greenkeeper" /></a>
+    <img src="https://img.shields.io/node/v/diamondpkg.svg" alt="Node Version" />
+    <img src="https://img.shields.io/badge/npm-%3E%3D3.0.0-brightgreen.svg" alt="npm Version" />
   </p>
   <p>
     <a href="https://nodei.co/npm/diamondpkg/"><img src="https://nodei.co/npm/diamondpkg.png?compact=true"></a>
   </p>
 </div>
+
+## Supported Environments
+diamond supports anything equal to or above node 4 (4, 5, 6, 7) **with above or equal to npm 3 (3, 4)**
 
 ## Introduction
 diamond is a package manager for Sass and Less. diamond allows you to mix and match (most of the time) Sass and
