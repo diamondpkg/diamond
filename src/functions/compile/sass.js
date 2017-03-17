@@ -98,7 +98,7 @@ module.exports = (file, options) => new Promise((resolve) => {
         []
     );
 
-  lockfile.unlockSync('./diamond/.internal/packages.lock');
+  if (fs.existsSync('./diamond/.internal/packages.lock')) lockfile.unlockSync('./diamond/.internal/packages.lock');
 
   sass.render({
     file,

@@ -7,7 +7,7 @@ const lockfile = require('proper-lockfile');
 const plugin = require('less-plugin-diamond');
 
 module.exports = filename => new Promise((resolve) => {
-  lockfile.unlockSync('./diamond/.internal/packages.lock');
+  if (fs.existsSync('./diamond/.internal/packages.lock')) lockfile.unlockSync('./diamond/.internal/packages.lock');
 
   less.render(fs.readFileSync(filename).toString(), { filename, plugins: [plugin] })
   .then((result) => {

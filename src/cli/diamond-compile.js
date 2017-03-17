@@ -19,7 +19,7 @@ if (!program.args[0]) {
   process.exit(1);
 }
 
-lockfile.lockSync('./diamond/.internal/packages.lock');
+if (fs.existsSync('./diamond/.internal/packages.lock')) lockfile.lockSync('./diamond/.internal/packages.lock');
 
 compile(program.args[0], { outputStyle: program.outputStyle }).then((css) => {
   if (program.output) {
