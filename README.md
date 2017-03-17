@@ -19,7 +19,7 @@
 </div>
 
 ## Supported Environments
-diamond supports anything equal to or above node 4 (4, 5, 6, 7) **with above or equal to npm 3 (3, 4)**
+diamond supports node 4, 5, 6, and 7 **with npm 3 or 4** (Note: node 4 comes with npm **2**)
 
 ## Introduction
 diamond is a package manager for Sass and Less. diamond allows you to mix and match (most of the time) Sass and
