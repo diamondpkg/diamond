@@ -203,6 +203,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
         if (shasum && shasum !== crypto.createHash('sha1').update(contents, 'utf8').digest('hex')) {
           log.disableProgress();
           log.resume();
+          fs.removeSync(path.join('./diamond/packages'), pkg.path);
           log.error('shasum does not match', pkg.name);
           log.error('not ok');
           process.exit(1);
