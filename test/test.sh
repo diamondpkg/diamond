@@ -28,6 +28,27 @@ else
     printf "\n$output"
 fi
 
+printf "\nCompiling Less..."
+output=$(diamond c test/bootstrap.less)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m\n"
+else
+    printf "\n$output"
+fi
+
+# Install
+printf "\n\nInstalling bootstrap@4.0.0-alpha.6 (with namespacing)\n"
+diamond install bootstrap@4.0.0-alpha.6 --no-save --no-cache --beta-namespacing
+
+# Test
+printf "Compiling Sass..."
+output=$(diamond c test/bootstrap.sass)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
 printf "\nCompiling Sass (with namespacing)..."
 output=$(diamond c test/bootstrap-ns.sass)
 if [ $? -eq 0 ]; then
@@ -51,14 +72,6 @@ diamond install bootstrap@4.0.0-alpha.6 --no-cache --no-save
 # Test
 printf "Compiling Sass..."
 output=$(diamond c test/bootstrap.sass)
-if [ $? -eq 0 ]; then
-    printf " \033[0;32mOK\033[0m"
-else
-    printf "\n$output"
-fi
-
-printf "\nCompiling Sass (with namespacing)..."
-output=$(diamond c test/bootstrap-ns.sass)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
@@ -117,7 +130,7 @@ else
 fi
 
 # Install
-printf "\n\nInstalling  ConciseCSS\n"
+printf "\n\nInstalling ConciseCSS\n"
 diamond install ConciseCSS/concise.css --no-save
 
 # Test

@@ -15,6 +15,7 @@ const parsePackageObject = require('../functions/parsePackageObject');
 
 program
   .version(version)
+  .option('--beta-namespacing', 'Enable namespacing beta')
   .option('--no-save', 'Don\'t save packages in your package.json')
   .option('--no-cache', 'Don\'t pull packages from the package cache')
   .parse(process.argv);

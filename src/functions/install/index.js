@@ -260,56 +260,58 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           ]);
 
           const promises = [];
-          for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
-            if (!/\.sass|\.scss$/.test(p.path)) continue;
+          if (options.betaNamespacing) {
+            for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
+              if (!/\.sass|\.scss$/.test(p.path)) continue;
 
-            let parseTree;
-            try {
-              parseTree = gonzales.parse(fs.readFileSync(p.path).toString(), { syntax: p.path.endsWith('sass') ? 'sass' : 'scss' });
-            } catch (err) {
-              parseTree = null;
-            }
+              let parseTree;
+              try {
+                parseTree = gonzales.parse(fs.readFileSync(p.path).toString(), { syntax: p.path.endsWith('sass') ? 'sass' : 'scss' });
+              } catch (err) {
+                parseTree = null;
+              }
 
-            if (parseTree) {
-              promises.push(new Promise((rsolve) => {
-                parseTree.traverseByType('class', (childNode) => {
-                  if (typeof childNode.content[0].content === 'string') {
-                    childNode.content[0].content = `#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${childNode.content[0].content}`;
-                  } else {
-                    childNode.content[0].content.unshift(gonzales.createNode({
-                      type: 'ident',
-                      syntax: p.path.endsWith('sass') ? 'sass' : 'scss',
-                      content: `#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}`,
-                    }));
-                  }
+              if (parseTree) {
+                promises.push(new Promise((rsolve) => {
+                  parseTree.traverseByType('class', (childNode) => {
+                    if (typeof childNode.content[0].content === 'string') {
+                      childNode.content[0].content = `#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${childNode.content[0].content}`;
+                    } else {
+                      childNode.content[0].content.unshift(gonzales.createNode({
+                        type: 'ident',
+                        syntax: p.path.endsWith('sass') ? 'sass' : 'scss',
+                        content: `#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}`,
+                      }));
+                    }
 
-                  return childNode;
-                });
-
-                fs.writeFileSync(p.path, parseTree.toString());
-                rsolve();
-              }));
-            } else {
-              promises.push(new Promise((rsolve) => {
-                let content = '';
-                readline.createInterface({ input: fs.createReadStream(p.path) })
-                  .on('line', (line) => {
-                    if (/[@$][^!"#$%&'()*+,./:;<=>?@[\]^{|}~]+[:=]|["']/.test(line)) return content += `${line}\n`;
-
-                    content += line.replace(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s*))/g, match =>
-                      match.replace(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s*))/g, (_, name, space) =>
-                        `.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${name}${space}`));
-
-                    content += '\n';
-
-                    return null;
-                  })
-                  .on('close', () => {
-                    fs.writeFile(p.path, content, () => {
-                      rsolve();
-                    });
+                    return childNode;
                   });
-              }));
+
+                  fs.writeFileSync(p.path, parseTree.toString());
+                  rsolve();
+                }));
+              } else {
+                promises.push(new Promise((rsolve) => {
+                  let content = '';
+                  readline.createInterface({ input: fs.createReadStream(p.path) })
+                    .on('line', (line) => {
+                      if (/[@$][^!"#$%&'()*+,./:;<=>?@[\]^{|}~]+[:=]|["']/.test(line)) return content += `${line}\n`;
+
+                      content += line.replace(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s*))/g, match =>
+                        match.replace(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s*))/g, (_, name, space) =>
+                          `.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${name}${space}`));
+
+                      content += '\n';
+
+                      return null;
+                    })
+                    .on('close', () => {
+                      fs.writeFile(p.path, content, () => {
+                        rsolve();
+                      });
+                    });
+                }));
+              }
             }
           }
 
