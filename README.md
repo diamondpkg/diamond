@@ -74,7 +74,7 @@ Examples:
 
 We want to import Bootstrap's main file, so we will use `[bootstrap]`
 ```scss
-@import "~boostrap";
+@import "~bootstrap";
 
 #foo {
   color: white;
@@ -89,7 +89,7 @@ If you try
 ```bash
 node-sass myfile.scss
 ```
-it will give you errors about not being able to find the file `~boostrap`.
+it will give you errors about not being able to find the file `~bootstrap`.
 This is because you aren't using diamond's custom importer.
 
 It is recommended to use the compile command to compile your Sass instead of node-sass.
