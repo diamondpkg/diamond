@@ -42,7 +42,7 @@
     "gonzales-pe": "^4.0.3",
     "klaw-sync": "^1.1.0",
     "less": "^2.7.2",
-    "less-plugin-diamond": "^0.1.0",
+    "less-plugin-diamond": "^0.2.0",
     "mustache": "^2.3.0",
     "node-sass": "^4.4.0",
     "npmlog": "^4.0.2",

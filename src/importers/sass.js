@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const lockfile = require('proper-lockfile');
 
 module.exports = (file, current) => {
-  if (/^\[([^\s/]+)(.+)?](\s+as\s+([a-zA-Z]+))?$/.test(file)) {
+  if (/^~([^\s/]+)(((?!\s+as\s+).)*)(\s+as\s+['"]?([a-zA-Z]+)['"]?)?$/.test(file)) {
     fs.ensureDirSync('./diamond/.staging');
     fs.ensureDirSync('./diamond/packages');
     fs.ensureFileSync('./diamond/.internal/packages.lock');
@@ -25,7 +25,7 @@ module.exports = (file, current) => {
       return new Error('no packages installed');
     }
 
-    const match = file.match(/^\[([^\s/]+)(.+)?](\s+as\s+([a-zA-Z]+))?$/);
+    const match = file.match(/^~([^\s/]+)(((?!\s+as\s+).)*)(\s+as\s+['"]?([a-zA-Z]+)['"]?)?$/);
 
     let pkg;
     if (/^packages\/([^/]+).+/.test(path.relative(__dirname, current))) {
@@ -81,10 +81,10 @@ module.exports = (file, current) => {
     if (p) {
       if (/\.scss$/.test(pkg.main)) {
         contents = fs.readFileSync(p).toString();
-        return { file: p, contents: `$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n${contents}` };
+        return { file: p, contents: `$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[5] ? `${match[5]}-` : ''}";\n${contents}` };
       }
 
-      return { contents: `$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[4] ? `${match[4]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
+      return { contents: `$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__: "${match[5] ? `${match[5]}-` : ''}";\n@import "${p.replace(/\\/g, '/')}";` };
     }
 
     return { contents };
