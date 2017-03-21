@@ -39,6 +39,7 @@
     "commander": "^2.9.0",
     "fs-extra": "^2.0.0",
     "fstream": "^1.0.11",
+    "gonzales-pe": "^4.0.3",
     "klaw-sync": "^1.1.0",
     "less": "^2.7.2",
     "less-plugin-diamond": "^0.1.0",
