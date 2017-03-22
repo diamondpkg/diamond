@@ -6,6 +6,7 @@ const path = require('path');
 const http = require('http');
 const fs = require('fs-extra');
 const superagent = require('superagent');
+const userAgent = require('../misc/userAgent');
 const querystring = require('querystring');
 const mustache = require('mustache');
 
@@ -31,6 +32,7 @@ http.createServer((req, res) => {
     }
 
     superagent.get(`https://diamondpkg-oauth.herokuapp.com/authenticate/${query.code}`)
+      .set(userAgent.superagent)
       .then((r) => {
         if (r.body.error) {
           res.writeHead(400, 'Error');

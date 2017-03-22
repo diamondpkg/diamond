@@ -45,6 +45,7 @@
     "less-plugin-diamond": "^0.2.0",
     "mustache": "^2.3.0",
     "node-sass": "^4.4.0",
+    "npm-registry-client": "^8.0.2",
     "npmlog": "^4.0.2",
     "opn": "^4.0.2",
     "proper-lockfile": "^2.0.0",

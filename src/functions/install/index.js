@@ -20,6 +20,7 @@ const zlib = require('zlib');
 const crypto = require('crypto');
 const fstream = require('fstream');
 const gonzales = require('gonzales-pe');
+const userAgent = require('../../misc/userAgent');
 const compile = require('../compile');
 const parsePackageObject = require('../parsePackageObject');
 
@@ -150,7 +151,8 @@ module.exports = (pkg, options) => new Promise((resolve) => {
         .pipe(zlib.createGunzip())
         .pipe(extract);
     } else {
-      const req = superagent.get(url);
+      const req = superagent.get(url)
+        .set(userAgent.superagent);
       const passthrough = new stream.PassThrough();
       const gzip = zlib.createGunzip();
       const extract = tar.Extract({

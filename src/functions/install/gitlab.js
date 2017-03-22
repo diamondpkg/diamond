@@ -1,10 +1,12 @@
 'use strict';
 
 const superagent = require('superagent');
+const userAgent = require('../../misc/userAgent');
 const log = require('npmlog');
 
 module.exports = (packages, pkg) => new Promise((resolve) => {
   superagent.get(`https://gitlab.com/api/v3/projects/${pkg.source.owner}%2F${pkg.source.repo}/repository/blobs/${pkg.source.ref}?filepath=package.json`)
+    .set(userAgent.superagent)
     .then((res) => {
       let info;
       try {
