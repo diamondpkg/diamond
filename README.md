@@ -102,7 +102,7 @@ diamond compile -o output.css input.scss
 
 To compile with node-sass, use the `--importer` flag
 ```bash
-node-sass --importer diamond -o output.css input.scss
+node-sass --importer diamond input.scss > output.css
 ```
 where `diamond` is the generated `diamond` folder on install.
 

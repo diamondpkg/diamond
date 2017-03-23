@@ -9,6 +9,8 @@ const async = require('async');
 const lockfile = require('proper-lockfile');
 const importer = require('../../importers/sass');
 
+global.compileCommand = true;
+
 module.exports = (file, options) => new Promise((resolve) => {
   let packages;
   try {

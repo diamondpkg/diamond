@@ -1,8 +1,11 @@
 'use strict';
 
+const log = require('npmlog');
 const path = require('path');
 const fs = require('fs-extra');
 const lockfile = require('proper-lockfile');
+
+log.heading = 'dia';
 
 module.exports = (file, current) => {
   if (/^~([^\s/]+)(((?!\s+as\s+).)*)(\s+as\s+['"]?([a-zA-Z]+)['"]?)?$/.test(file)) {
@@ -40,6 +43,13 @@ module.exports = (file, current) => {
     if (!pkg) {
       release();
       return new Error(`could not find package '${match[1]}'`);
+    }
+
+    if (!global.compileCommand && !global.holdUp &&
+      (pkg.functions || pkg.importer || pkg.postProcessor)) {
+      global.holdUp = true;
+      log.warn('hold up!', 'you are using packages that require features only found when using the compile command');
+      log.warn('hold up!', 'use the compile command do avoid any issues');
     }
 
     let p;
