@@ -5,7 +5,7 @@ const log = require('npmlog');
 
 log.heading = 'dia';
 
-raven.config('https://b3e855ffb6214bacad64c30ecd947b0b:92764259e54c4501821c339ba95b52af@sentry.io/158014', {
+raven.config('https://f2be20d7c4d84c7fa384e602c0b32103@sentry.io/158014', {
   release: require('../../package.json').version,
   captureUnhandledRejections: true,
   extra: {
