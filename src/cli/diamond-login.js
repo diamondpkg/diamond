@@ -9,6 +9,9 @@ const superagent = require('superagent');
 const userAgent = require('../misc/userAgent');
 const querystring = require('querystring');
 const mustache = require('mustache');
+const analytics = require('../functions/analytics');
+
+analytics.init('install');
 
 http.createServer((req, res) => {
   const u = url.parse(req.url);

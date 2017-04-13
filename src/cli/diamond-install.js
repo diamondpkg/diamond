@@ -14,14 +14,14 @@ const install = require('../functions/install');
 const parsePackageString = require('../functions/parsePackageString');
 const parsePackageObject = require('../functions/parsePackageObject');
 
+analytics.init('install');
+
 program
   .version(version)
   .option('--beta-namespacing', 'Enable namespacing beta')
   .option('--no-save', 'Don\'t save packages in your package.json')
   .option('--no-cache', 'Don\'t pull packages from the package cache')
   .parse(process.argv);
-
-analytics.init('install');
 
 fs.ensureDirSync(path.join(os.homedir(), '.diamond'));
 if (!fs.existsSync(path.join(os.homedir(), '.diamond/config.json'))) fs.writeFileSync(path.join(os.homedir(), '.diamond/config.json'), JSON.stringify({ save: true, cache: true }));

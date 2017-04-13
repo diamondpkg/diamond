@@ -5,6 +5,9 @@ const log = require('npmlog');
 const fs = require('fs-extra');
 const lockfile = require('proper-lockfile');
 const compile = require('../functions/compile');
+const analytics = require('../functions/analytics');
+
+analytics.init('install');
 
 program
   .option('-o, --output <file>', 'the file to write to')

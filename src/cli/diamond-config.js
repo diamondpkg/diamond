@@ -6,6 +6,9 @@ const log = require('npmlog');
 const path = require('path');
 const program = require('commander');
 const version = require('../../package.json').version;
+const analytics = require('../functions/analytics');
+
+analytics.init('install');
 
 program
   .version(version)

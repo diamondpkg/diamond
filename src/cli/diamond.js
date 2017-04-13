@@ -2,8 +2,9 @@
 
 'use strict';
 
-const program = require('commander');
+require('../functions/error');
 
+const program = require('commander');
 
 program
   .version(require('../../package.json').version)
