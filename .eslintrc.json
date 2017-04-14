@@ -1,30 +1,33 @@
 {
-  "extends": "airbnb",
-  "parserOptions": {
-    "emcaVersion": 6
-  },
-  "env": {
-    "es6": true,
-    "node": true
-  },
-  "rules": {
-    "strict": 0,
-    "no-restricted-syntax": 0,
-    "no-loop-func": 0,
-    "no-continue": 0,
-    "global-require": 0,
-    "import/no-dynamic-require": 0,
-    "no-console": 2,
-    "no-param-reassign": 0,
-    "class-methods-use-this": 0,
-    "guard-for-in": 0,
-    "no-return-assign": 0,
-    "comma-dangle": ["error", {
-      "arrays": "always-multiline",
-      "objects": "always-multiline",
-      "imports": "always-multiline",
-      "exports": "always-multiline",
-      "functions": "ignore"
-    }]
-  }
+    "extends": "airbnb-base",
+    "plugins": [
+        "import"
+    ],
+    "parserOptions": {
+      "emcaVersion": 6
+    },
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "rules": {
+      "strict": 0,
+      "no-restricted-syntax": 0,
+      "no-loop-func": 0,
+      "no-continue": 0,
+      "global-require": 0,
+      "import/no-dynamic-require": 0,
+      "no-console": 2,
+      "no-param-reassign": 0,
+      "class-methods-use-this": 0,
+      "guard-for-in": 0,
+      "no-return-assign": 0,
+      "comma-dangle": ["error", {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "ignore"
+      }]
+    }
 }
