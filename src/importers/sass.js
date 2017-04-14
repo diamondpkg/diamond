@@ -8,7 +8,7 @@ const lockfile = require('proper-lockfile');
 log.heading = 'dia';
 
 module.exports = (file, current) => {
-  console.log(file, current); // eslint-disable-line
+  console.error(file, current); // eslint-disable-line
   if (/^~([^\s/]+)(((?!\s+as\s+).)*)(\s+as\s+['"]?([a-zA-Z]+)['"]?)?$/.test(file)) {
     fs.ensureDirSync('./diamond/.staging');
     fs.ensureDirSync('./diamond/packages');
