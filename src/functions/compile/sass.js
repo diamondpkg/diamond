@@ -8,6 +8,7 @@ const path = require('path');
 const async = require('async');
 const lockfile = require('proper-lockfile');
 const importer = require('../../importers/sass');
+const raven = require('../error');
 
 global.compileCommand = true;
 
@@ -109,6 +110,7 @@ module.exports = (file, options) => new Promise((resolve) => {
     functions,
   }, (error, result) => {
     if (error) {
+      raven.captureException(error);
       log.disableProgress();
       log.resume();
       log.error('sass', error.message);
