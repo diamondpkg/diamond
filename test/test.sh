@@ -21,11 +21,12 @@ diamond install bootstrap@4.0.0-alpha.6 --no-save
 
 # Test
 printf "Compiling Sass..."
-output=$(diamond c test/bootstrap.sass)
-if [ $? -eq 0 ]; then
-    printf " \033[0;32mOK\033[0m"
-else
-    printf "\n$output"
+diamond c test/bootstrap.sass
+#output=$(diamond c test/bootstrap.sass)
+#if [ $? -eq 0 ]; then
+#    printf " \033[0;32mOK\033[0m"
+#else
+#    printf "\n$output"
 fi
 
 printf "\nCompiling Less..."
