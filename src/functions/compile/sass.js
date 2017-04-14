@@ -8,7 +8,6 @@ const path = require('path');
 const async = require('async');
 const lockfile = require('proper-lockfile');
 const importer = require('../../importers/sass');
-const raven = require('../error');
 
 global.compileCommand = true;
 
