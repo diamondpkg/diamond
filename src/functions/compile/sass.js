@@ -102,6 +102,8 @@ module.exports = (file, options) => new Promise((resolve) => {
 
   if (fs.existsSync('./diamond/.internal/packages.lock')) lockfile.unlockSync('./diamond/.internal/packages.lock');
 
+  console.error(importers); // eslint-disable-line
+
   sass.render({
     file,
     outputStyle: options.outputStyle || 'nested',
