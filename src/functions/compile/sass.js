@@ -110,7 +110,6 @@ module.exports = (file, options) => new Promise((resolve) => {
     functions,
   }, (error, result) => {
     if (error) {
-      raven.captureException(error);
       log.disableProgress();
       log.resume();
       log.error('sass', error.message);
