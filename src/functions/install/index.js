@@ -73,7 +73,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
       return p.path === pkg.name;
     });
 
-    if (old && old.for && !old.version === pkg.version) {
+    if (old && old.for && !old.version !== pkg.version) {
       fs.ensureDirSync(`./diamond/packages/${old.for}/diamond/packages`);
       fs.renameSync(`./diamond/packages/${old.name}`, `./diamond/packages/${old.for}/diamond/packages/${old.name}`);
       old.path = `${old.for}/diamond/packages/${old.name}`;
@@ -85,7 +85,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
     index = 0;
     const found = packages.find((p, i) => {
       index = i;
-      return p.name === pkg.name;
+      return p.name === pkg.name && p.for === pkg.for;
     });
 
     if (pkg.for && found) {
@@ -133,30 +133,48 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           { type: 'logline', kerning: 1, default: '' },
         ]);
 
-        if (pkg.name && pkg.version) {
-          node.label = `${pkg.name}@${pkg.version}`;
-        } else if (pkg.name && pkg.ref) {
-          node.label = `${pkg.name}#${pkg.ref}`;
-        } else {
-          node.label = `${pkg.name}`;
-        }
-
-        node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
-        node.label = `${node.label} ${chalk.cyan('(from cache)')}`;
-
-        analytics.analytics.track({
-          userId: analytics.id,
-          event: 'Package Install',
-          properties: {
-            pkg,
-            cached: true,
-          },
-        });
-
         fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
 
-        analytics.analytics.flush(() => {
-          resolve([node, pkg]);
+        const dependencies = [];
+        for (const source of parsePackageObject(pkg.dependencies)) {
+          dependencies.push({
+            name: source.name,
+            version: source.version,
+            path: null,
+            for: pkg.path,
+            source,
+          });
+        }
+
+        async.each(dependencies, (dep, cb) => {
+          module.exports(dep, options).then((d) => {
+            node.nodes.push(d[0]);
+            cb();
+          });
+        }, () => {
+          if (pkg.name && pkg.version) {
+            node.label = `${pkg.name}@${pkg.version}`;
+          } else if (pkg.name && pkg.ref) {
+            node.label = `${pkg.name}#${pkg.ref}`;
+          } else {
+            node.label = `${pkg.name}`;
+          }
+
+          node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
+          node.label = `${node.label} ${chalk.cyan('(from cache)')}`;
+
+          analytics.analytics.track({
+            userId: analytics.id,
+            event: 'Package Install',
+            properties: {
+              pkg,
+              cached: true,
+            },
+          });
+
+          analytics.analytics.flush(() => {
+            resolve([node, pkg]);
+          });
         });
       });
 
@@ -260,114 +278,116 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           }
         }
 
-        const pulse = () => log.gauge.pulse();
-        new Promise((rsolve) => {
-          if (/\.sass|\.scss|\.less/.test(pkg.main)) {
-            log.enableProgress();
-            setInterval(pulse, 100);
-            log.gauge.show({ section: 'compiling', logline: pkg.main }, 0);
-            compile(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), { outputStyle: 'compressed' })
-              .then((css) => {
-                fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), css);
-                log.gauge.show({ section: 'compiling', logline: pkg.main }, 1);
-                rsolve();
-              });
-          } else rsolve();
-        }).then(() => {
-          clearInterval(pulse);
-          log.disableProgress();
-          log.setGaugeTemplate([
-            { type: 'progressbar', length: 20 },
-            { type: 'activityIndicator', kerning: 1, length: 1 },
-            { type: 'section', default: '' },
-            ':',
-            { type: 'logline', kerning: 1, default: '' },
-          ]);
+        const finish = () => {
+          analytics.analytics.track({
+            userId: analytics.id,
+            event: 'Package Install',
+            properties: {
+              pkg,
+              cached: false,
+            },
+          });
 
-          const promises = [];
-          if (options.betaNamespacing) {
-            for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
-              if (!/\.sass|\.scss$/.test(p.path)) continue;
+          fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
 
-              let parseTree;
-              try {
-                parseTree = gonzales.parse(fs.readFileSync(p.path).toString(), { syntax: p.path.endsWith('sass') ? 'sass' : 'scss' });
-              } catch (err) {
-                parseTree = null;
-              }
-
-              if (parseTree) {
-                promises.push(new Promise((rsolve) => {
-                  parseTree.traverseByType('class', (childNode) => {
-                    if (typeof childNode.content[0].content === 'string') {
-                      childNode.content[0].content = `#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${childNode.content[0].content}`;
-                    } else {
-                      childNode.content[0].content.unshift(gonzales.createNode({
-                        type: 'ident',
-                        syntax: p.path.endsWith('sass') ? 'sass' : 'scss',
-                        content: `#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}`,
-                      }));
-                    }
-
-                    return childNode;
-                  });
-
-                  fs.writeFileSync(p.path, parseTree.toString());
-                  rsolve();
-                }));
-              } else {
-                promises.push(new Promise((rsolve) => {
-                  let content = '';
-                  readline.createInterface({ input: fs.createReadStream(p.path) })
-                    .on('line', (line) => {
-                      if (/[@$][^!"#$%&'()*+,./:;<=>?@[\]^{|}~]+[:=]|["']/.test(line)) return content += `${line}\n`;
-
-                      content += line.replace(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s*))/g, match =>
-                        match.replace(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s*))/g, (_, name, space) =>
-                          `.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${name}${space}`));
-
-                      content += '\n';
-
-                      return null;
-                    })
-                    .on('close', () => {
-                      fs.writeFile(p.path, content, () => {
-                        rsolve();
-                      });
-                    });
-                }));
-              }
-            }
+          const dependencies = [];
+          for (const source of parsePackageObject(pkg.dependencies)) {
+            dependencies.push({
+              name: source.name,
+              version: source.version,
+              path: null,
+              for: pkg.path,
+              source,
+            });
           }
 
-          Promise.all(promises).then(() => {
-            const finish = () => {
-              analytics.analytics.track({
-                userId: analytics.id,
-                event: 'Package Install',
-                properties: {
-                  pkg,
-                  cached: false,
-                },
-              });
+          async.each(dependencies, (dep, cb) => {
+            module.exports(dep, options).then((d) => {
+              node.nodes.push(d[0]);
+              cb();
+            });
+          }, () => {
+            const pulse = () => log.gauge.pulse();
+            new Promise((rsolve) => {
+              if (/\.sass|\.scss|\.less/.test(pkg.main)) {
+                log.enableProgress();
+                setInterval(pulse, 100);
+                log.gauge.show({ section: 'compiling', logline: pkg.main }, 0);
+                compile(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), { outputStyle: 'compressed' })
+                  .then((css) => {
+                    fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), css);
+                    log.gauge.show({ section: 'compiling', logline: pkg.main }, 1);
+                    rsolve();
+                  });
+              } else rsolve();
+            }).then(() => {
+              clearInterval(pulse);
+              log.disableProgress();
+              log.setGaugeTemplate([
+                { type: 'progressbar', length: 20 },
+                { type: 'activityIndicator', kerning: 1, length: 1 },
+                { type: 'section', default: '' },
+                ':',
+                { type: 'logline', kerning: 1, default: '' },
+              ]);
 
-              const dependencies = [];
-              for (const source of parsePackageObject(pkg.dependencies)) {
-                dependencies.push({
-                  name: source.name,
-                  version: source.version,
-                  path: null,
-                  for: pkg.path,
-                  source,
-                });
+              const promises = [];
+              if (options.betaNamespacing) {
+                for (const p of klaw(path.join('./diamond/packages', pkg.path), { ignore: 'diamond/packages' })) {
+                  if (!/\.sass|\.scss$/.test(p.path)) continue;
+
+                  let parseTree;
+                  try {
+                    parseTree = gonzales.parse(fs.readFileSync(p.path).toString(), { syntax: p.path.endsWith('sass') ? 'sass' : 'scss' });
+                  } catch (err) {
+                    parseTree = null;
+                  }
+
+                  if (parseTree) {
+                    promises.push(new Promise((rsolve) => {
+                      parseTree.traverseByType('class', (childNode) => {
+                        if (typeof childNode.content[0].content === 'string') {
+                          childNode.content[0].content = `#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${childNode.content[0].content}`;
+                        } else {
+                          childNode.content[0].content.unshift(gonzales.createNode({
+                            type: 'ident',
+                            syntax: p.path.endsWith('sass') ? 'sass' : 'scss',
+                            content: `#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}`,
+                          }));
+                        }
+
+                        return childNode;
+                      });
+
+                      fs.writeFileSync(p.path, parseTree.toString());
+                      rsolve();
+                    }));
+                  } else {
+                    promises.push(new Promise((rsolve) => {
+                      let content = '';
+                      readline.createInterface({ input: fs.createReadStream(p.path) })
+                        .on('line', (line) => {
+                          if (/[@$][^!"#$%&'()*+,./:;<=>?@[\]^{|}~]+[:=]|["']/.test(line)) return content += `${line}\n`;
+
+                          content += line.replace(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s*))/g, match =>
+                            match.replace(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s*))/g, (_, name, space) =>
+                              `.#{$__${pkg.name.replace(/[!"#$%&'()*+,./:;<=>?@[\]^{|}~]/g, '')}__namespace__}${name}${space}`));
+
+                          content += '\n';
+
+                          return null;
+                        })
+                        .on('close', () => {
+                          fs.writeFile(p.path, content, () => {
+                            rsolve();
+                          });
+                        });
+                    }));
+                  }
+                }
               }
 
-              async.each(dependencies, (dep, cb) => {
-                module.exports(dep, options).then((n) => {
-                  node.nodes.push(n);
-                  cb();
-                });
-              }, () => {
+              Promise.all(promises).then(() => {
                 if (pkg.name && pkg.version) {
                   node.label = `${pkg.name}@${pkg.version}`;
                 } else if (pkg.name && pkg.ref) {
@@ -378,27 +398,25 @@ module.exports = (pkg, options) => new Promise((resolve) => {
 
                 node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
 
-                fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
-
                 analytics.analytics.flush(() => {
                   resolve([node, pkg]);
                 });
               });
-            };
-
-            if (pkg.source.type === 'npm') {
-              fs.ensureDirSync(path.join(os.homedir(), '.diamond/package-cache'));
-
-              const writeStream = fs.createWriteStream(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))
-                .on('finish', finish);
-
-              fstream.Reader({ path: path.join('./diamond/packages', pkg.path), type: 'Directory' })
-                .pipe(tar.Pack({ noProprietary: true }))
-                .pipe(zlib.createGzip())
-                .pipe(writeStream);
-            } else finish();
+            });
           });
-        });
+        };
+
+        if (pkg.source.type === 'npm') {
+          fs.ensureDirSync(path.join(os.homedir(), '.diamond/package-cache'));
+
+          const writeStream = fs.createWriteStream(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))
+            .on('finish', finish);
+
+          fstream.Reader({ path: path.join('./diamond/packages', pkg.path), type: 'Directory' })
+            .pipe(tar.Pack({ noProprietary: true }))
+            .pipe(zlib.createGzip())
+            .pipe(writeStream);
+        } else finish();
       });
 
       gzip.pipe(extract);

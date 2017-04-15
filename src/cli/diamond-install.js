@@ -39,6 +39,7 @@ try {
 }
 
 packageJson = Object.assign({ diamond: { dependencies: {} } }, packageJson);
+if (!packageJson.diamond.dependencies) packageJson.diamond.dependencies = {};
 
 log.enableProgress();
 
@@ -116,6 +117,16 @@ async.each(packages, (pkg, done) => {
     done();
   });
 }, () => {
+  let autoload = '';
+  const installed = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
+  for (const installedPkg of installed) {
+    if (!installedPkg.for) {
+      autoload += `${fs.readFileSync(path.join(process.cwd(), 'diamond/packages', installedPkg.path, 'diamond/dist/main.css'))}\n\n`;
+    }
+  }
+
+  fs.writeFileSync('./diamond/autoload.css', autoload.trim());
+
   release();
   if (program.save) fs.writeFileSync('./package.json', JSON.stringify(packageJson, null, 2));
 
