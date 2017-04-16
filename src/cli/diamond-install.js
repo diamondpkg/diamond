@@ -120,8 +120,10 @@ async.each(packages, (pkg, done) => {
   let autoload = '';
   const installed = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
   for (const installedPkg of installed) {
-    if (!installedPkg.for) {
+    if (!installedPkg.for && fs.existsSync(path.join(process.cwd(), 'diamond/packages', installedPkg.path, 'diamond/dist/main.css'))) {
       autoload += `${fs.readFileSync(path.join(process.cwd(), 'diamond/packages', installedPkg.path, 'diamond/dist/main.css'))}\n\n`;
+    } else if (!installedPkg.for && installedPkg.main.endsWith('.css')) {
+      autoload += `${fs.readFileSync(path.join(process.cwd(), 'diamond/packages', installedPkg.path, installedPkg.main))}\n\n`;
     }
   }
 
