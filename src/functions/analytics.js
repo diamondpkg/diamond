@@ -15,7 +15,7 @@ exports.id = config.tid;
 
 exports.init = (command) => {
   exports.analytics.identify({
-    userId: exports.id,
+    anonymousId: exports.id,
     traits: {
       arch: os.arch(),
       osName: osName(os.platform(), os.release()),
@@ -27,7 +27,7 @@ exports.init = (command) => {
   });
 
   exports.analytics.track({
-    userId: exports.id,
+    anonymousId: exports.id,
     event: 'Command',
     properties: {
       name: command,

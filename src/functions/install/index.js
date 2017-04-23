@@ -164,7 +164,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           node.label = `${node.label} ${chalk.cyan('(from cache)')}`;
 
           analytics.analytics.track({
-            userId: analytics.id,
+            anonymousId: analytics.id,
             event: 'Package Install',
             properties: {
               pkg,
@@ -237,7 +237,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
 
         if (shasum && shasum !== crypto.createHash('sha1').update(contents, 'utf8').digest('hex')) {
           analytics.analytics.track({
-            userID: analytics.id,
+            anonymousId: analytics.id,
             event: 'Shasum Mismatch',
             properties: {
               pkg,
@@ -280,7 +280,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
 
         const finish = () => {
           analytics.analytics.track({
-            userId: analytics.id,
+            anonymousId: analytics.id,
             event: 'Package Install',
             properties: {
               pkg,
