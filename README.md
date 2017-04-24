@@ -135,3 +135,6 @@ diamond compile -o output.css input.less
 lessc --diamond input.less output.css
 ```
 This uses `less-plugin-diamond` as a plugin, which is installed when you install diamond.
+
+#### CSS
+To use with vanilla CSS or another preprocessor, simply link the `diamond/autoload.css` file in your HTML.
