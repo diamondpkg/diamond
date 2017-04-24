@@ -109,7 +109,8 @@ This is because you aren't using diamond's custom importer.
 
 It is recommended to use the compile command to compile your Sass instead of node-sass.
 While this is not required, some packages like `concise.css` use functionality only found
-in the compile command.
+in the compile command. You will be warned if you are missing out on features not using
+the compile command.
 
 ```bash
 diamond compile -o output.css input.scss
