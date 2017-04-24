@@ -96,6 +96,9 @@ We want to import Bootstrap's main file, so we will use `~bootstrap`
 }
 ```
 
+#### CSS
+To use with vanilla CSS or another preprocessor, simply link the `diamond/autoload.css` file in your HTML. Compiling is not required with CSS.
+
 ### Compiling
 #### Sass
 Once we have written our sass, we are ready for compiling.
@@ -135,6 +138,3 @@ diamond compile -o output.css input.less
 lessc --diamond input.less output.css
 ```
 This uses `less-plugin-diamond` as a plugin, which is installed when you install diamond.
-
-#### CSS
-To use with vanilla CSS or another preprocessor, simply link the `diamond/autoload.css` file in your HTML.
