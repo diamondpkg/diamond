@@ -54,7 +54,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
       pkg.version = info.version;
       pkg.main = info.diamond ?
         info.diamond.main :
-        info.sass || info.less || info.style || info.main;
+        info.sass || info.less || !info.main.endsWith('.js') ? info.main : info.style;
       pkg.postProcessor = info.diamond ?
         info.diamond.postProcessor || info.diamond.postCompile :
         null;
