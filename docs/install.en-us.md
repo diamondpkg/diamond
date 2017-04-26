@@ -111,11 +111,11 @@ A **package** is:
 
   Examples:
   ```
-      diamond install gl:mygithubuser/myproject
-      diamond install gitlab:mygithubuser/myproject
-      diamond install gitlab:mygithubuser/myproject#master
-      diamond install gitlab:mygithubuser/myproject#beffcd31cd20f41125ca2ff03d42e902c3935e18
-      diamond install gitlab:mygithubuser/myproject#1.0.0
+      diamond install gl:mygitlabuser/myproject
+      diamond install gitlab:mygitlabuser/myproject
+      diamond install gitlab:mygitlabuser/myproject#master
+      diamond install gitlab:mygitlabuser/myproject#beffcd31cd20f41125ca2ff03d42e902c3935e18
+      diamond install gitlab:mygitlabuser/myproject#1.0.0
   ```
 
 You may install multiple packages at once
