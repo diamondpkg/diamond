@@ -107,7 +107,7 @@ Um **pacote** é:
 
   Instala o pacote em **`https://gitlab.com/nome gitlab/repositório gitlab`**, baixando os arquivos.
 
-  Se você não especificar uma **`referência`** então **`master**` será usado.
+  Se você não especificar uma **`referência`** então **`master`** será usado.
 
   Exemplos:
   ```
