@@ -118,9 +118,9 @@ A **package** is:
       diamond install gitlab:mygitlabuser/myproject#1.0.0
   ```
 
-You may install multiple packages at once
+You may install multiple packages at once.
 
-Example
+Example:
 ```
     diamond i bootstrap kurisubrooks/caramel
 ```
@@ -128,7 +128,7 @@ Example
 ## Args
 * **`--no-save`**
 
-  If specified, the package won't be saved to your **`package.json`**
+  If specified, the package won't be saved to your **`package.json`**.
 
 
 
