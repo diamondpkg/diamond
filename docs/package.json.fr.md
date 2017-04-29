@@ -3,7 +3,7 @@
 **Chaque champs sont en plus des champs décrits [par npm](https://docs.npmjs.com/files/package.json)**
 
 ## diamond
-Où presque tout les champs reliés à diamon se situent.
+Où presque tout les champs reliés à diamond se situent.
 
 ### diamond.main
 Le champ principal est un ID module servant comme point d'entré principal pour votre program. Par example, si votre packet se nomme foo, et un utilisateur l'installe et utilise par la suite `@import "~foo"`, alors votre fichier principal sera importé.
@@ -34,7 +34,7 @@ Par exemple, les suivants sont tous des exemples valides:
 ```
 
 #### GitHub URLs
-Il est possible de faire référence au URLs Github simplement par `"foo": "user/foo-project"`. Un suffix peut aussi être ajouté. Par exemple:
+Il est possible de faire référence aux URLs Github simplement par `"foo": "user/foo-project"`. Un suffix peut aussi être ajouté. Par exemple:
 ```json
 {
   "name": "foo",
@@ -48,7 +48,7 @@ Il est possible de faire référence au URLs Github simplement par `"foo": "user
 ```
 
 ### diamond.postProcessor
-Un chemin d'accès vers un fichier relatif à la racine du dossier du packet. Le **`module.exports`** de ce fichier ne devrait être qu'une seule fonction qui prend: un argument, le CSS compilé, et renvoi ou une promesse ou un chaîne de charactères contenant le CSS traité.
+Un chemin d'accès vers un fichier relatif à la racine du dossier du packet. Le **`module.exports`** de ce fichier ne devrait être qu'une seule fonction qui prend: un argument, le CSS compilé, et renvoi une promesse ou un chaîne de charactères contenant le CSS traité.
 
 ### diamond.sass
 Tout les champs relié à Sass uniquement.

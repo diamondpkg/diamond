@@ -46,4 +46,5 @@ Cette commande compile un fichier avec le soutien complet de diamond (importeurs
   <div class="notification is-warning">
     Cet argument est <b>uniquement pour Sass</b>.
   </div>
-  Le style du fichier produit peut être l'une des options suivantes: `nested, expanded, compact, compressed`.
+  Le style du fichier produit peut être l'une des options suivantes:
+  `nested, expanded, compact, compressed`.

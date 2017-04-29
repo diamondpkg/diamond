@@ -3,12 +3,12 @@
 ## Synopsis
 ```
 diamond install (sans arguments, dans le répertoire du packet)
-diamond install <name>
-diamond install <name>@<tag>
-diamond install <name>@<version>
-diamond install <name>@<version range>
-diamond install <owner>/<repo>[#<ref>]
-diamond install gitlab:<owner>/<repo>[#<ref>]
+diamond install <nom>
+diamond install <nom>@<tag>
+diamond install <nom>@<version>
+diamond install <nom>@<gamme de versions>
+diamond install <propriétaire>/<répertoire>[#<ref>]
+diamond install gitlab:<propriétaire>/<répertoire>[#<ref>]
 
 alias: diamond i
 options communes: [--no-save] [--no-cache]
@@ -17,9 +17,9 @@ options communes: [--no-save] [--no-cache]
 ## Déscription
 Cette commande installe un packet, et tout les packets dont il dépend.
 
-Un **packet** c'est:
+Un **packet** est définit par:
 
-* a) un dossier contenant un programe décrit par un fichier package.json
+* a) un dossier contenant un programme décrit par un fichier package.json
 * b) un **`<nom>@<version>`** qui est publié dans le registre npm (voire [npm-registry](https://docs.npmjs.com/misc/registry)) avec (a)
 * c) un **`<nom>@<tag>`** (voire [npm-dist-tag](https://docs.npmjs.com/cli/dist-tag)) qui pointe à (b)
 * d) un **`<nom>`** qui satisfait un tag "latest" correctement (c)
@@ -29,7 +29,7 @@ Un **packet** c'est:
 ## Commandes
 * **`diamond install`** (dans le répertoire du packet, sans arguments)
 
-  Installe les dpendences dans le dossier diamond local.
+  Installe les dépendences dans le dossier diamond local.
 
   Par défaut, **`diamond install`** installera tout les modules inscrit comme dépendences dan le fichier package.json.
 
