@@ -2,8 +2,8 @@
 
 ## Synopsis
 ```
-diamond compile <input>
-diamond compile --output <output> <input>
+diamond compile <entrée>
+diamond compile --output <sortie> <entrée>
 
 alias: diamond c
 common options: [-o|--output] [--output-style]
@@ -13,7 +13,7 @@ common options: [-o|--output] [--output-style]
 Cette commande compile un fichier avec le soutien complet de diamond (importeurs, fonctions, etc.).
 
 ## Commandes
-* **`diamond compile <input>`**
+* **`diamond compile <entrée>`**
 
   Compile le fichier donné et imprime le CSS résultant à `stdout`.
 
@@ -23,7 +23,7 @@ Cette commande compile un fichier avec le soutien complet de diamond (importeurs
   ```
 
 
-* **`diamond compile --output <output> <input>`**
+* **`diamond compile --output <sortie> <entrée>`**
 
   Compile le fichier donné et imprime le CSS résultant dans le fichier définit.
 
