@@ -74,6 +74,8 @@ module.exports = (file, current) => {
 
       if (/\.sass|\.scss$/.test(pkg.main)) {
         p = path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main);
+      } else if (/\.css$/.test(pkg.main)) {
+        contents = fs.readFileSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main)).toString();
       } else {
         try {
           fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, 'diamond/dist/main.css'));
