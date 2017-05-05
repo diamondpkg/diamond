@@ -23,7 +23,6 @@ const gonzales = require('gonzales-pe');
 const userAgent = require('../../misc/userAgent');
 const compile = require('../compile');
 const parsePackageObject = require('../parsePackageObject');
-const analytics = require('../analytics');
 
 module.exports = (pkg, options) => new Promise((resolve) => {
   let packages;
@@ -164,18 +163,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
           node.label = `${node.label} ${chalk.cyan('(from cache)')}`;
 
-          analytics.analytics.track({
-            anonymousId: analytics.id,
-            event: 'Package Install',
-            properties: {
-              pkg,
-              cached: true,
-            },
-          });
-
-          analytics.analytics.flush(() => {
-            resolve([node, pkg]);
-          });
+          resolve([node, pkg]);
         });
       });
 
@@ -237,16 +225,6 @@ module.exports = (pkg, options) => new Promise((resolve) => {
         ]);
 
         if (shasum && shasum !== crypto.createHash('sha1').update(contents, 'utf8').digest('hex')) {
-          analytics.analytics.track({
-            anonymousId: analytics.id,
-            event: 'Shasum Mismatch',
-            properties: {
-              pkg,
-              shasum,
-              received: crypto.createHash('sha1').update(contents, 'utf8').digest('hex'),
-            },
-          });
-
           log.disableProgress();
           log.resume();
           fs.removeSync(path.join('./diamond/packages'), pkg.path);
@@ -278,15 +256,6 @@ module.exports = (pkg, options) => new Promise((resolve) => {
             process.exit(1);
           }
         }
-
-        analytics.analytics.track({
-          anonymousId: analytics.id,
-          event: 'Package Install',
-          properties: {
-            pkg,
-            cached: false,
-          },
-        });
 
         fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
 
@@ -399,9 +368,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
 
                 node.label = newPkg ? chalk.green(node.label) : chalk.yellow(node.label);
 
-                analytics.analytics.flush(() => {
-                  resolve([node, pkg]);
-                });
+                resolve([node, pkg]);
               };
 
               if (pkg.source.type === 'npm') {

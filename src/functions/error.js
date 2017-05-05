@@ -1,3 +1,5 @@
+'use strict';
+
 const os = require('os');
 const osName = require('os-name');
 const raven = require('raven');

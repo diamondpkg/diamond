@@ -1,20 +1,16 @@
 'use strict';
 
-const os = require('os');
 const fs = require('fs-extra');
 const log = require('npmlog');
 const path = require('path');
 const async = require('async');
 const program = require('commander');
 const lockfile = require('proper-lockfile');
-const analytics = require('../functions/analytics');
 const archy = require('archy');
 const version = require('../../package.json').version;
 const install = require('../functions/install');
 const parsePackageString = require('../functions/parsePackageString');
 const parsePackageObject = require('../functions/parsePackageObject');
-
-analytics.init('install');
 
 program
   .version(version)
@@ -22,9 +18,6 @@ program
   .option('--no-save', 'Don\'t save packages in your package.json')
   .option('--no-cache', 'Don\'t pull packages from the package cache')
   .parse(process.argv);
-
-fs.ensureDirSync(path.join(os.homedir(), '.diamond'));
-if (!fs.existsSync(path.join(os.homedir(), '.diamond/config.json'))) fs.writeFileSync(path.join(os.homedir(), '.diamond/config.json'), JSON.stringify({ save: true, cache: true }));
 
 const pkgs = program.args;
 

@@ -1,3 +1,5 @@
+'use strict';
+
 const diamondVersion = require('../../package.json').version;
 const superagentVersion = require('superagent/package.json').version;
 
