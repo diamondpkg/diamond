@@ -3,6 +3,7 @@
 const npm = require('./npm');
 const github = require('./github');
 const gitlab = require('./gitlab');
+const diamond = require('./diamond');
 const os = require('os');
 const readline = require('readline');
 const fs = require('fs-extra');
@@ -28,6 +29,8 @@ module.exports = (pkg, options) => new Promise((resolve) => {
   let packages;
   const node = { nodes: [] };
 
+  const release = lockfile.lockSync('./diamond/.internal/packages.lock');
+
   try {
     packages = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
   } catch (err) {
@@ -41,26 +44,25 @@ module.exports = (pkg, options) => new Promise((resolve) => {
     promise = github(packages, pkg);
   } else if (pkg.source.type === 'gitlab') {
     promise = gitlab(packages, pkg);
+  } else if (pkg.source.type === 'diamond') {
+    promise = diamond(packages, pkg);
   }
 
   promise.then((data) => {
-    const info = data[0];
-    const url = data[1];
-    const shasum = data[2];
+    const [info, url, shasum] = data;
 
-    if (info) {
+    if (info && pkg.source.type !== 'npm') {
       pkg.name = pkg.name || info.name || pkg.source.repo;
       pkg.version = info.version;
-      pkg.main = info.diamond ?
-        info.diamond.main :
-        info.sass || info.less || null;
-      if (!pkg.main) pkg.main = info.main && !info.main.endsWith('.js') ? info.main : info.style;
-      pkg.postProcessor = info.diamond ?
-        info.diamond.postProcessor || info.diamond.postCompile :
-        null;
-      pkg.functions = info.diamond && info.diamond.sass ? info.diamond.sass.functions : null;
-      pkg.importer = info.diamond && info.diamond.sass ? info.diamond.sass.importer : null;
-      pkg.dependencies = info.diamond ? info.diamond.dependencies : {};
+      pkg.main = info.main;
+      pkg.postProcessor = info.postProcessor;
+      pkg.functions = info.sass ? info.sass.functions : null;
+      pkg.importer = info.sass ? info.sass.importer : null;
+      pkg.dependencies = info.dependencies || {};
+    } else if (pkg.source.type === 'npm') {
+      pkg.name = pkg.name || info.name;
+      pkg.version = info.version;
+      pkg.main = info.diamond || info.sass || info.less || (info.main && !info.main.endsWith('.js') ? info.main : info.style);
     } else {
       pkg.name = pkg.name || pkg.source.repo;
     }
@@ -146,7 +148,9 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           });
         }
 
-        async.each(dependencies, (dep, cb) => {
+        release();
+
+        async.eachLimit(dependencies, 1, (dep, cb) => {
           module.exports(dep, options).then((d) => {
             node.nodes.push(d[0]);
             cb();
@@ -177,7 +181,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
       const gzip = zlib.createGunzip();
       const extract = tar.Extract({
         path: path.join('./diamond/packages', pkg.path),
-        strip: 1,
+        strip: pkg.source.type === 'diamond' ? 0 : 1,
       });
 
       let contents = Buffer.alloc(0);
@@ -190,7 +194,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           log.error('not ok');
           process.exit(1);
         } else if (!info) {
-          log.warn('no package.json', `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
+          log.warn('no diamond.json', `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
         }
       });
 
@@ -224,7 +228,8 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           { type: 'logline', kerning: 1, default: '' },
         ]);
 
-        if (shasum && shasum !== crypto.createHash('sha1').update(contents, 'utf8').digest('hex')) {
+        if (shasum && shasum !== crypto.createHash(pkg.source.type === 'diamond' ? 'sha256' : 'sha1')
+          .update(contents, 'utf8').digest('hex')) {
           log.disableProgress();
           log.resume();
           fs.removeSync(path.join('./diamond/packages'), pkg.path);
@@ -270,7 +275,9 @@ module.exports = (pkg, options) => new Promise((resolve) => {
           });
         }
 
-        async.each(dependencies, (dep, cb) => {
+        release();
+
+        async.eachLimit(dependencies, 1, (dep, cb) => {
           module.exports(dep, options).then((d) => {
             node.nodes.push(d[0]);
             cb();
@@ -371,7 +378,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
                 resolve([node, pkg]);
               };
 
-              if (pkg.source.type === 'npm') {
+              if (pkg.source.type === 'diamond') {
                 fs.ensureDirSync(path.join(os.homedir(), '.diamond/package-cache'));
 
                 const writeStream = fs.createWriteStream(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))

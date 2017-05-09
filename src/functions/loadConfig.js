@@ -5,12 +5,6 @@ const fs = require('fs-extra');
 const yaml = require('js-yaml');
 const log = require('npmlog');
 const path = require('path');
-const program = require('commander');
-const version = require('../../package.json').version;
-
-program
-  .version(version)
-  .parse(process.argv);
 
 log.heading = 'dia';
 

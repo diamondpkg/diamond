@@ -28,9 +28,9 @@ module.exports = (pkg) => {
       repo: match[3],
       ref: match[6] || 'master',
     };
-  } else if (/^([^/@]+?)(@([^/]+))?$/i.test(pkg) && npmValidate(
-    pkg.match(/^([^/@]+?)(@([^/]+))?$/i)[1]).validForOldPackages) {
-    const match = pkg.match(/^([^/@]+?)(@([^/]+))?$/i);
+  } else if (/^npm:([^/@]+?)(@([^/]+))?$/i.test(pkg) && npmValidate(
+    pkg.match(/^npm:([^/@]+?)(@([^/]+))?$/i)[1]).validForOldPackages) {
+    const match = pkg.match(/^npm:([^/@]+?)(@([^/]+))?$/i);
     if (semver.validRange(match[3])) {
       return {
         type: 'npm',
@@ -40,6 +40,21 @@ module.exports = (pkg) => {
     }
     return {
       type: 'npm',
+      name: match[1],
+      tag: match[3] || 'latest',
+    };
+  } else if (/^([^/@]+?)(@([^/]+))?$/i.test(pkg) && npmValidate(
+    pkg.match(/^([^/@]+?)(@([^/]+))?$/i)[1]).validForOldPackages) {
+    const match = pkg.match(/^([^/@]+?)(@([^/]+))?$/i);
+    if (semver.validRange(match[3])) {
+      return {
+        type: 'diamond',
+        name: match[1],
+        version: match[3],
+      };
+    }
+    return {
+      type: 'diamond',
       name: match[1],
       tag: match[3] || 'latest',
     };

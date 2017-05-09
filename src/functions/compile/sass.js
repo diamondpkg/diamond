@@ -6,7 +6,6 @@ const log = require('npmlog');
 const fs = require('fs-extra');
 const path = require('path');
 const async = require('async');
-const lockfile = require('proper-lockfile');
 const importer = require('../../importers/sass');
 
 global.compileCommand = true;
@@ -21,10 +20,10 @@ module.exports = (file, options) => new Promise((resolve) => {
 
   let packageJson;
   try {
-    packageJson = JSON.parse(fs.readFileSync('./package.json'));
+    packageJson = JSON.parse(fs.readFileSync('./diamond.json'));
   } catch (err) {
     packageJson = {};
-    log.info('no package.json found');
+    log.info('no diamond.json found');
   }
 
   function getValue(obj) {
@@ -63,14 +62,14 @@ module.exports = (file, options) => new Promise((resolve) => {
     },
   };
 
-  if (packageJson.diamond && packageJson.diamond.sass && packageJson.diamond.sass.functions) {
-    if (typeof packageJson.diamond.sass.functions === 'string') {
+  if (packageJson.sass && packageJson.sass.functions) {
+    if (typeof packageJson.sass.functions === 'string') {
       Object.assign(functions,
-        require(path.join(process.cwd(), packageJson.diamond.sass.functions)));
+        require(path.join(process.cwd(), packageJson.sass.functions)));
     } else {
-      for (const func in packageJson.diamond.sass.functions) {
+      for (const func in packageJson.sass.functions) {
         functions[func] = require(path.join(process.cwd(),
-          packageJson.diamond.sass.functions[func]));
+          packageJson.sass.functions[func]));
       }
     }
   }
@@ -88,19 +87,17 @@ module.exports = (file, options) => new Promise((resolve) => {
 
   const postProcessors = packages.filter(o => !!o.postProcessor).map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.postProcessor)))
     .concat(
-      packageJson.diamond && packageJson.diamond.postProcessor ?
-        [require(path.join(process.cwd(), packageJson.diamond.postProcessor))] :
+      packageJson.postProcessor ?
+        [require(path.join(process.cwd(), packageJson.postProcessor))] :
         []
     );
 
   const importers = packages.filter(o => !!o.importer).map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.importer)))
     .concat(
-      packageJson.diamond && packageJson.diamond.sass && packageJson.diamond.sass.importer ?
-        [require(path.join(process.cwd(), packageJson.diamond.sass.importer))] :
+      packageJson.sass && packageJson.sass.importer ?
+        [require(path.join(process.cwd(), packageJson.sass.importer))] :
         []
     );
-
-  if (fs.existsSync('./diamond/.internal/packages.lock')) lockfile.unlockSync('./diamond/.internal/packages.lock');
 
   sass.render({
     file,
@@ -118,7 +115,7 @@ module.exports = (file, options) => new Promise((resolve) => {
 
     let css = result.css.toString();
 
-    async.each(postProcessors, (postProcessor, done) => {
+    async.eachLimit(postProcessors, 1, (postProcessor, done) => {
       let res;
       try {
         res = postProcessor(css);

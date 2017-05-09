@@ -11,13 +11,9 @@ if [ "$TRAVIS_NODE_VERSION" == "4" ]; then
   printf "\n\n"
 fi
 
-# Check dependencies
-printf "Checking dependencies\n"
-depcheck --ignores=eslint,eslint-config-airbnb,eslint-plugin-import,eslint-plugin-jsx-a11y,eslint-plugin-react
-
 # Install
-printf "\n\nInstalling bootstrap@4.0.0-alpha.6\n"
-diamond install bootstrap@4.0.0-alpha.6 --no-save
+printf "\n\nInstalling npm:bootstrap@4.0.0-alpha.6\n"
+diamond install npm:bootstrap@4.0.0-alpha.6 --no-save
 
 # Test
 printf "Compiling Sass..."
@@ -37,8 +33,8 @@ else
 fi
 
 # Install
-printf "\n\nInstalling bootstrap@4.0.0-alpha.6 (with namespacing)\n"
-diamond install bootstrap@4.0.0-alpha.6 --no-save --no-cache --beta-namespacing
+printf "\n\nInstalling npm:bootstrap@4.0.0-alpha.6 (with namespacing)\n"
+diamond install npm:bootstrap@4.0.0-alpha.6 --no-save --no-cache --beta-namespacing
 
 # Test
 printf "Compiling Sass..."
@@ -66,8 +62,8 @@ else
 fi
 
 # Install
-printf "\n\nInstalling bootstrap@4.0.0-alpha.6 (uncached)\n"
-diamond install bootstrap@4.0.0-alpha.6 --no-cache --no-save
+printf "\n\nInstalling npm:bootstrap@4.0.0-alpha.6 (uncached)\n"
+diamond install npm:bootstrap@4.0.0-alpha.6 --no-cache --no-save
 
 # Test
 printf "Compiling Sass..."
@@ -88,8 +84,8 @@ fi
 
 
 # Install
-printf "\n\nInstalling bootstrap@3.3.7\n"
-diamond install bootstrap@3.3.7 --no-save
+printf "\n\nInstalling npm:bootstrap@3.3.7\n"
+diamond install npm:bootstrap@3.3.7 --no-save
 
 # Test
 printf "Compiling Sass..."
@@ -109,8 +105,8 @@ else
 fi
 
 # Install
-printf "\n\nInstalling bootstrap@3.3.7 (uncached)\n"
-diamond install bootstrap@3.3.7 --no-cache --no-save
+printf "\n\nInstalling npm:bootstrap@3.3.7 (uncached)\n"
+diamond install npm:bootstrap@3.3.7 --no-cache --no-save
 
 # Test
 printf "Compiling Sass..."
@@ -128,27 +124,5 @@ if [ $? -eq 0 ]; then
 else
     printf "\n$output"
 fi
-
-# Install
-printf "\n\nInstalling ConciseCSS\n"
-diamond install ConciseCSS/concise.css --no-save
-
-# Test
-printf "Compiling Sass..."
-output=$(diamond c test/concise.sass)
-if [ $? -eq 0 ]; then
-    printf " \033[0;32mOK\033[0m"
-else
-    printf "\n$output"
-fi
-
-printf "\nCompiling Less..."
-output=$(diamond c test/concise.less)
-if [ $? -eq 0 ]; then
-    printf " \033[0;32mOK\033[0m"
-else
-    printf "\n$output"
-fi
-
 
 printf "\n\n\033[0;32mTests Complete!\033[0m\n"

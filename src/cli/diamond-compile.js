@@ -1,32 +1,34 @@
 'use strict';
 
-const program = require('commander');
 const log = require('npmlog');
 const fs = require('fs-extra');
-const lockfile = require('proper-lockfile');
 const compile = require('../functions/compile');
-
-program
-  .option('-o, --output <file>', 'the file to write to')
-  .option('--output-style <nested|expanded|compact|compressed>', 'CSS output style', 'nested')
-  .parse(process.argv);
 
 log.heading = 'dia';
 
-if (!program.args[0]) {
-  log.error('you must provide a file to compile');
-  log.error('not ok');
-  process.exit(1);
-}
+exports.command = 'compile <file>';
+exports.desc = 'compile a file';
+exports.aliases = ['c'];
+exports.builder = {
+  output: {
+    alias: 'o',
+    desc: 'the file to write to',
+  },
+  'output-style': {
+    desc: 'CSS output style',
+    default: 'nested',
+    choices: ['nested', 'expanded', 'compact', 'compressed'],
+  },
+};
 
-if (fs.existsSync('./diamond/.internal/packages.lock')) lockfile.lockSync('./diamond/.internal/packages.lock');
-
-compile(program.args[0], { outputStyle: program.outputStyle }).then((css) => {
-  if (program.output) {
-    fs.writeFileSync(program.output, css);
-    process.exit(0);
-  } else {
-    process.stdout.write(css);
-    process.exit(0);
-  }
-});
+exports.handler = (args) => {
+  compile(args.file, { outputStyle: args.outputStyle }).then((css) => {
+    if (args.output) {
+      fs.writeFileSync(args.output, css);
+      process.exit(0);
+    } else {
+      process.stdout.write(css);
+      process.exit(0);
+    }
+  });
+};

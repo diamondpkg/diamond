@@ -35,15 +35,31 @@ module.exports = (dependencies) => {
         name: dep,
         ref: match[6] || 'master',
       });
+    } else if (/^npm:([^/@]+?)(@([^/]+))?$/i.test(dependencies[dep]) && npmValidate(
+      dependencies[dep].match(/^npm:([^/@]+?)(@([^/]+))?$/i)[1]).validForOldPackages) {
+      const match = dependencies[dep].match(/^npm:([^/@]+?)(@([^/]+))?$/i);
+      if (semver.validRange(match[3])) {
+        deps.push({
+          type: 'npm',
+          name: match[1],
+          version: match[3],
+        });
+      } else {
+        deps.push({
+          type: 'npm',
+          name: match[1],
+          tag: match[3] || 'latest',
+        });
+      }
     } else if (npmValidate(dep).validForOldPackages && semver.validRange(dependencies[dep])) {
       deps.push({
-        type: 'npm',
+        type: 'diamond',
         name: dep,
         version: dependencies[dep],
       });
     } else if (npmValidate(dep).validForOldPackages) {
       deps.push({
-        type: 'npm',
+        type: 'diamond',
         name: dep,
         tag: dependencies[dep] || 'latest',
       });

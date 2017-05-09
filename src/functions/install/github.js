@@ -5,7 +5,7 @@ const userAgent = require('../../misc/userAgent');
 const log = require('npmlog');
 
 module.exports = (packages, pkg) => new Promise((resolve) => {
-  superagent.get(`https://raw.githubusercontent.com/${pkg.source.owner}/${pkg.source.repo}/${pkg.source.ref}/package.json`)
+  superagent.get(`https://raw.githubusercontent.com/${pkg.source.owner}/${pkg.source.repo}/${pkg.source.ref}/diamond.json`)
     .set(userAgent.superagent)
     .then((res) => {
       let info;
@@ -23,7 +23,7 @@ module.exports = (packages, pkg) => new Promise((resolve) => {
       } else {
         log.disableProgress();
         log.resume();
-        log.error(`error downloading package.json: ${res.status}`, `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
+        log.error(`error downloading diamond.json: ${res.status}`, `${pkg.source.owner}/${pkg.source.repo}#${pkg.source.ref}`);
         log.error('not ok');
         process.exit(1);
       }

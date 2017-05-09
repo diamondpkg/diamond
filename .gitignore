@@ -1,3 +1,6 @@
 diamond
 node_modules
 npm-debug.log*
+.diaignore
+diamond-config.yml
+diamond.json
