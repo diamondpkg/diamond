@@ -94,8 +94,8 @@ module.exports = (file, options) => new Promise((resolve) => {
 
   const importers = packages.filter(o => !!o.importer).map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.importer)))
     .concat(
-      packageJson.sass && packageJson.sass.importer ?
-        [require(path.join(process.cwd(), packageJson.sass.importer))] :
+      packageJson && packageJson.importer ?
+        [require(path.join(process.cwd(), packageJson.importer))] :
         []
     );
 
