@@ -1,6 +1,6 @@
 {
   "name": "diamondpkg",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Dependency management built for Sass, Less, and CSS.",
   "preferGlobal": true,
   "engines": {

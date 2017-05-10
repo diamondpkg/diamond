@@ -30,24 +30,37 @@ exports.handler = (args) => {
     process.exit(1);
   }
 
-  let packageJson;
+  let info = {};
   try {
-    packageJson = JSON.parse(fs.readFileSync('./diamond.json'));
+    info = JSON.parse(fs.readFileSync('./diamond.json'));
   } catch (err) {
-    log.error('no diamond.json found');
-    process.exit(1);
+    let packageJson;
+    try {
+      packageJson = JSON.parse(fs.readFileSync('./package.json'));
+    } catch (e) {
+      log.error('no \'diamond.json\' or \'package.json\' found');
+      process.exit(1);
+    }
+
+    info.name = packageJson.name;
+    info.version = packageJson.version;
+    info.description = packageJson.description;
+    info.main = packageJson.diamond || packageJson.sass || packageJson.less ||
+      (packageJson.main && !packageJson.main.endsWith('.js') ? packageJson.main : packageJson.style);
+
+    log.warn('using \'package.json\'', 'all fields may not be supported');
   }
 
-  if (!packageJson.name) {
+  if (!info.name) {
     log.error('no \'name\' field');
     process.exit(1);
-  } else if (!packageJson.version) {
+  } else if (!info.version) {
     log.error('no \'version\' field');
     process.exit(1);
-  } else if (!packageJson.description) {
+  } else if (!info.description) {
     log.error('no \'description\' field');
     process.exit(1);
-  } else if (!packageJson.main) {
+  } else if (!info.main) {
     log.warn('no \'main\' field');
   }
 
@@ -80,9 +93,9 @@ exports.handler = (args) => {
   });
 
   stream.on('end', () => {
-    superagent.post(`${config.registry}/package/${packageJson.name}`)
+    superagent.post(`${config.registry}/package/${info.name}`)
       .auth(auth.username, auth.password)
-      .field('package', JSON.stringify(packageJson))
+      .field('package', JSON.stringify(info))
       .field('readme', readme || '')
       .attach('dist', file, 'dist.tar.gz')
       .then((res) => {
