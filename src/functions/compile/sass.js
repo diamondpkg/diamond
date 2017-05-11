@@ -102,6 +102,7 @@ module.exports = (file, options) => new Promise((resolve) => {
   if (packageJson && packageJson.unify) {
     const plugin = require(path.join(process.cwd(), packageJson.unify)).toSass();
     importers = importers.concat(plugin.importers);
+    Object.assign(functions, plugin.functions);
   }
 
   sass.render({
