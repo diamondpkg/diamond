@@ -23,7 +23,7 @@ diamond supports node 4, 5, 6, and 7 **with npm 3 or 4** (Note: node 4 comes wit
 
 ## What data we collect
 Let's be upfront, we collect data. You will soon be able to limit the data we collect.
-All data is anonymous and linked together through a randomly generated UUID. This data
+All data is anonymous. This data
 is **not** shared with anyone outside of the diamond team.
 
 - OS type
@@ -34,7 +34,6 @@ is **not** shared with anyone outside of the diamond team.
 - npm version
 - diamond version
 - Errors
-- Packages you install
 
 ## Introduction
 diamond is a package manager for Sass and Less. diamond allows you to mix and match (most of the time) Sass and

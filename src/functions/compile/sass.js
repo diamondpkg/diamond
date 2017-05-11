@@ -92,17 +92,22 @@ module.exports = (file, options) => new Promise((resolve) => {
         []
     );
 
-  const importers = packages.filter(o => !!o.importer).map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.importer)))
+  let importers = packages.filter(o => !!o.importer).map(o => require(path.join(process.cwd(), 'diamond/packages', o.path, o.importer)))
     .concat(
       packageJson && packageJson.importer ?
         [require(path.join(process.cwd(), packageJson.importer))] :
         []
     );
 
+  if (packageJson && packageJson.unify) {
+    const plugin = require(path.join(process.cwd(), packageJson.unify)).toSass();
+    importers = importers.concat(plugin.importers);
+  }
+
   sass.render({
     file,
     outputStyle: options.outputStyle || 'nested',
-    importer: [importer].concat(importers),
+    importer: importers.concat([importer]),
     functions,
   }, (error, result) => {
     if (error) {
