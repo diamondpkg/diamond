@@ -1,7 +1,8 @@
 {
   "name": "diamondpkg",
   "version": "0.10.1",
-  "description": "Dependency management built for Sass, Less, and CSS.",
+  "description": "Dependency management built for Sass, Less, Stylus, and CSS.",
+  "main": "src/exports.js",
   "preferGlobal": true,
   "engines": {
     "npm": ">=3.0.0",

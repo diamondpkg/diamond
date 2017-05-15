@@ -11,6 +11,9 @@ const plugin = require('../../importers');
 global.compileCommand = true;
 
 module.exports = (file, options) => new Promise((resolve) => {
+  if (!options) options = {};
+  Object.assign(options, { outputStyle: 'nested' });
+
   let packages;
   try {
     packages = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
@@ -107,7 +110,7 @@ module.exports = (file, options) => new Promise((resolve) => {
 
   sass.render({
     file,
-    outputStyle: options.outputStyle || 'nested',
+    outputStyle: options.outputStyle,
     importer: importers.concat(plugin.sass.importers),
     functions,
   }, (error, result) => {
