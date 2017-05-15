@@ -6,7 +6,7 @@
     </a>
   </p>
   <br />
-  <p>Logo by <a href="https://github.com/Programmix">@Programmix</a></p>
+  <p>Logo by <a href="https://github.com/aemino">@aemino</a></p>
   <p>
     <a href="https://travis-ci.org/diamondpkg/diamond"><img src="https://travis-ci.org/diamondpkg/diamond.svg?branch=master" alt="Build status" /></a>
     <a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/diamondpkg/diamond.svg" alt="Greenkeeper" /></a>
