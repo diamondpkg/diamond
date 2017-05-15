@@ -27,34 +27,13 @@ fi
 printf "\nCompiling Less..."
 output=$(diamond c test/bootstrap.less)
 if [ $? -eq 0 ]; then
-    printf " \033[0;32mOK\033[0m\n"
-else
-    printf "\n$output"
-fi
-
-# Install
-printf "\n\nInstalling npm:bootstrap@4.0.0-alpha.6 (with namespacing)\n"
-diamond install npm:bootstrap@4.0.0-alpha.6 --no-save --no-cache --beta-namespacing
-
-# Test
-printf "Compiling Sass..."
-output=$(diamond c test/bootstrap.sass)
-if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
 else
     printf "\n$output"
 fi
 
-printf "\nCompiling Sass (with namespacing)..."
-output=$(diamond c test/bootstrap-ns.sass)
-if [ $? -eq 0 ]; then
-    printf " \033[0;32mOK\033[0m"
-else
-    printf "\n$output"
-fi
-
-printf "\nCompiling Less..."
-output=$(diamond c test/bootstrap.less)
+printf "\nCompiling Styl..."
+output=$(diamond c test/bootstrap.styl)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m\n"
 else
@@ -77,11 +56,18 @@ fi
 printf "\nCompiling Less..."
 output=$(diamond c test/bootstrap.less)
 if [ $? -eq 0 ]; then
-    printf " \033[0;32mOK\033[0m\n"
+    printf " \033[0;32mOK\033[0m"
 else
     printf "\n$output"
 fi
 
+printf "\nCompiling Styl..."
+output=$(diamond c test/bootstrap.styl)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m\n"
+else
+    printf "\n$output"
+fi
 
 # Install
 printf "\n\nInstalling npm:bootstrap@3.3.7\n"
@@ -104,6 +90,14 @@ else
     printf "\n$output"
 fi
 
+printf "\nCompiling Styl..."
+output=$(diamond c test/bootstrap.styl)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m\n"
+else
+    printf "\n$output"
+fi
+
 # Install
 printf "\n\nInstalling npm:bootstrap@3.3.7 (uncached)\n"
 diamond install npm:bootstrap@3.3.7 --no-cache --no-save
@@ -121,6 +115,14 @@ printf "\nCompiling Less..."
 output=$(diamond c test/bootstrap.less)
 if [ $? -eq 0 ]; then
     printf " \033[0;32mOK\033[0m"
+else
+    printf "\n$output"
+fi
+
+printf "\nCompiling Styl..."
+output=$(diamond c test/bootstrap.styl)
+if [ $? -eq 0 ]; then
+    printf " \033[0;32mOK\033[0m\n"
 else
     printf "\n$output"
 fi

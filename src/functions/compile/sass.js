@@ -6,7 +6,7 @@ const log = require('npmlog');
 const fs = require('fs-extra');
 const path = require('path');
 const async = require('async');
-const importer = require('../../importers/sass');
+const plugin = require('../../importers');
 
 global.compileCommand = true;
 
@@ -100,21 +100,22 @@ module.exports = (file, options) => new Promise((resolve) => {
     );
 
   if (packageJson && packageJson.unify) {
-    const plugin = require(path.join(process.cwd(), packageJson.unify)).toSass();
-    importers = importers.concat(plugin.importers);
-    Object.assign(functions, plugin.functions);
+    const plug = require(path.join(process.cwd(), packageJson.unify)).sass;
+    importers = importers.concat(plug.importers);
+    Object.assign(functions, plug.functions);
   }
 
   sass.render({
     file,
     outputStyle: options.outputStyle || 'nested',
-    importer: importers.concat([importer]),
+    importer: importers.concat(plugin.sass.importers),
     functions,
   }, (error, result) => {
     if (error) {
       log.disableProgress();
       log.resume();
       log.error('sass', error.message);
+      log.error('sass', error.stack);
       log.error('not ok');
       process.exit(1);
     }

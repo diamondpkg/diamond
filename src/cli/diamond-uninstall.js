@@ -16,8 +16,6 @@ exports.handler = (args) => {
   fs.ensureDirSync('./diamond/packages');
   fs.ensureFileSync('./diamond/.internal/packages.lock');
 
-  if (!fs.existsSync('./diamond/index.js')) fs.copySync(path.join(__dirname, '../importers/sass.js'), './diamond/index.js');
-
   const release = lockfile.lockSync('./diamond/.internal/packages.lock');
 
   let packages;

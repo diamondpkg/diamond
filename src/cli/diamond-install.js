@@ -16,10 +16,6 @@ exports.command = 'install [pkgs...]';
 exports.desc = 'install one or more packages';
 exports.aliases = ['i'];
 exports.builder = {
-  'beta-namespacing': {
-    boolean: true,
-    desc: 'Enable namespacing beta',
-  },
   save: {
     boolean: true,
     desc: 'Don\'t save packages in your diamond.json',
@@ -82,8 +78,6 @@ exports.handler = (args) => {
 
   fs.ensureDirSync('./diamond/packages');
   fs.ensureFileSync('./diamond/.internal/packages.lock');
-
-  if (!fs.existsSync('./diamond/index.js')) fs.copySync(path.join(__dirname, '../importers/sass.js'), './diamond/index.js');
 
   let label;
   if (packageJson.name && packageJson.version) {
