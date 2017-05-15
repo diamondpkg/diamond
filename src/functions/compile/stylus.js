@@ -1,3 +1,5 @@
+/* global cli:false */
+
 'use strict';
 
 const stylus = require('stylus');
@@ -9,7 +11,7 @@ const plugin = require('../../importers');
 
 global.compileCommand = true;
 
-module.exports = file => new Promise((resolve) => {
+module.exports = file => new Promise((resolve, reject) => {
   let packages;
   try {
     packages = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
@@ -22,7 +24,7 @@ module.exports = file => new Promise((resolve) => {
     packageJson = JSON.parse(fs.readFileSync('./diamond.json'));
   } catch (err) {
     packageJson = {};
-    log.info('no diamond.json found');
+    if (cli) log.info('no diamond.json found');
   }
 
   const plugins = [plugin.stylus];
@@ -47,12 +49,14 @@ module.exports = file => new Promise((resolve) => {
 
   style.render((error, css) => {
     if (error) {
-      log.disableProgress();
-      log.resume();
-      log.error('styl', error.message);
-      log.error('styl', error.stack);
-      log.error('not ok');
-      process.exit(1);
+      if (cli) {
+        log.disableProgress();
+        log.resume();
+        log.error('styl', error.message);
+        log.error('styl', error.stack);
+        log.error('not ok');
+        process.exit(1);
+      } else reject(error);
     }
 
     async.eachLimit(postProcessors, 1, (postProcessor, done) => {
@@ -60,38 +64,38 @@ module.exports = file => new Promise((resolve) => {
       try {
         res = postProcessor(css);
       } catch (err) {
-        if (typeof err === 'string') {
+        if (cli && typeof err === 'string') {
           log.disableProgress();
           log.resume();
           log.error('post install', err);
           log.error('not ok');
           process.exit(1);
-        } else {
+        } else if (cli) {
           log.disableProgress();
           log.resume();
           log.error('post install', err.message);
           log.error('not ok');
           process.exit(1);
-        }
+        } else reject(err);
       }
 
       Promise.resolve(res).then((newCss) => {
         css = newCss;
         done();
       }).catch((err) => {
-        if (typeof err === 'string') {
+        if (cli && typeof err === 'string') {
           log.disableProgress();
           log.resume();
           log.error('post install', err);
           log.error('not ok');
           process.exit(1);
-        } else {
+        } else if (cli) {
           log.disableProgress();
           log.resume();
           log.error('post install', err.message);
           log.error('not ok');
           process.exit(1);
-        }
+        } else reject(err);
       });
     }, () => {
       resolve(css);

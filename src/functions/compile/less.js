@@ -1,3 +1,5 @@
+/* global cli:false */
+
 'use strict';
 
 const less = require('less');
@@ -6,13 +8,13 @@ const log = require('npmlog');
 const fs = require('fs-extra');
 const plugin = require('../../importers');
 
-module.exports = filename => new Promise((resolve) => {
+module.exports = filename => new Promise((resolve, reject) => {
   let packageJson;
   try {
     packageJson = JSON.parse(fs.readFileSync('./diamond.json'));
   } catch (err) {
     packageJson = {};
-    log.info('no diamond.json found');
+    if (cli) log.info('no diamond.json found');
   }
 
   const plugins = [plugin.less];
@@ -25,11 +27,13 @@ module.exports = filename => new Promise((resolve) => {
     .then((result) => {
       resolve(result.css.toString());
     }).catch((error) => {
-      log.disableProgress();
-      log.resume();
-      log.error('less', error.message);
-      log.error('less', error.stack);
-      log.error('not ok');
-      process.exit(1);
+      if (cli) {
+        log.disableProgress();
+        log.resume();
+        log.error('less', error.message);
+        log.error('less', error.stack);
+        log.error('not ok');
+        process.exit(1);
+      } else reject(error);
     });
 });
