@@ -20,12 +20,12 @@
   },
   "keywords": [
     "diamond",
-    "package",
-    "manager",
+    "package manager",
     "css",
     "sass",
     "scss",
-    "less"
+    "less",
+    "stylus"
   ],
   "author": "Hackzzila",
   "license": "MIT",
