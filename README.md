@@ -9,7 +9,7 @@
   <p>Logo by <a href="https://github.com/Programmix">@Programmix</a></p>
   <p>
     <a href="https://travis-ci.org/diamondpkg/diamond"><img src="https://travis-ci.org/diamondpkg/diamond.svg?branch=master" alt="Build status" /></a>
-    <a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/diamondpkg/diamond.svg" alt="Greenkeeper" /></a>
+    <a href="https://david-dm.org/diamondpkg/diamond" title="dependencies status"><img src="https://david-dm.org/diamondpkg/diamond/status.svg"/></a>
     <img src="https://img.shields.io/node/v/diamondpkg.svg" alt="Node Version" />
     <img src="https://img.shields.io/badge/npm-%3E%3D3.0.0-brightgreen.svg" alt="npm Version" />
   </p>
