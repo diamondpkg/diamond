@@ -13,6 +13,11 @@ const regex = {
   stylus: /\.styl$/,
 };
 
+function packagePath(pkg) {
+  if (pkg.current) return '';
+  return path.join('diamond/packages', pkg.path);
+}
+
 class Importer extends unify.ImportController {
   supports(name) {
     return /^~([^\s/]+)(.*)$/.test(name);
@@ -33,6 +38,26 @@ class Importer extends unify.ImportController {
       packages = [];
     }
 
+    let current;
+    try {
+      current = JSON.parse(fs.readFileSync('./diamond.json'));
+    } catch (err) {
+      try {
+        current = JSON.parse(fs.readFileSync('./package.json'));
+      } catch (_) {
+        current = {};
+      }
+    }
+
+    if (current.name) {
+      packages.push({
+        name: current.name,
+        current: true,
+        version: current.version,
+        main: current.diamond || current.sass || current.less || (current.main && !current.main.endsWith('.js') ? current.main : current.style),
+      });
+    }
+
     if (!packages.length) {
       release();
       return Promise.reject(new Error('no packages installed'));
@@ -47,7 +72,8 @@ class Importer extends unify.ImportController {
         return p.path === `${currentPkg}/diamond/packages/${match[1]}`;
       }) || packages.find(p => p.path === match[1]);
     } else {
-      pkg = packages.find(p => p.path === match[1]);
+      pkg = packages.find(p => p.path === match[1]) ||
+        packages.find(p => p.current && p.name === match[1]);
     }
 
     if (!pkg) {
@@ -59,30 +85,30 @@ class Importer extends unify.ImportController {
     if (match[2]) {
       release();
       try {
-        fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, match[2]));
+        fs.accessSync(path.join(process.cwd(), packagePath(pkg), match[2]));
       } catch (err) {
         return Promise.reject(new Error(`could not find file '${path.join(match[1], match[2])}'`));
       }
 
-      p = path.join(process.cwd(), 'diamond/packages', pkg.path, match[2]);
+      p = path.join(process.cwd(), packagePath(pkg), match[2]);
     } else if (pkg.main) {
       release();
       try {
-        fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main));
+        fs.accessSync(path.join(process.cwd(), packagePath(pkg), pkg.main));
       } catch (err) {
         return Promise.reject(new Error(`could not find file '${path.join(match[1], pkg.main)}' this is likely a problem with the package itself`));
       }
 
       if (regex[lang].test(pkg.main)) {
-        p = path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main);
+        p = path.join(process.cwd(), packagePath(pkg), pkg.main);
       } else {
         try {
-          fs.accessSync(path.join(process.cwd(), 'diamond/packages', pkg.path, 'diamond/dist/main.css'));
+          fs.accessSync(path.join(process.cwd(), packagePath(pkg), 'diamond/dist/main.css'));
         } catch (err) {
           return Promise.reject(new Error('could not find dist files, try reinstalling'));
         }
 
-        p = path.join(process.cwd(), 'diamond/packages', pkg.path, 'diamond/dist/main.css');
+        p = path.join(process.cwd(), packagePath(pkg), 'diamond/dist/main.css');
       }
     } else {
       release();
