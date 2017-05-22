@@ -1,0 +1,24 @@
+getting-started: 
+  - title: Getting Started
+    path: index
+cli:
+  - title: CLI Introduction
+    path: index
+  - title: diamond author
+    path: author
+  - title: diamond compile
+    path: compile
+  - title: diamond init
+    path: init
+  - title: diamond install
+    path: install
+  - title: diamond login
+    path: login
+  - title: diamond publish
+    path: publish
+  - title: diamond tag
+    path: tag
+  - title: diamond uninstall
+    path: uninstall
+  - title: diamond unpublish
+    path: unpublish
