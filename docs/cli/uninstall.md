@@ -15,5 +15,5 @@ alias: diamond u
   Uninstalls a package and removes it from your `diamond.json` file.
 
 ```
-diamond uinstall sierra
+diamond uninstall sierra
 ```
