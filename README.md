@@ -21,20 +21,6 @@
 ## Supported Environments
 diamond supports node 4, 5, 6, and 7 **with npm 3 or 4** (Note: node 4 comes with npm **2**)
 
-## What data we collect
-Let's be upfront, we collect data. You will soon be able to limit the data we collect.
-All data is anonymous. This data
-is **not** shared with anyone outside of the diamond team.
-
-- OS type
-- OS name
-- OS version
-- Node architecture
-- Node version
-- npm version
-- diamond version
-- Errors
-
 ## Introduction
 diamond is a package manager for Sass and Less. diamond allows you to mix and match (most of the time) Sass and
 Less packages. You can also ship custom functions to be run after compiling, or even Less plugins and Sass importers
