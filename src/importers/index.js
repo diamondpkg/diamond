@@ -99,7 +99,7 @@ class Importer extends unify.ImportController {
         return Promise.reject(new Error(`could not find file '${path.join(match[1], pkg.main)}' this is likely a problem with the package itself`));
       }
 
-      if (regex[lang].test(pkg.main)) {
+      if (regex[lang].test(pkg.main) || /.css/.test(pkg.main)) {
         p = path.join(process.cwd(), packagePath(pkg), pkg.main);
       } else {
         try {
