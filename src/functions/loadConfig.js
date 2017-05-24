@@ -8,7 +8,7 @@ const path = require('path');
 
 log.heading = 'dia';
 
-const defaults = { registry: 'https://registry.hackzzila.com' };
+const defaults = { registry: 'https://registry.diamondpkg.org' };
 
 fs.ensureDirSync(path.join(os.homedir(), '.diamond'));
 if (!fs.existsSync(path.join(os.homedir(), '.diamond/config.yml'))) fs.writeFileSync(path.join(os.homedir(), '.diamond/config.yml'), yaml.safeDump(defaults));
