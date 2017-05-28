@@ -88,7 +88,7 @@ module.exports = (file, options) => new Promise((resolve, reject) => {
         log.error('sass', error.stack);
         log.error('not ok');
         process.exit(1);
-      } else reject(error);
+      } else return reject(error);
     }
 
     let css = result.css.toString();
@@ -110,7 +110,7 @@ module.exports = (file, options) => new Promise((resolve, reject) => {
           log.error('post install', err.message);
           log.error('not ok');
           process.exit(1);
-        } else reject(err);
+        } else return reject(err);
       }
 
       Promise.resolve(res).then((newCss) => {
@@ -129,10 +129,15 @@ module.exports = (file, options) => new Promise((resolve, reject) => {
           log.error('post install', err.message);
           log.error('not ok');
           process.exit(1);
-        } else reject(err);
+        } else return reject(err);
+        return undefined;
       });
+
+      return undefined;
     }, () => {
       resolve(css);
     });
+
+    return undefined;
   });
 });
