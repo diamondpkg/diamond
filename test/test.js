@@ -39,6 +39,11 @@ for (const library of libraries) {
         }
       });
 
+      test('css', () => {
+        fs.writeFileSync(`${library.folder}.css`, fs.readFileSync('diamond/autoload.css', 'utf8'));
+        expect(fs.readFileSync(`test/${library.folder}/test.css`, 'utf8')).toBe(fs.readFileSync('diamond/autoload.css', 'utf8'));
+      });
+
       describe('CLI', () => {
         for (const lang of ['sass', 'less', 'styl']) {
           test(lang, () => {
@@ -62,6 +67,18 @@ for (const library of libraries) {
               });
           });
         }
+      });
+
+      describe('uninstall', () => {
+        test('uninstall', () => {
+          const result = childProcess.spawnSync('diamond', ['u', library.package]);
+          if (result.status !== 0) {
+            throw new Error(`STDOUT:\n${result.stdout}\n\n-----\n\nSTDERR:\n${result.stderr}`);
+          } else {
+            expect(fs.existsSync(`diamond/packages/${library.package}`)).toBe(false);
+            expect(fs.readFileSync('diamond/autoload.css', 'utf8')).toBe('');
+          }
+        });
       });
     });
   }

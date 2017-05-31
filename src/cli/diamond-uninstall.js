@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const log = require('npmlog');
 const path = require('path');
 const lockfile = require('proper-lockfile');
+const autoload = require('../functions/autoload');
 
 log.heading = 'dia';
 
@@ -46,4 +47,6 @@ exports.handler = (args) => {
   fs.writeFileSync('./diamond/.internal/packages.lock', JSON.stringify(packages));
 
   release();
+
+  autoload();
 };

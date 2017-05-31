@@ -2,11 +2,10 @@
 
 const fs = require('fs-extra');
 const log = require('npmlog');
-const path = require('path');
 const async = require('async');
-const lockfile = require('proper-lockfile');
 const archy = require('archy');
 const install = require('../functions/install');
+const autoload = require('../functions/autoload');
 const parsePackageString = require('../functions/parsePackageString');
 const parsePackageObject = require('../functions/parsePackageObject');
 
@@ -113,20 +112,8 @@ exports.handler = (args) => {
       done();
     });
   }, () => {
-    const release = lockfile.lockSync('./diamond/.internal/packages.lock');
-    let autoload = '';
-    const installed = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
-    for (const installedPkg of installed) {
-      if (!installedPkg.for && fs.existsSync(path.join(process.cwd(), 'diamond/packages', installedPkg.path, 'diamond/dist/main.css'))) {
-        autoload += `${fs.readFileSync(path.join(process.cwd(), 'diamond/packages', installedPkg.path, 'diamond/dist/main.css'))}\n\n`;
-      } else if (!installedPkg.for && installedPkg.main.endsWith('.css')) {
-        autoload += `${fs.readFileSync(path.join(process.cwd(), 'diamond/packages', installedPkg.path, installedPkg.main))}\n\n`;
-      }
-    }
+    autoload();
 
-    fs.writeFileSync('./diamond/autoload.css', autoload.trim());
-
-    release();
     if (args.save) fs.writeFileSync('./diamond.json', JSON.stringify(packageJson, null, 2));
 
     process.stderr.write(`${archy(tree)}\n`);
