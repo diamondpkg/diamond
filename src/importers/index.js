@@ -99,16 +99,16 @@ class Importer extends unify.ImportController {
         return Promise.reject(new Error(`could not find file '${path.join(match[1], pkg.main)}' this is likely a problem with the package itself`));
       }
 
-      if (regex[lang].test(pkg.main) || /\.css/.test(pkg.main)) {
+      if (regex[lang].test(pkg.main) || (/\.css/.test(pkg.main) && lang !== 'stylus')) {
         p = path.join(process.cwd(), packagePath(pkg), pkg.main);
       } else {
         try {
-          fs.accessSync(path.join(process.cwd(), packagePath(pkg), 'diamond/dist/main.css'));
+          fs.accessSync(path.join(process.cwd(), packagePath(pkg), lang !== 'stylus' ? 'diamond/dist/main.css' : 'diamond/dist/main.styl'));
         } catch (err) {
           return Promise.reject(new Error('could not find dist files, try reinstalling'));
         }
 
-        p = path.join(process.cwd(), packagePath(pkg), 'diamond/dist/main.css');
+        p = path.join(process.cwd(), packagePath(pkg), lang !== 'stylus' ? 'diamond/dist/main.css' : 'diamond/dist/main.styl');
       }
     } else {
       release();

@@ -9,8 +9,9 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "depcheck": "depcheck --ignores=eslint,eslint-config-airbnb-base,eslint-plugin-import",
-    "test": "npm run depcheck && eslint src/* && bash test/test.sh"
+    "depcheck": "depcheck",
+    "lint": "eslint src/*",
+    "test": "npm run depcheck && npm run lint && jest"
   },
   "bin": {
     "diamond": "src/cli/diamond.js"
@@ -39,6 +40,7 @@
     "async": "^2.1.4",
     "chalk": "^1.1.3",
     "chokidar": "^1.7.0",
+    "css-to-stylus-converter": "^1.1.2",
     "fs-extra": "^2.0.0",
     "fstream": "^1.0.11",
     "ignore-file": "^1.1.2",
@@ -63,6 +65,7 @@
     "depcheck": "^0.6.7",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.1.3",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "jest": "^20.0.4"
   }
 }

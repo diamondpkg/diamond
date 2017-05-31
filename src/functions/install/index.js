@@ -21,6 +21,7 @@ const fstream = require('fstream');
 const userAgent = require('../../misc/userAgent');
 const compile = require('../compile');
 const parsePackageObject = require('../parsePackageObject');
+const convertStylus = require('css-to-stylus-converter');
 
 module.exports = (pkg, options) => new Promise((resolve) => {
   let packages;
@@ -108,7 +109,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
     if (pkg.version) verString = `@${pkg.version}`;
     else if (pkg.ref) verString = `#${pkg.ref}`;
 
-    if (options.cache && fs.existsSync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))) {
+    if (pkg.source.type === 'diamond' && options.cache && fs.existsSync(path.join(os.homedir(), '.diamond/package-cache', `${pkg.name}${verString}.tar.gz`))) {
       const extract = tar.Extract({ path: path.join('./diamond/packages') });
 
       log.setGaugeTemplate([
@@ -284,13 +285,14 @@ module.exports = (pkg, options) => new Promise((resolve) => {
         }, () => {
           const pulse = () => log.gauge.pulse();
           new Promise((rsolve) => {
-            if (/\.sass|\.scss|\.less/.test(pkg.main)) {
+            if (/\.sass|\.scss|\.less|\.styl/.test(pkg.main)) {
               log.enableProgress();
               setInterval(pulse, 100);
               log.gauge.show({ section: 'compiling', logline: pkg.main }, 0);
               compile(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), { outputStyle: 'compressed' })
                 .then((css) => {
                   fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), css);
+                  fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.styl'), convertStylus(css));
                   log.gauge.show({ section: 'compiling', logline: pkg.main }, 1);
                   rsolve();
                 });
@@ -305,6 +307,10 @@ module.exports = (pkg, options) => new Promise((resolve) => {
               ':',
               { type: 'logline', kerning: 1, default: '' },
             ]);
+
+            if (pkg.main.endsWith('.css')) {
+              fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.styl'), convertStylus(fs.readFileSync(path.join('./diamond/packages', pkg.path, pkg.main), 'utf8')));
+            }
 
             const finish = () => {
               if (pkg.name && pkg.version) {
