@@ -292,6 +292,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
               compile(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), { outputStyle: 'compressed' })
                 .then((css) => {
                   fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), css);
+                  fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.scss'), css);
                   fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.styl'), convertStylus(css));
                   log.gauge.show({ section: 'compiling', logline: pkg.main }, 1);
                   rsolve();
@@ -309,6 +310,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
             ]);
 
             if (pkg.main.endsWith('.css')) {
+              fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.scss'), fs.readFileSync(path.join('./diamond/packages', pkg.path, pkg.main), 'utf8'));
               fs.writeFileSync(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.styl'), convertStylus(fs.readFileSync(path.join('./diamond/packages', pkg.path, pkg.main), 'utf8')));
             }
 
