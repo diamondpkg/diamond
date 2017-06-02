@@ -4,3 +4,6 @@ npm-debug.log*
 .diaignore
 diamond-config.yml
 diamond.json
+lib
+deploy/deploy_key
+deploy/deploy_key.pub

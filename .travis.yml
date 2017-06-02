@@ -3,11 +3,15 @@ node_js:
   - "4"
   - "5"
   - "6"
+  - "7.5"
   - "7"
 before_install: bash test/npm.sh
 install:
   - npm i
   - npm link
+script:
+  - npm run build
+  - npm test
 cache:
   directories:
     - node_modules
@@ -23,3 +27,9 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.8
+    - stage: Babel
+      node_js: "7"
+      env:
+        - ENCRYPTION_LABEL: 614fe36bb44f
+        - COMMIT_AUTHOR_EMAIL: hackzzila@gmail.com
+      script: bash deploy/deploy.sh

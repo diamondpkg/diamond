@@ -40,7 +40,6 @@ for (const library of libraries) {
       });
 
       test('css', () => {
-        fs.writeFileSync(`${library.folder}.css`, fs.readFileSync('diamond/autoload.css', 'utf8'));
         expect(fs.readFileSync(`test/${library.folder}/test.css`, 'utf8')).toBe(fs.readFileSync('diamond/autoload.css', 'utf8'));
       });
 

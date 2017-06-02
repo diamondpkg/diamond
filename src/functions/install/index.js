@@ -47,9 +47,7 @@ module.exports = (pkg, options) => new Promise((resolve) => {
   }
 
   promise.then((data) => {
-    const info = data[0];
-    const url = data[1];
-    const shasum = data[2];
+    const [info, url, shasum] = data;
 
     if (info && pkg.source.type !== 'npm') {
       pkg.name = pkg.name || info.name || pkg.source.repo;
