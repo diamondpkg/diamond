@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e # Exit with nonzero exit code if anything fails
 
-SOURCE_BRANCH="master"
-TARGET_BRANCH="master"
+SOURCE_BRANCH="async-rewrite"
+TARGET_BRANCH="async-rewrite"
 
 function doCompile {
   npm run build
