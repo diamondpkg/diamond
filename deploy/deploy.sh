@@ -27,7 +27,6 @@ SHA=`git rev-parse --verify HEAD`
 
 # Checkout to correct branch
 git checkout $TARGET_BRANCH
-rm -rf lib/
 
 # Run our compile script
 doCompile
@@ -35,6 +34,8 @@ doCompile
 # Now let's go have some fun with the cloned repo
 git config user.name "HackzziaBot"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
+
+git diff
 
 # If there are no changes to the compiled out (e.g. this is a README update) then just bail.
 if git diff --quiet; then
