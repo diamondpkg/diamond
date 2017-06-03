@@ -27,6 +27,7 @@ SHA=`git rev-parse --verify HEAD`
 
 # Checkout to correct branch
 git checkout $TARGET_BRANCH
+rm -rf lib/
 
 # Run our compile script
 doCompile
