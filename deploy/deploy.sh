@@ -20,6 +20,9 @@ REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
+# Checkout to correct branch
+git checkout $TARGET_BRANCH
+
 # Run our compile script
 doCompile
 
