@@ -111,8 +111,8 @@ exports.handler = (args) => {
 
       done();
     });
-  }, () => {
-    autoload();
+  }, async () => {
+    await autoload();
 
     if (args.save) fs.writeFileSync('./diamond.json', JSON.stringify(packageJson, null, 2));
 

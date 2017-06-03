@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const lockfile = require('proper-lockfile');
 
-module.exports = () => {
+module.exports = async () => {
   const release = lockfile.lockSync('./diamond/.internal/packages.lock');
   let autoload = '';
   const installed = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
@@ -16,7 +16,7 @@ module.exports = () => {
     }
   }
 
-  fs.writeFileSync('./diamond/autoload.css', autoload.trim());
+  await fs.writeFile('./diamond/autoload.css', autoload.trim());
 
   release();
 };

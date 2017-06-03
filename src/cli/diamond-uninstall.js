@@ -13,7 +13,7 @@ exports.desc = 'Uninstall one or more packages';
 exports.aliases = ['u'];
 exports.builder = {};
 
-exports.handler = (args) => {
+exports.handler = async (args) => {
   fs.ensureDirSync('./diamond/packages');
   fs.ensureFileSync('./diamond/.internal/packages.lock');
 
@@ -48,5 +48,5 @@ exports.handler = (args) => {
 
   release();
 
-  autoload();
+  await autoload();
 };
