@@ -3,7 +3,7 @@
 # Exit on errors
 set -e
 
-if [ "$TRAVIS_COMMIT_MESSAGE" == "Babel Build"* ]; then
+if [[ $TRAVIS_COMMIT_MESSAGE == Babel\ Build:* ]]; then
   echo "Ignoring automated build."
   exit 0
 fi
