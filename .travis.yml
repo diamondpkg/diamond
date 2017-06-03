@@ -33,3 +33,4 @@ matrix:
         - ENCRYPTION_LABEL: 614fe36bb44f
         - COMMIT_AUTHOR_EMAIL: hackzzila@gmail.com
       script: bash deploy/deploy.sh
+      install: npm i
