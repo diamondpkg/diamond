@@ -7,31 +7,28 @@ const compileSass = require('./sass');
 const compileLess = require('./less');
 const compileStyl = require('./stylus');
 const log = require('npmlog');
+const co = require('co');
 
 log.heading = 'dia';
 
-module.exports = (file, options) => new Promise((resolve, reject) => {
-  fs.ensureDirSync('./diamond/packages');
-  fs.ensureFileSync('./diamond/.internal/packages.lock');
+module.exports = co.wrap(function* fn(file, options) {
+  yield fs.ensureDir('./diamond/packages');
+  yield fs.ensureFile('./diamond/.internal/packages.lock');
 
-  let promise;
   if (/\.sass|\.scss/.test(file)) {
-    promise = compileSass(file, options);
+    return yield compileSass(file, options);
   } else if (/\.less/.test(file)) {
-    promise = compileLess(file, options);
+    return yield compileLess(file, options);
   } else if (/\.styl/.test(file)) {
-    promise = compileStyl(file, options);
+    return yield compileStyl(file, options);
   } else if (cli) {
     log.resume();
     log.error('unsupported file type');
     log.error('not ok');
     process.exit(1);
   } else {
-    reject(new Error('unsupported file type'));
+    throw new Error('unsupported file type');
   }
 
-  promise.then((css) => {
-    resolve(css);
-  })
-  .catch(e => reject(e));
+  return undefined;
 });

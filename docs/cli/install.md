@@ -10,7 +10,7 @@ diamond install <owner>/<repo>[#<ref>]
 diamond install gitlab:<owner>/<repo>[#<ref>]
 
 alias: diamond i
-common options: [--no-save] [--no-cache]
+common options: [--no-save] [--no-cache] [--offline]
 ```
 
 ## Description
@@ -145,3 +145,7 @@ diamond i sierra kurisubrooks/caramel
 ### **`--no-cache`**
 
   If specified, the package will not be pulled from the cache, and the cache will be updated after installation.
+
+### **`--offline`**
+
+  Forces diamond to use offline mode.

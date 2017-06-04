@@ -28,11 +28,15 @@ const libraries = [
 ];
 
 for (const library of libraries) {
-  for (const cache of [true, false]) {
-    describe(`${library.name} (${cache ? 'Cache Enabled' : 'Cache Disabled'})`, () => {
+  for (const mode of [0, 1, 2]) {
+    if (library.folder === 'sierra-github' && mode !== 0) continue;
+
+    describe(`${library.name} (${['Cache Enabled', 'Cache Disabled', 'Offline'][mode]})`, () => {
       test('install', () => {
         const otherArgs = [];
-        if (!cache) otherArgs.push('--no-cache');
+        if (mode === 1) otherArgs.push('--no-cache');
+        else if (mode === 2) otherArgs.push('--offline');
+
         const result = childProcess.spawnSync('diamond', ['i', '--no-save', library.install].concat(otherArgs));
         if (result.status !== 0) {
           throw new Error(`STDOUT:\n${result.stdout}\n\n-----\n\nSTDERR:\n${result.stderr}`);
@@ -40,7 +44,6 @@ for (const library of libraries) {
       });
 
       test('css', () => {
-        fs.writeFileSync(`${library.folder}.css`, fs.readFileSync('diamond/autoload.css', 'utf8'));
         expect(fs.readFileSync(`test/${library.folder}/test.css`, 'utf8')).toBe(fs.readFileSync('diamond/autoload.css', 'utf8'));
       });
 

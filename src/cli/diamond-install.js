@@ -2,7 +2,7 @@
 
 const fs = require('fs-extra');
 const log = require('npmlog');
-const async = require('async');
+const co = require('co');
 const archy = require('archy');
 const install = require('../functions/install');
 const autoload = require('../functions/autoload');
@@ -25,9 +25,16 @@ exports.builder = {
     desc: 'Don\'t pull packages from the package cache',
     default: true,
   },
+  offline: {
+    boolean: true,
+    desc: 'Force offline mode',
+    default: false,
+  },
 };
 
-exports.handler = (args) => {
+exports.handler = co.wrap(function* fn(args) {
+  global.offline = args.offline;
+
   let packageJson;
   try {
     packageJson = JSON.parse(fs.readFileSync('./diamond.json'));
@@ -92,32 +99,30 @@ exports.handler = (args) => {
     nodes: [],
   };
 
-  async.eachLimit(packages, 1, (pkg, done) => {
+  for (let pkg of packages) {
     log.pause();
     log.gauge.enable();
-    install(pkg, args).then((data) => {
-      tree.nodes.push(data[0]);
 
-      pkg = data[1];
-      if (args.save) {
-        if (pkg.source.type === 'diamond') {
-          packageJson.dependencies[pkg.name] = `^${pkg.version}`;
-        } else if (pkg.source.type === 'npm') {
-          packageJson.dependencies[pkg.name] = `npm:${pkg.name}@^${pkg.version}`;
-        } else {
-          packageJson.dependencies[pkg.name] = `${pkg.source.type}:${pkg.source.owner}/${pkg.source.repo}${pkg.source.ref ? `#${pkg.source.ref}` : ''}`;
-        }
+    const data = yield install(pkg, args);
+    tree.nodes.push(data[0]);
+
+    pkg = data[1];
+    if (args.save) {
+      if (pkg.source.type === 'diamond') {
+        packageJson.dependencies[pkg.name] = `^${pkg.version}`;
+      } else if (pkg.source.type === 'npm') {
+        packageJson.dependencies[pkg.name] = `npm:${pkg.name}@^${pkg.version}`;
+      } else {
+        packageJson.dependencies[pkg.name] = `${pkg.source.type}:${pkg.source.owner}/${pkg.source.repo}${pkg.source.ref ? `#${pkg.source.ref}` : ''}`;
       }
+    }
+  }
 
-      done();
-    });
-  }, () => {
-    autoload();
+  autoload();
 
-    if (args.save) fs.writeFileSync('./diamond.json', JSON.stringify(packageJson, null, 2));
+  if (args.save) fs.writeFileSync('./diamond.json', JSON.stringify(packageJson, null, 2));
 
-    process.stderr.write(`${archy(tree)}\n`);
-    log.resume();
-    process.exit(0);
-  });
-};
+  process.stderr.write(`${archy(tree)}\n`);
+  log.resume();
+  process.exit(0);
+});

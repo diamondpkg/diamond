@@ -6,22 +6,21 @@ const stylus = require('stylus');
 const log = require('npmlog');
 const fs = require('fs-extra');
 const path = require('path');
-const async = require('async');
 const plugin = require('../../importers');
 
 global.compileCommand = true;
 
-module.exports = file => new Promise((resolve, reject) => {
+module.exports = function* fn(file) {
   let packages;
   try {
-    packages = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
+    packages = JSON.parse(yield fs.readFile('./diamond/.internal/packages.lock'));
   } catch (err) {
     packages = [];
   }
 
   let packageJson;
   try {
-    packageJson = JSON.parse(fs.readFileSync('./diamond.json'));
+    packageJson = JSON.parse(yield fs.readFile('./diamond.json'));
   } catch (err) {
     packageJson = {};
     if (cli) log.info('no diamond.json found');
@@ -40,71 +39,46 @@ module.exports = file => new Promise((resolve, reject) => {
       []
   );
 
-  const style = stylus(fs.readFileSync(file).toString())
+  const style = stylus(yield fs.readFile(file, 'utf8'))
     .set('filename', file);
 
   for (const plug of plugins) {
     style.use(plug);
   }
 
-  style.render((error, css) => {
-    if (error) {
-      if (cli) {
+  let css;
+  try {
+    css = style.render();
+  } catch (error) {
+    if (cli) {
+      log.disableProgress();
+      log.resume();
+      log.error('styl', error.message);
+      log.error('styl', error.stack);
+      log.error('not ok');
+      process.exit(1);
+    } else throw error;
+  }
+
+  for (const postProcessor of postProcessors) {
+    try {
+      css = yield postProcessor(css);
+    } catch (err) {
+      if (cli && typeof err === 'string') {
         log.disableProgress();
         log.resume();
-        log.error('styl', error.message);
-        log.error('styl', error.stack);
+        log.error('post install', err);
         log.error('not ok');
         process.exit(1);
-      } else return reject(error);
+      } else if (cli) {
+        log.disableProgress();
+        log.resume();
+        log.error('post install', err.message);
+        log.error('not ok');
+        process.exit(1);
+      } else throw err;
     }
+  }
 
-    async.eachLimit(postProcessors, 1, (postProcessor, done) => {
-      let res;
-      try {
-        res = postProcessor(css);
-      } catch (err) {
-        if (cli && typeof err === 'string') {
-          log.disableProgress();
-          log.resume();
-          log.error('post install', err);
-          log.error('not ok');
-          process.exit(1);
-        } else if (cli) {
-          log.disableProgress();
-          log.resume();
-          log.error('post install', err.message);
-          log.error('not ok');
-          process.exit(1);
-        } else return reject(err);
-      }
-
-      Promise.resolve(res).then((newCss) => {
-        css = newCss;
-        done();
-      }).catch((err) => {
-        if (cli && typeof err === 'string') {
-          log.disableProgress();
-          log.resume();
-          log.error('post install', err);
-          log.error('not ok');
-          process.exit(1);
-        } else if (cli) {
-          log.disableProgress();
-          log.resume();
-          log.error('post install', err.message);
-          log.error('not ok');
-          process.exit(1);
-        } else return reject(err);
-
-        return undefined;
-      });
-
-      return undefined;
-    }, () => {
-      resolve(css);
-    });
-
-    return undefined;
-  });
-});
+  return css;
+};

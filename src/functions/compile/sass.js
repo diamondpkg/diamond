@@ -6,25 +6,25 @@ const sass = require('node-sass');
 const log = require('npmlog');
 const fs = require('fs-extra');
 const path = require('path');
-const async = require('async');
+const bleubird = require('bluebird');
 const plugin = require('../../importers');
 
 global.compileCommand = true;
 
-module.exports = (file, options) => new Promise((resolve, reject) => {
+module.exports = function* fn(file, options) {
   if (!options) options = {};
   Object.assign(options, { outputStyle: 'nested' });
 
   let packages;
   try {
-    packages = JSON.parse(fs.readFileSync('./diamond/.internal/packages.lock'));
+    packages = JSON.parse(yield fs.readFile('./diamond/.internal/packages.lock'));
   } catch (err) {
     packages = [];
   }
 
   let packageJson;
   try {
-    packageJson = JSON.parse(fs.readFileSync('./diamond.json'));
+    packageJson = JSON.parse(yield fs.readFile('./diamond.json'));
   } catch (err) {
     packageJson = {};
     if (cli) log.info('no diamond.json found');
@@ -74,70 +74,46 @@ module.exports = (file, options) => new Promise((resolve, reject) => {
     Object.assign(functions, plug.functions);
   }
 
-  sass.render({
-    file,
-    outputStyle: options.outputStyle,
-    importer: importers.concat(plugin.sass.importers),
-    functions,
-  }, (error, result) => {
-    if (error) {
-      if (cli) {
+  let result;
+  try {
+    result = yield bleubird.promisify(sass.render)({
+      file,
+      outputStyle: options.outputStyle,
+      importer: importers.concat(plugin.sass.importers),
+      functions,
+    });
+  } catch (error) {
+    if (cli) {
+      log.disableProgress();
+      log.resume();
+      log.error('sass', error.message);
+      log.error('sass', error.stack);
+      log.error('not ok');
+      process.exit(1);
+    } else throw error;
+  }
+
+  let css = result.css.toString();
+
+  for (const postProcessor of postProcessors) {
+    try {
+      css = yield postProcessor(css);
+    } catch (err) {
+      if (cli && typeof err === 'string') {
         log.disableProgress();
         log.resume();
-        log.error('sass', error.message);
-        log.error('sass', error.stack);
+        log.error('post install', err);
         log.error('not ok');
         process.exit(1);
-      } else return reject(error);
+      } else if (cli) {
+        log.disableProgress();
+        log.resume();
+        log.error('post install', err.message);
+        log.error('not ok');
+        process.exit(1);
+      } else throw err;
     }
+  }
 
-    let css = result.css.toString();
-
-    async.eachLimit(postProcessors, 1, (postProcessor, done) => {
-      let res;
-      try {
-        res = postProcessor(css);
-      } catch (err) {
-        if (cli && typeof err === 'string') {
-          log.disableProgress();
-          log.resume();
-          log.error('post install', err);
-          log.error('not ok');
-          process.exit(1);
-        } else if (cli) {
-          log.disableProgress();
-          log.resume();
-          log.error('post install', err.message);
-          log.error('not ok');
-          process.exit(1);
-        } else return reject(err);
-      }
-
-      Promise.resolve(res).then((newCss) => {
-        css = newCss;
-        done();
-      }).catch((err) => {
-        if (cli && typeof err === 'string') {
-          log.disableProgress();
-          log.resume();
-          log.error('post install', err);
-          log.error('not ok');
-          process.exit(1);
-        } else if (cli) {
-          log.disableProgress();
-          log.resume();
-          log.error('post install', err.message);
-          log.error('not ok');
-          process.exit(1);
-        } else return reject(err);
-        return undefined;
-      });
-
-      return undefined;
-    }, () => {
-      resolve(css);
-    });
-
-    return undefined;
-  });
-});
+  return css;
+};

@@ -29,6 +29,7 @@ process.on('unhandledRejection', (error) => {
   log.error('error');
   log.error('error', 'You have encountered an error, please report the information above to the diamond team.');
   log.error('error', 'You can make a new issue here https://github.com/diamondpkg/diamond/issues/new');
+  process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {
@@ -43,4 +44,5 @@ process.on('uncaughtException', (error) => {
   log.error('error');
   log.error('error', 'You have encountered an error, please report the information above to the diamond team.');
   log.error('error', 'You can make a new issue here https://github.com/diamondpkg/diamond/issues/new');
+  process.exit(1);
 });
