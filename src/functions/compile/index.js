@@ -11,16 +11,18 @@ const co = require('co');
 
 log.heading = 'dia';
 
-module.exports = co.wrap(function* fn(file, options) {
+module.exports = co.wrap(function* fn(filename, options) {
   yield fs.ensureDir('./diamond/packages');
   yield fs.ensureFile('./diamond/.internal/packages.lock');
 
-  if (/\.sass|\.scss/.test(file)) {
-    return yield compileSass(file, options);
-  } else if (/\.less/.test(file)) {
-    return yield compileLess(file, options);
-  } else if (/\.styl/.test(file)) {
-    return yield compileStyl(file, options);
+  const data = yield fs.readFile(filename, 'utf8');
+
+  if (/\.sass|\.scss/.test(filename)) {
+    return yield compileSass(data, filename, options);
+  } else if (/\.less/.test(filename)) {
+    return yield compileLess(data, filename, options);
+  } else if (/\.styl/.test(filename)) {
+    return yield compileStyl(data, filename, options);
   } else if (cli) {
     log.resume();
     log.error('unsupported file type');
@@ -32,3 +34,27 @@ module.exports = co.wrap(function* fn(file, options) {
 
   return undefined;
 });
+
+module.exports.sass = co.wrap(function* fn(data, options) {
+  yield fs.ensureDir('./diamond/packages');
+  yield fs.ensureFile('./diamond/.internal/packages.lock');
+
+  return yield compileSass(data, options.filename, options);
+});
+
+module.exports.less = co.wrap(function* fn(data, options) {
+  yield fs.ensureDir('./diamond/packages');
+  yield fs.ensureFile('./diamond/.internal/packages.lock');
+
+  return yield compileLess(data, options.filename, options);
+});
+
+
+module.exports.stylus = co.wrap(function* fn(data, options) {
+  yield fs.ensureDir('./diamond/packages');
+  yield fs.ensureFile('./diamond/.internal/packages.lock');
+
+  return yield compileStyl(data, options.filename, options);
+});
+
+module.exports.styl = module.exports.stylus;

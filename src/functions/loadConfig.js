@@ -11,10 +11,11 @@ log.heading = 'dia';
 const defaults = { registry: 'https://registry.diamondpkg.org' };
 
 fs.ensureDirSync(path.join(os.homedir(), '.diamond'));
-if (!fs.existsSync(path.join(os.homedir(), '.diamond/config.yml'))) fs.writeFileSync(path.join(os.homedir(), '.diamond/config.yml'), yaml.safeDump(defaults));
-const global = yaml.safeLoad(fs.readFileSync(path.join(os.homedir(), '.diamond/config.yml')));
+if (!fs.existsSync(path.join(os.homedir(), '.diamond/config.yml'))) fs.writeFileSync(path.join(os.homedir(), '.diamond/config.yml'), '');
+let global = yaml.safeLoad(fs.readFileSync(path.join(os.homedir(), '.diamond/config.yml')));
+if (!global) global = {};
 
 let local = {};
 if (fs.existsSync(path.join(process.cwd(), 'diamond-config.yml'))) local = yaml.safeLoad(fs.readFileSync(path.join(process.cwd(), 'diamond-config.yml')));
 
-module.exports = Object.assign(global, local);
+module.exports = Object.assign(global, local, defaults);

@@ -11,7 +11,7 @@ const plugin = require('../../importers');
 
 global.compileCommand = true;
 
-module.exports = function* fn(file, options) {
+module.exports = function* fn(data, filename, options) {
   if (!options) options = {};
   Object.assign(options, { outputStyle: 'nested' });
 
@@ -77,7 +77,9 @@ module.exports = function* fn(file, options) {
   let result;
   try {
     result = yield bleubird.promisify(sass.render)({
-      file,
+      data,
+      file: filename,
+      indentedSyntax: (filename ? filename.endsWith('.sass') : false) || options.indentedSyntax,
       outputStyle: options.outputStyle,
       importer: importers.concat(plugin.sass.importers),
       functions,

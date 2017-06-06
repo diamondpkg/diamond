@@ -10,7 +10,7 @@ const plugin = require('../../importers');
 
 global.compileCommand = true;
 
-module.exports = function* fn(file) {
+module.exports = function* fn(data, filename) {
   let packages;
   try {
     packages = JSON.parse(yield fs.readFile('./diamond/.internal/packages.lock'));
@@ -39,8 +39,8 @@ module.exports = function* fn(file) {
       []
   );
 
-  const style = stylus(yield fs.readFile(file, 'utf8'))
-    .set('filename', file);
+  const style = stylus(data)
+    .set('filename', filename);
 
   for (const plug of plugins) {
     style.use(plug);

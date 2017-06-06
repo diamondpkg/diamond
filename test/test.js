@@ -62,12 +62,23 @@ for (const library of libraries) {
 
       describe('Node.JS API', () => {
         for (const lang of ['sass', 'less', 'styl']) {
-          test(lang, () => {
-            expect.assertions(1);
-            return diamond.compile(`test/${library.folder}/test.${lang}`)
-              .then((css) => {
-                expect(css).toBe(fs.readFileSync(`test/${library.folder}/test.${lang}.css`, 'utf8'));
-              });
+          describe(lang, () => {
+            test('compile()', () => {
+              expect.assertions(1);
+              return diamond.compile(`test/${library.folder}/test.${lang}`)
+                .then((css) => {
+                  expect(css).toBe(fs.readFileSync(`test/${library.folder}/test.${lang}.css`, 'utf8'));
+                });
+            });
+
+            test(`compile.${lang}()`, () => {
+              expect.assertions(1);
+              const data = fs.readFileSync(`test/${library.folder}/test.${lang}`, 'utf8');
+              return diamond.compile[lang](data, { filename: `test/${library.folder}/test.${lang}` })
+                .then((css) => {
+                  expect(css).toBe(fs.readFileSync(`test/${library.folder}/test.${lang}.css`, 'utf8'));
+                });
+            });
           });
         }
       });

@@ -8,7 +8,7 @@ const log = require('npmlog');
 const fs = require('fs-extra');
 const plugin = require('../../importers');
 
-module.exports = function* fn(filename) {
+module.exports = function* fn(data, filename) {
   let packageJson;
   try {
     packageJson = JSON.parse(yield fs.readFile('./diamond.json'));
@@ -25,7 +25,7 @@ module.exports = function* fn(filename) {
 
   let result;
   try {
-    result = yield less.render(yield fs.readFile(filename, 'utf8'), { filename, plugins });
+    result = yield less.render(data, { filename, plugins });
   } catch (error) {
     if (cli) {
       log.disableProgress();
