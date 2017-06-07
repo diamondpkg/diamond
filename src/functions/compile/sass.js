@@ -76,14 +76,13 @@ module.exports = function* fn(data, filename, options) {
 
   let result;
   try {
-    result = yield bleubird.promisify(sass.render)({
+    result = yield bleubird.promisify(sass.render)(Object.assign(options, {
       data,
       file: filename,
       indentedSyntax: (filename ? filename.endsWith('.sass') : false) || options.indentedSyntax,
-      outputStyle: options.outputStyle,
       importer: importers.concat(plugin.sass.importers),
       functions,
-    });
+    }));
   } catch (error) {
     if (cli) {
       log.disableProgress();
