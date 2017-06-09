@@ -1,30 +1,3 @@
-/**
- *  VARIABLES
- *
- *  Configure sierra SCSS library by adjusting this file
- *
- */
-/**
- *  LAYOUT
- */
-/**
- *  MEDIA QUERIES BREAKPOINTS
- */
-/**
- *  BOOTSTRAP GRID SYSTEM CONFIG
- */
-/**
- *  COMPONENTS
- */
-/**
- * Library
- */
-/**
- * MIXINS
- */
-/**
- *  PLACEHOLDERS
- */
 .visuallyhidden.focusable:active,
 .visuallyhidden.focusable:focus {
   clip: auto;
@@ -50,75 +23,71 @@
     margin-right: -30px;
   }
 }
-/**
- * Reset
- */
-html,
+abbr,
+address,
+article,
+aside,
+audio,
+b,
+blockquote,
 body,
-body,
+caption,
+cite,
+code,
+dd,
+del,
+dfn,
 div,
-span,
-object,
-iframe,
+dl,
+dt,
+em,
+fieldset,
+figure,
+footer,
+form,
 h1,
 h2,
 h3,
 h4,
 h5,
 h6,
-p,
-blockquote,
-pre,
-abbr,
-address,
-cite,
-code,
-del,
-dfn,
-em,
+header,
+hgroup,
+html,
+i,
+iframe,
 ins,
 kbd,
+label,
+legend,
+li,
+mark,
+menu,
+nav,
+object,
+ol,
+p,
+pre,
 q,
 samp,
+section,
 small,
+span,
 strong,
 sub,
 sup,
-var,
-b,
-i,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
 table,
-caption,
 tbody,
-tfoot,
-thead,
-tr,
-th,
 td,
-article,
-aside,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section,
+tfoot,
+th,
+thead,
 time,
-mark,
-audio,
+tr,
+ul,
+var,
 video {
-  background: transparent;
+  background: 0 0;
   border: 0;
   font-size: 100%;
   margin: 0;
@@ -137,28 +106,25 @@ section {
   display: block;
 }
 *,
-*:before,
-*:after {
+:after,
+:before {
   box-sizing: border-box;
 }
-/**
- *  MAIN RULES
- */
 *,
-*::after,
-*::before {
+::after,
+::before {
   box-sizing: border-box;
-  outline: none;
+  outline: 0;
 }
 body {
   background-color: #2c3e50;
-  font-weight: normal;
+  font-weight: 400;
   min-height: 100%;
   overflow-x: hidden;
   position: relative;
 }
 p {
-  font-weight: normal;
+  font-weight: 400;
 }
 img {
   max-width: 100%;
@@ -171,14 +137,11 @@ ul {
 }
 li {
   list-style: none;
-  margin-bottom: .5em;
+  margin-bottom: 0.5em;
 }
 pre {
   margin-bottom: 2em !important;
 }
-/**
- *  BACKGROUND COLORS
- */
 .background-primary {
   background-color: #1abc9c;
 }
@@ -189,7 +152,7 @@ pre {
   background-color: #9b59b6;
 }
 .background-white {
-  background-color: #ffffff;
+  background-color: #fff;
 }
 .background-success {
   background-color: #4caf50;
@@ -239,28 +202,16 @@ pre {
 .background-rating10 {
   background-color: #388e3c;
 }
-/**
- *  BADGES
- *
- *  Markup:
- *  -------
- *
- *  <ul class="badges-list">
- *    <li class="badges-list-item badge-primary">Badge 1</li>
- *    <li class="badges-list-item badge-secondary badge-lg">Badge 1</li>
- *  </ul>
- *
- */
 .badges-list {
   margin-bottom: 20px;
 }
 .badges-list-item {
   background-color: #34495e;
   border-radius: 3px;
-  color: #ffffff;
+  color: #fff;
   display: inline-block;
   line-height: 1.2em;
-  padding: .2em .7em;
+  padding: 0.2em 0.7em;
 }
 .badge-rounded {
   border-radius: 50px;
@@ -269,7 +220,7 @@ pre {
   font-size: 1.3em;
 }
 .badge-xs {
-  font-size: .7em;
+  font-size: 0.7em;
 }
 .badge-primary {
   background-color: #1abc9c;
@@ -292,9 +243,6 @@ pre {
 .badge-warning {
   background-color: #f0ad4e;
 }
-/**
- *  BUTTONS
- */
 button {
   background-color: transparent;
   border: 0;
@@ -304,9 +252,9 @@ button {
   background-color: #64829f;
   border: 1px solid #2c3e50;
   border-radius: 2em;
-  color: #ffffff;
+  color: #fff;
   display: inline-block;
-  font-family: "Lato", sans-serif;
+  font-family: Lato, sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: 1.5em;
@@ -318,10 +266,10 @@ button {
   transition: opacity 0.2s ease-in-out;
   white-space: nowrap;
 }
+.button:active,
 .button:focus,
-.button:hover,
-.button:active {
-  color: #ffffff;
+.button:hover {
+  color: #fff;
 }
 .button:hover {
   cursor: pointer;
@@ -381,37 +329,37 @@ button {
 .button.button-primary {
   background-color: #1abc9c;
   border: 1px solid #1abc9c;
-  color: #ffffff;
+  color: #fff;
 }
 .button.button-primary:hover {
-  color: #ffffff;
+  color: #fff;
 }
 .button.button-secondary {
   background-color: #9b59b6;
   border: 1px solid #9b59b6;
-  color: #ffffff;
+  color: #fff;
 }
 .button.button-secondary:hover {
-  color: #ffffff;
+  color: #fff;
 }
 .button.button-transparent {
   background-color: transparent;
   border: 1px solid transparent;
 }
 .button.button-white {
-  background-color: #ffffff;
-  border: 1px solid #ffffff;
+  background-color: #fff;
+  border: 1px solid #fff;
   color: #1abc9c;
 }
 .button.button-green {
   background-color: #4caf50;
   border-color: #4caf50;
-  color: #ffffff;
+  color: #fff;
 }
 .button.button-red {
   background-color: #e74c3c;
   border-color: #e74c3c;
-  color: #ffffff;
+  color: #fff;
 }
 .button.button-outlined {
   background-color: transparent;
@@ -420,7 +368,7 @@ button {
 }
 .button.button-disabled {
   cursor: default;
-  opacity: .4;
+  opacity: 0.4;
 }
 .button.button-only-icon {
   height: 43px;
@@ -437,7 +385,7 @@ button {
   margin-left: .8em;
   margin-right: .8em;
   position: relative;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 .button i:last-child {
   margin-right: 0;
@@ -453,7 +401,7 @@ button {
 }
 .button-link {
   color: #1abc9c;
-  font-family: 'Lato', sans-serif;
+  font-family: Lato, sans-serif;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -464,7 +412,7 @@ button {
   margin-bottom: -2px;
   margin-left: 4px;
   margin-right: 8px;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 .button-link i::before {
   float: left;
@@ -488,16 +436,13 @@ button {
   border-right: 0;
   border-top-right-radius: 0;
 }
-/**
- *  FORMS
- */
 input,
 textarea {
   appearance: none;
 }
 label {
   display: block;
-  font-weight: normal;
+  font-weight: 400;
 }
 input:-webkit-autofill {
   box-shadow: 0 0 0 1000px #34495e inset;
@@ -506,8 +451,8 @@ select {
   -moz-appearance: window;
   -webkit-appearance: none;
 }
-select,
 input[type=text],
+select,
 textarea {
   border-radius: 3px;
   font-size: 14px;
@@ -515,50 +460,50 @@ textarea {
   transition: background-color 0.2s ease-in-out;
 }
 @media (min-width: 768px) {
-  select,
   input[type=text],
+  select,
   textarea {
     font-size: 15px;
   }
 }
 @media (min-width: 992px) {
-  select,
   input[type=text],
+  select,
   textarea {
     font-size: 15px;
   }
 }
-.textarea,
 .input,
-.select {
+.select,
+.textarea {
   border: 0;
   border: 1px solid #465f78;
   border-radius: 3px;
   box-shadow: none;
   display: block;
-  font-weight: normal;
+  font-weight: 400;
   margin-bottom: 20px;
 }
-.textarea :focus,
 .input :focus,
-.select :focus {
-  outline: none;
+.select :focus,
+.textarea :focus {
+  outline: 0;
 }
-.textarea.error,
 .input.error,
-.select.error {
+.select.error,
+.textarea.error {
   border: 1px solid #e74c3c;
   margin-bottom: 0;
 }
-.textarea.small,
 .input.small,
-.select.small {
+.select.small,
+.textarea.small {
   font-size: 13px;
   padding: 4px 6px;
 }
-.has-error .textarea,
 .has-error .input,
-.has-error .select {
+.has-error .select,
+.has-error .textarea {
   border: 1px solid #1abc9c;
 }
 .has-error .control-label {
@@ -618,7 +563,7 @@ input[type=radio] {
   appearance: none;
   background-color: transparent;
   border: 0;
-  color: #ffffff;
+  color: #fff;
   height: 44px;
   margin-right: 20px;
   padding-left: 10px;
@@ -636,7 +581,7 @@ input[type=radio] {
 .select select:focus {
   background-color: #3d566e;
   border: 0;
-  outline: none;
+  outline: 0;
 }
 .select select:active + i,
 .select select:focus + i {
@@ -644,14 +589,14 @@ input[type=radio] {
 }
 .select select option {
   background-color: #34495e;
-  color: #ffffff;
+  color: #fff;
   height: 30px;
 }
 .select.select-small {
   max-width: 150px;
 }
 .select.select-small select {
-  font-size: 14px !important;
+  font-size: 14px!important;
   height: 24px;
   line-height: 24px;
   padding: 0 5px;
@@ -670,18 +615,18 @@ select::-ms-expand {
   width: 100%;
 }
 .textarea textarea {
-  background: transparent;
+  background: 0 0;
   border: 0;
-  color: #ffffff;
+  color: #fff;
   display: block;
-  font-family: "Lato", sans-serif;
+  font-family: Lato, sans-serif;
   padding: 10px 15px;
   width: 100%;
 }
-.textarea textarea:focus,
-.textarea textarea:active {
+.textarea textarea:active,
+.textarea textarea:focus {
   border: 0;
-  outline: none;
+  outline: 0;
   background-color: #3d566e;
 }
 textarea {
@@ -695,23 +640,6 @@ textarea {
     text-align: right;
   }
 }
-/**
- *  CHECKBOXES AND RADIO BUTTONS
- *
- *  Markup:
- *  -------
- *
- *  <div class="radio">
- *    <input id="hello" name="hello" type="radio" value=""/>
- *    <label for="hello" >option 1</label>
- *  </div>
- *
- *  <div class="checkbox">
- *    <input id="goodbye" name="goodbye" type="checkbox" value=""/>
- *    <label for="goodbye">option {{$i}}</label>
- *  </div>
- *
- */
 .checkbox,
 .radio {
   margin: 0;
@@ -807,8 +735,8 @@ input[type=radio]:checked + label:before {
   padding: 0;
   position: relative;
 }
-.input :focus,
-.input :active {
+.input :active,
+.input :focus {
   background-color: #3d566e;
 }
 .input.full-width {
@@ -818,14 +746,14 @@ input[type=radio]:checked + label:before {
   width: 100%;
 }
 .input input {
-  background: transparent;
+  background: 0 0;
   border: 0;
   box-shadow: none;
-  color: #ffffff;
+  color: #fff;
   height: 44px;
   line-height: 44px;
   margin-bottom: 0;
-  outline: none;
+  outline: 0;
   padding-left: 10px;
   padding-right: 10px;
   width: 100%;
@@ -853,7 +781,7 @@ input[type=radio]:checked + label:before {
   margin-top: -7px;
 }
 .input-with-icon button.input-icon {
-  background: none;
+  background: 0 0;
   border: 0;
   cursor: pointer;
   padding: 0;
@@ -865,47 +793,14 @@ input[type=radio]:checked + label:before {
 .input-icon i {
   padding: 14px 15px 14px 12px;
 }
-/**
- *  Input group
- *
- *  Markup:
- *  -------
- *
- *  <div class="input-group {{ $errors->first('email', 'has-error') }}">
- *     <div class="input full-width ">
- *         <input type="email" class="form-control" name="email" placeholder="email address" value="{{{ Input::old('email') }}}">
- *     </div>
- *     <span class="help-block">{{ $errors->first('email', ':message') }}</span>
- *  </div>
- *
- */
 .input-group {
   margin-bottom: 20px;
 }
-.input-group .textarea,
 .input-group .input,
-.input-group .select {
+.input-group .select,
+.input-group .textarea {
   margin-bottom: 0;
 }
-/**
- *  FORM GROUP
- *
- *  Markup:
- *  -------
- *
- *  <div class="form-group">
- *    <div class="input form-group-item">
- *      <input type="text" name="" id="" placeholder="Search an app and start tracking...">
- *    </div>
- *    <div class="select form-group-item">
- *      <select class="class">
- *        <option value="asd">asd</option>
- *        <option value="asfdasd">asfdasd</option>
- *      </select>
- *      <i class="js-select-opener fa fa-angle-down fa-2"></i>
- *    </div>
- *  </div>
- */
 .form-group {
   background-color: #34495e;
   border: 1px solid #465f78;
@@ -913,9 +808,9 @@ input[type=radio]:checked + label:before {
   display: inline-block;
   margin-bottom: 20px;
 }
-.form-group .textarea,
 .form-group .input,
-.form-group .select {
+.form-group .select,
+.form-group .textarea {
   margin-bottom: 0;
 }
 .form-group .form-group-item {
@@ -930,31 +825,10 @@ input[type=radio]:checked + label:before {
   margin-left: -3px !important;
   margin-right: -3px !important;
 }
-.form-row div[class^="col"] {
+.form-row div[class^=col] {
   padding-left: 3px;
   padding-right: 3px;
 }
-/**
- *  FORM COLLAPSE (items in row without gap between them)
- *
- *  Markup:
- *  -------
- *
- *  <div class="form-collapse">
- *    <div class="input item item-main">
- *      <input id="name" placeholder="Klingon search" type="text" />
- *    </div>
- *    <div class="select item">
- *      <select name="country-code" id="country-code">
- *        <option value="AO"> Angola</option>
- *      </select>
- *      <i class="fa fa-angle-down fa-2"></i>
- *    </div>
- *    <button class="item button button-primary">
- *      Search
- *    </button>
- *  </div>
- **/
 .form-collapse {
   display: flex;
   margin-bottom: 20px;
@@ -978,9 +852,6 @@ input[type=radio]:checked + label:before {
 .form-collapse .item:not(:last-child) {
   border-right: 0;
 }
-/**
- *  FLEX ALIGNMENTS
- */
 .aligner {
   display: flex;
 }
@@ -1019,17 +890,14 @@ input[type=radio]:checked + label:before {
 .flex-grow {
   flex-grow: 1;
 }
-/**
- *  ALIGNMENTS
- */
 .fleft {
   float: left;
 }
 .fright {
   float: right;
 }
-.cf::before,
-.cf::after {
+.cf::after,
+.cf::before {
   content: '';
   display: table;
 }
@@ -1054,9 +922,6 @@ input[type=radio]:checked + label:before {
 .align-top {
   vertical-align: top;
 }
-/**
- *  TEXT UTILITIES
- */
 .ellipsis {
   overflow: hidden;
   white-space: nowrap;
@@ -1074,9 +939,6 @@ input[type=radio]:checked + label:before {
 .text-indent {
   padding-left: 24px;
 }
-/**
- *  MODIFIERS
- */
 .bordered {
   border: 1px solid #465f78;
 }
@@ -1119,7 +981,7 @@ input[type=radio]:checked + label:before {
   overflow: hidden;
 }
 .opacity-low {
-  opacity: .5;
+  opacity: 0.5;
 }
 .icon-rounded,
 .rounded-corners {
@@ -1128,9 +990,6 @@ input[type=radio]:checked + label:before {
 .rounded {
   border-radius: 100%;
 }
-/**
- *  VISIBILITY UTILITIES
- */
 @media (min-width: 992px) {
   .hidden-large {
     display: none;
@@ -1185,10 +1044,6 @@ input[type=radio]:checked + label:before {
     display: block;
   }
 }
-/**
- *  BOOTSTRAP VISIBILITY UTILITIES
- *  Note: Deprecated .visible-xs, .visible-sm, .visible-md, and .visible-lg as of v3.2.0
- */
 .visible-xs {
   display: none !important;
 }
@@ -1201,18 +1056,18 @@ input[type=radio]:checked + label:before {
 .visible-lg {
   display: none !important;
 }
-.visible-xs-block,
-.visible-xs-inline,
-.visible-xs-inline-block,
-.visible-sm-block,
-.visible-sm-inline,
-.visible-sm-inline-block,
+.visible-lg-block,
+.visible-lg-inline,
+.visible-lg-inline-block,
 .visible-md-block,
 .visible-md-inline,
 .visible-md-inline-block,
-.visible-lg-block,
-.visible-lg-inline,
-.visible-lg-inline-block {
+.visible-sm-block,
+.visible-sm-inline,
+.visible-sm-inline-block,
+.visible-xs-block,
+.visible-xs-inline,
+.visible-xs-inline-block {
   display: none !important;
 }
 @media (max-width: 767px) {
@@ -1225,8 +1080,8 @@ input[type=radio]:checked + label:before {
   tr.visible-xs {
     display: table-row !important;
   }
-  th.visible-xs,
-  td.visible-xs {
+  td.visible-xs,
+  th.visible-xs {
     display: table-cell !important;
   }
 }
@@ -1255,8 +1110,8 @@ input[type=radio]:checked + label:before {
   tr.visible-sm {
     display: table-row !important;
   }
-  th.visible-sm,
-  td.visible-sm {
+  td.visible-sm,
+  th.visible-sm {
     display: table-cell !important;
   }
 }
@@ -1285,8 +1140,8 @@ input[type=radio]:checked + label:before {
   tr.visible-md {
     display: table-row !important;
   }
-  th.visible-md,
-  td.visible-md {
+  td.visible-md,
+  th.visible-md {
     display: table-cell !important;
   }
 }
@@ -1315,8 +1170,8 @@ input[type=radio]:checked + label:before {
   tr.visible-lg {
     display: table-row !important;
   }
-  th.visible-lg,
-  td.visible-lg {
+  td.visible-lg,
+  th.visible-lg {
     display: table-cell !important;
   }
 }
@@ -1355,15 +1210,12 @@ input[type=radio]:checked + label:before {
     display: none !important;
   }
 }
-/**
- * LAYOUT
- */
 .section {
   padding-bottom: 20px;
   padding-top: 20px;
 }
-.section::before,
-.section::after {
+.section::after,
+.section::before {
   content: '';
   display: table;
 }
@@ -1433,18 +1285,10 @@ input[type=radio]:checked + label:before {
   position: relative;
   width: 100%;
 }
-.main-content::before,
-.main-content::after {
+.main-content::after,
+.main-content::before {
   clear: none;
 }
-/**
- *  LOADING BAR
- *
- *  Markup:
- *  ---------
- *  <div class="loading-bar"></div>
- *
- */
 .loading-bar {
   height: 4px;
   left: 0;
@@ -1486,19 +1330,6 @@ input[type=radio]:checked + label:before {
     left: 100%;
   }
 }
-/**
- *  LOADING SPINNER
- *
- *  Markdown:
- *  ---------
- *  <div class='loading-spinner'>
- *    <span></span>
- *    <span></span>
- *    <span></span>
- *    <span></span>
- *  </div>
- *
- */
 .loading-spinner {
   animation: rotateLoader 4s infinite;
   animation-timing-function: ease-in-out;
@@ -1514,7 +1345,7 @@ input[type=radio]:checked + label:before {
 }
 .loading-spinner span {
   animation-timing-function: ease-in-out;
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 100%;
   display: block;
   height: 9px;
@@ -1611,18 +1442,6 @@ input[type=radio]:checked + label:before {
     transform: translate3d(0, 0, 0);
   }
 }
-/**
- *  MESSAGE BARS
- *
- *  Markup:
- *  -------
- *
- *  <div class="message-bar background-sucess">Success message</div>
- *  <div class="message-bar background-info">Success info</div>
- *  <div class="message-bar background-error">Success error</div>
- *  <div class="message-bar background-warning">Success warning</div>
- *
- */
 .message-bar {
   border-radius: 3px;
   margin-bottom: 1em;
@@ -1631,46 +1450,22 @@ input[type=radio]:checked + label:before {
 .message-bar p:last-child {
   margin-bottom: 0;
 }
-/**
- *  PAGINATOR
- *
- *  Markup:
- *  -------
- *
- *  <ul class="paginator-list">
- *    <li class="paginator-list-item">
- *      <a href="#" class="paginator-list-link">Prev</a>
- *    </li>
- *    <li class="paginator-list-item">
- *      <a href="#" class="paginator-list-link">1</a>
- *    </li>
- *    <li class="paginator-list-item">
- *      <a href="#" class="paginator-list-link active">2</a>
- *    </li>
- *    <li class="paginator-list-item">
- *      <a href="#" class="paginator-list-link">3</a>
- *    </li>
- *    <li class="paginator-list-item">
- *      <a href="#" class="paginator-list-link">Next</a>
- *    </li>
- *  </ul>
- */
 .paginator-list .paginator-list-item {
   margin-right: 5px;
   padding: 0;
   display: inline-block;
 }
 .paginator-list .paginator-list-item:first-child i {
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 .paginator-list .paginator-list-item:last-child i {
-  margin-left: .5em;
+  margin-left: 0.5em;
 }
 .paginator-list .paginator-list-item .paginator-list-link {
   background-color: #34495e;
   border: 1px solid #2c3e50;
   border-radius: 3px;
-  color: #ffffff;
+  color: #fff;
   display: block;
   padding: .5em 1em;
   transition: background-color 0.2s ease-in-out;
@@ -1680,7 +1475,7 @@ input[type=radio]:checked + label:before {
 }
 .paginator-list .paginator-list-item .paginator-list-link.active {
   background-color: #1abc9c;
-  color: #ffffff;
+  color: #fff;
 }
 .paginator-list.paginator-compact {
   display: flex;
@@ -1706,9 +1501,6 @@ input[type=radio]:checked + label:before {
   justify-content: center;
   text-align: center;
 }
-/**
- *  RATING CIRCLE
- */
 .rating-circle {
   background-color: #d7d7d7;
   border-radius: 50%;
@@ -1791,8 +1583,8 @@ input[type=radio]:checked + label:before {
 .rating-circle.rating-color-10 .circle-fill {
   background-color: #388e3c;
 }
-.rating-circle .circle .circle-mask,
-.rating-circle .circle .circle-fill {
+.rating-circle .circle .circle-fill,
+.rating-circle .circle .circle-mask {
   border-radius: 50%;
   height: 100px;
   position: absolute;
@@ -1800,23 +1592,23 @@ input[type=radio]:checked + label:before {
   width: 100px;
 }
 @media (min-width: 992px) {
-  .rating-circle .circle .circle-mask,
-  .rating-circle .circle .circle-fill {
+  .rating-circle .circle .circle-fill,
+  .rating-circle .circle .circle-mask {
     height: 130px;
     width: 130px;
   }
 }
-.rating-circle .circle .circle-mask,
-.rating-circle .circle .circle-fill {
+.rating-circle .circle .circle-fill,
+.rating-circle .circle .circle-mask {
   backface-visibility: hidden;
 }
-.rating-circle .circle .circle-mask.reanimate,
-.rating-circle .circle .circle-fill.reanimate {
+.rating-circle .circle .circle-fill.reanimate,
+.rating-circle .circle .circle-mask.reanimate {
   transition: transform 0s;
 }
-.rating-circle .circle .circle-mask.reset,
-.rating-circle .circle .circle-fill.reset {
-  transform: rotate(0deg) !important;
+.rating-circle .circle .circle-fill.reset,
+.rating-circle .circle .circle-mask.reset {
+  transform: rotate(0) !important;
 }
 .rating-circle .circle .circle-mask {
   clip: rect(0, 100px, 100px, 50px);
@@ -1858,7 +1650,7 @@ input[type=radio]:checked + label:before {
 }
 .rating-circle .circle-inset .circle-rating-number {
   font-size: 36px;
-  font-weight: normal;
+  font-weight: 400;
   line-height: 94px;
 }
 @media (min-width: 992px) {
@@ -1871,8 +1663,8 @@ input[type=radio]:checked + label:before {
   width: 80px;
   height: 80px;
 }
-.rating-circle.circle-small .circle .circle-mask,
-.rating-circle.circle-small .circle .circle-fill {
+.rating-circle.circle-small .circle .circle-fill,
+.rating-circle.circle-small .circle .circle-mask {
   height: 80px;
   width: 80px;
 }
@@ -1898,7 +1690,7 @@ input[type=radio]:checked + label:before {
   font-weight: 400;
   left: 0;
   line-height: 74px;
-  margin: 0 !important;
+  margin: 0!important;
   position: absolute;
   top: 0;
   width: 74px;
@@ -1943,27 +1735,24 @@ input[type=radio]:checked + label:before {
 .rating-color-10 .circle-full {
   transform: rotate(180deg);
 }
-/**
- *  TABLES
- */
 .table {
   background-color: #34495e;
   border: 1px solid #465f78;
   border-collapse: collapse;
   border-radius: 3px;
-  color: #ffffff;
+  color: #fff;
   margin-bottom: 20px;
   max-width: 100%;
   width: 100%;
 }
-.table th,
-.table td {
+.table td,
+.table th {
   border-bottom: 1px solid #465f78;
   padding: 10px;
 }
 @media (min-width: 992px) {
-  .table th,
-  .table td {
+  .table td,
+  .table th {
     padding: 10px 20px;
   }
 }
@@ -1980,43 +1769,13 @@ input[type=radio]:checked + label:before {
 .table th {
   background-color: #2c3e50;
   color: #969da6;
-  font-weight: normal;
+  font-weight: 400;
   padding: 5px 14px;
   white-space: nowrap;
 }
 .table-vertical-center td {
   vertical-align: middle;
 }
-/**
- *  TABLE RESPONSIVE
- *
- *  Markup:
- *  -------
- *
- *  <table class="table-responsive table-break-small">
- *    <tr>
- *      <th>First column</th>
- *      <th>Second column</th>
- *      <th>Third column</th>
- *    </tr>
- *    <tr>
- *      <td data-th="First column">Blue</td>
- *      <td data-th="Second column">One</td>
- *      <td data-th="Third column">My life fades</td>
- *    </tr>
- *    <tr>
- *      <td data-th="First column">Green</td>
- *      <td data-th="Second column">Two</td>
- *      <td data-th="Third column">when the world was powered by the black fuel... and the desert sprouted great cities of pipe and steel. </td>
- *    </tr>
- *    <tr>
- *      <td data-th="First column">Yellow</td>
- *      <td data-th="Second column">Three</td>
- *      <td data-th="Third column">A whirlwind of looting, a firestorm of fear. Men began to feed on men. </td>
- *    </tr>
- *  </table>
- *
- */
 .table-responsive th {
   display: none;
 }
@@ -2033,10 +1792,10 @@ input[type=radio]:checked + label:before {
 .table-responsive td::before {
   content: attr(data-th) ": ";
   display: block;
-  font-weight: normal;
+  font-weight: 400;
 }
-.table-responsive th,
-.table-responsive td {
+.table-responsive td,
+.table-responsive th {
   text-align: left;
 }
 .table-responsive.table-break-medium tr {
@@ -2057,8 +1816,8 @@ input[type=radio]:checked + label:before {
   padding-bottom: 14px;
 }
 @media (min-width: 768px) {
-  .table-responsive.table-break-medium th,
-  .table-responsive.table-break-medium td {
+  .table-responsive.table-break-medium td,
+  .table-responsive.table-break-medium th {
     display: table-cell;
   }
 }
@@ -2080,29 +1839,11 @@ input[type=radio]:checked + label:before {
   padding-bottom: 14px;
 }
 @media (min-width: 480px) {
-  .table-responsive.table-break-small th,
-  .table-responsive.table-break-small td {
+  .table-responsive.table-break-small td,
+  .table-responsive.table-break-small th {
     display: table-cell;
   }
 }
-/**
- *  TABS
- *
- *  Markup:
- *  -------
- *
- *  <div class="c-tabs">
- *    <a href="link" title="#" data-targetclass="js-tab1" class="c-tab js-tab">[...]</a>
- *    <a href="link" title="#" data-targetclass="js-tab2" class="c-tab js-tab active">[...]</a>
- *  </div>
- *  <div class="js-tab1 c-tab-content">
- *    [...]
- *  </div>
- *  <div class="js-tab2 c-tab-content selected">
- *    [...]
- *  </div>
- *
- */
 .tabs {
   border-bottom: 1px solid #465f78;
   margin-bottom: 30px;
@@ -2132,25 +1873,6 @@ input[type=radio]:checked + label:before {
 .tab-content.selected {
   display: block;
 }
-/**
- *  TAGS
- *
- *  Markup:
- *  -------
- *
- *  <ul class="tags">
- *    <li>
- *        <a href="#" class="tag"> fantasy</a>
- *    </li>
- *    <li>
- *        <a href="#" class="tag"> fiction </a>
- *    </li>
- *    <li>
- *        <a href="#" class="tag"> contemporary </a>
- *    </li>
- *  </ul>
- *
- */
 .tags {
   margin-bottom: 20px;
 }
@@ -2164,7 +1886,7 @@ input[type=radio]:checked + label:before {
 .tags .tag {
   background-color: #34495e;
   border-radius: 3px 0 0 3px;
-  color: #ffffff;
+  color: #fff;
   display: inline-block;
   float: left;
   line-height: 34px;
@@ -2194,7 +1916,7 @@ input[type=radio]:checked + label:before {
   width: 5px;
 }
 .tags a.tag {
-  color: #ffffff;
+  color: #fff;
   display: inline-block;
   text-decoration: none;
 }
@@ -2205,12 +1927,9 @@ input[type=radio]:checked + label:before {
 .tags a.tag:hover::before {
   border-left: 10px solid #46637f;
 }
-/**
- *  TYPOGRAPHY
- */
 body {
-  font: 400 14px/1.5em "Lato", sans-serif;
-  color: #ffffff;
+  font: 400 14px/1.5em Lato, sans-serif;
+  color: #fff;
 }
 @media (min-width: 768px) {
   body {
@@ -2240,20 +1959,20 @@ a:hover {
 a:focus {
   color: #1abc9c;
 }
-.text-huge,
 .text-big,
+.text-huge,
 .text-medium {
   line-height: 1.3em;
   margin-bottom: 1em;
   margin-top: 1.5em;
 }
-.text-huge:first-child,
 .text-big:first-child,
+.text-huge:first-child,
 .text-medium:first-child {
-  margin-top: .5em;
+  margin-top: 0.5em;
 }
 .text-huge {
-  font-family: "Lato", sans-serif;
+  font-family: Lato, sans-serif;
   font-size: 30px;
   font-weight: 300;
   text-transform: none;
@@ -2269,7 +1988,7 @@ a:focus {
   }
 }
 .text-big {
-  font-family: "Lato", sans-serif;
+  font-family: Lato, sans-serif;
   font-size: 24px;
   font-weight: 300;
   text-transform: none;
@@ -2280,7 +1999,7 @@ a:focus {
   }
 }
 .text-medium {
-  font-family: "Lato", sans-serif;
+  font-family: Lato, sans-serif;
   font-size: 20px;
   font-weight: 300;
   text-transform: none;
@@ -2314,7 +2033,7 @@ label.label {
   color: #9b59b6;
 }
 .text-white {
-  color: #ffffff;
+  color: #fff;
 }
 .text-success {
   color: #4caf50;
@@ -2328,9 +2047,9 @@ label.label {
 .text-error {
   color: #e74c3c;
 }
+.table-responsive td::before,
 .text-gray,
-label.label,
-.table-responsive td::before {
+label.label {
   color: #dee6ea;
 }
 .text-gray-light {
@@ -2367,13 +2086,13 @@ label.label,
   color: #388e3c;
 }
 .text-white {
-  color: #ffffff;
+  color: #fff;
 }
-.text-gray,
-label.label,
 .table-responsive td::before,
+.text-gray,
 a.text-gray,
-button.text-gray {
+button.text-gray,
+label.label {
   color: #969da6;
 }
 .text-light {
@@ -2398,17 +2117,17 @@ button.text-gray {
   text-align: center;
 }
 .text-lato {
-  font-family: 'Lato', sans-serif;
+  font-family: Lato, sans-serif;
 }
 .text-with-subtitle {
   margin-bottom: 0 !important;
 }
-.text-with-subtitle + .text-huge,
 .text-with-subtitle + .text-big,
+.text-with-subtitle + .text-huge,
 .text-with-subtitle + .text-medium,
 .text-with-subtitle + .text-small,
 .text-with-subtitle + label.label {
-  margin-top: .5em;
+  margin-top: 0.5em;
 }
 h1,
 h2,
@@ -2416,15 +2135,12 @@ h3,
 h4 {
   font-weight: 300;
 }
-/**
- *  Grid system
- */
 .container {
   margin-right: auto;
   margin-left: auto;
 }
-.container::before,
-.container::after {
+.container::after,
+.container::before {
   content: '';
   display: table;
 }
@@ -2445,8 +2161,8 @@ h4 {
   margin-right: auto;
   margin-left: auto;
 }
-.container-fluid::before,
-.container-fluid::after {
+.container-fluid::after,
+.container-fluid::before {
   content: '';
   display: table;
 }
@@ -2457,68 +2173,71 @@ h4 {
   margin-left: -15px;
   margin-right: -15px;
 }
-.row::before,
-.row::after {
+.row::after,
+.row::before {
   content: '';
   display: table;
 }
 .row::after {
   clear: both;
 }
-.col-xs-1,
-.col-sm-1,
-.col-md-1,
 .col-lg-1,
-.col-xs-2,
-.col-sm-2,
-.col-md-2,
-.col-lg-2,
-.col-xs-3,
-.col-sm-3,
-.col-md-3,
-.col-lg-3,
-.col-xs-4,
-.col-sm-4,
-.col-md-4,
-.col-lg-4,
-.col-xs-5,
-.col-sm-5,
-.col-md-5,
-.col-lg-5,
-.col-xs-6,
-.col-sm-6,
-.col-md-6,
-.col-lg-6,
-.col-xs-7,
-.col-sm-7,
-.col-md-7,
-.col-lg-7,
-.col-xs-8,
-.col-sm-8,
-.col-md-8,
-.col-lg-8,
-.col-xs-9,
-.col-sm-9,
-.col-md-9,
-.col-lg-9,
-.col-xs-10,
-.col-sm-10,
-.col-md-10,
 .col-lg-10,
-.col-xs-11,
-.col-sm-11,
-.col-md-11,
 .col-lg-11,
-.col-xs-12,
-.col-sm-12,
+.col-lg-12,
+.col-lg-2,
+.col-lg-3,
+.col-lg-4,
+.col-lg-5,
+.col-lg-6,
+.col-lg-7,
+.col-lg-8,
+.col-lg-9,
+.col-md-1,
+.col-md-10,
+.col-md-11,
 .col-md-12,
-.col-lg-12 {
+.col-md-2,
+.col-md-3,
+.col-md-4,
+.col-md-5,
+.col-md-6,
+.col-md-7,
+.col-md-8,
+.col-md-9,
+.col-sm-1,
+.col-sm-10,
+.col-sm-11,
+.col-sm-12,
+.col-sm-2,
+.col-sm-3,
+.col-sm-4,
+.col-sm-5,
+.col-sm-6,
+.col-sm-7,
+.col-sm-8,
+.col-sm-9,
+.col-xs-1,
+.col-xs-10,
+.col-xs-11,
+.col-xs-12,
+.col-xs-2,
+.col-xs-3,
+.col-xs-4,
+.col-xs-5,
+.col-xs-6,
+.col-xs-7,
+.col-xs-8,
+.col-xs-9 {
   position: relative;
   min-height: 1px;
   padding-left: 15px;
   padding-right: 15px;
 }
 .col-xs-1,
+.col-xs-10,
+.col-xs-11,
+.col-xs-12,
 .col-xs-2,
 .col-xs-3,
 .col-xs-4,
@@ -2526,10 +2245,7 @@ h4 {
 .col-xs-6,
 .col-xs-7,
 .col-xs-8,
-.col-xs-9,
-.col-xs-10,
-.col-xs-11,
-.col-xs-12 {
+.col-xs-9 {
   float: left;
 }
 .col-xs-1 {
@@ -2647,7 +2363,7 @@ h4 {
   left: 100%;
 }
 .col-xs-offset-0 {
-  margin-left: 0%;
+  margin-left: 0;
 }
 .col-xs-offset-1 {
   margin-left: 8.33333%;
@@ -2687,6 +2403,9 @@ h4 {
 }
 @media (min-width: 768px) {
   .col-sm-1,
+  .col-sm-10,
+  .col-sm-11,
+  .col-sm-12,
   .col-sm-2,
   .col-sm-3,
   .col-sm-4,
@@ -2694,10 +2413,7 @@ h4 {
   .col-sm-6,
   .col-sm-7,
   .col-sm-8,
-  .col-sm-9,
-  .col-sm-10,
-  .col-sm-11,
-  .col-sm-12 {
+  .col-sm-9 {
     float: left;
   }
   .col-sm-1 {
@@ -2815,7 +2531,7 @@ h4 {
     left: 100%;
   }
   .col-sm-offset-0 {
-    margin-left: 0%;
+    margin-left: 0;
   }
   .col-sm-offset-1 {
     margin-left: 8.33333%;
@@ -2856,6 +2572,9 @@ h4 {
 }
 @media (min-width: 992px) {
   .col-md-1,
+  .col-md-10,
+  .col-md-11,
+  .col-md-12,
   .col-md-2,
   .col-md-3,
   .col-md-4,
@@ -2863,10 +2582,7 @@ h4 {
   .col-md-6,
   .col-md-7,
   .col-md-8,
-  .col-md-9,
-  .col-md-10,
-  .col-md-11,
-  .col-md-12 {
+  .col-md-9 {
     float: left;
   }
   .col-md-1 {
@@ -2984,7 +2700,7 @@ h4 {
     left: 100%;
   }
   .col-md-offset-0 {
-    margin-left: 0%;
+    margin-left: 0;
   }
   .col-md-offset-1 {
     margin-left: 8.33333%;
@@ -3025,6 +2741,9 @@ h4 {
 }
 @media (min-width: 1280px) {
   .col-lg-1,
+  .col-lg-10,
+  .col-lg-11,
+  .col-lg-12,
   .col-lg-2,
   .col-lg-3,
   .col-lg-4,
@@ -3032,10 +2751,7 @@ h4 {
   .col-lg-6,
   .col-lg-7,
   .col-lg-8,
-  .col-lg-9,
-  .col-lg-10,
-  .col-lg-11,
-  .col-lg-12 {
+  .col-lg-9 {
     float: left;
   }
   .col-lg-1 {
@@ -3153,7 +2869,7 @@ h4 {
     left: 100%;
   }
   .col-lg-offset-0 {
-    margin-left: 0%;
+    margin-left: 0;
   }
   .col-lg-offset-1 {
     margin-left: 8.33333%;

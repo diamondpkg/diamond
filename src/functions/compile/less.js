@@ -7,8 +7,9 @@ const path = require('path');
 const log = require('npmlog');
 const fs = require('fs-extra');
 const plugin = require('../../importers');
+const CleanCSS = require('clean-css');
 
-module.exports = function* fn(data, filename) {
+module.exports = function* fn(data, filename, options) {
   let packageJson;
   try {
     packageJson = JSON.parse(yield fs.readFile('./diamond.json'));
@@ -30,12 +31,15 @@ module.exports = function* fn(data, filename) {
     if (cli) {
       log.disableProgress();
       log.resume();
-      log.error('less', error.message);
       log.error('less', error.stack);
       log.error('not ok');
       process.exit(1);
     } else throw error;
   }
 
-  return result.css.toString();
+  let css = result.css.toString();
+
+  if (options.minify) css = (yield new CleanCSS({ compatibility: 'ie7', returnPromise: true }).minify(css)).styles;
+
+  return css;
 };

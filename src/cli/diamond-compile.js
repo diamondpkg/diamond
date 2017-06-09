@@ -25,6 +25,11 @@ exports.builder = {
     default: 'nested',
     choices: ['nested', 'expanded', 'compact', 'compressed'],
   },
+  minify: {
+    alias: 'm',
+    desc: 'Minifies CSS',
+    boolean: true,
+  },
 };
 
 exports.handler = (args) => {
@@ -36,7 +41,7 @@ exports.handler = (args) => {
 
   if (args.watch) global.cli = false;
 
-  compile(args.file, { outputStyle: args.outputStyle }).then((css) => {
+  compile(args.file, { outputStyle: args.outputStyle, minify: args.minify }).then((css) => {
     if (args.watch) {
       fs.writeFileSync(args.output, css);
       log.notice('compiled');

@@ -40,6 +40,7 @@
     "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
     "chokidar": "^1.7.0",
+    "clean-css": "^4.1.3",
     "co": "^4.6.0",
     "css-to-stylus-converter": "github:diamondpkg/css-to-stylus-converter",
     "fs-extra": "^3.0.0",

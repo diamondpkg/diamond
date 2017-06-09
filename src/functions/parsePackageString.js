@@ -1,7 +1,10 @@
 'use strict';
 
+const log = require('npmlog');
 const semver = require('semver');
 const npmValidate = require('validate-npm-package-name');
+
+log.heading = 'dia';
 
 module.exports = (pkg) => {
   if (/^(gitlab:|gl:)([^#@\s]+)\/([^#@\s]+)((#|@)(.+))?$/i.test(pkg)) {
@@ -60,5 +63,8 @@ module.exports = (pkg) => {
     };
   }
 
+  log.error('invalid package', pkg);
+  log.error('not ok');
+  process.exit(1);
   return null;
 };

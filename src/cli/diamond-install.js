@@ -50,19 +50,13 @@ exports.handler = co.wrap(function* fn(args) {
   const packages = [];
   for (const pkg of args.pkgs) {
     const source = parsePackageString(pkg);
-    if (source) {
-      packages.push({
-        name: source.name,
-        version: source.version,
-        path: null,
-        for: null,
-        source,
-      });
-    } else {
-      log.error('invalid package', pkg);
-      log.error('not ok');
-      process.exit(1);
-    }
+    packages.push({
+      name: source.name,
+      version: source.version,
+      path: null,
+      for: null,
+      source,
+    });
   }
 
   if (!packages.length) {

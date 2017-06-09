@@ -4,7 +4,7 @@ diamond compile <input>
 diamond compile --output <output> <input>
 
 alias: diamond c
-common options: [-o|--output] [--output-style] [-w|--watch]
+common options: [-o|--output] [--output-style] [-w|--watch] [-m|--minify]
 ```
 
 ## Description
@@ -42,6 +42,9 @@ diamond compile --output out.css in.sass
 
   Watches and compiles the file on any changes. Must be used with `--output` arg.
 
+### **`-m | --minify`**
+
+  Minfies the output CSS.
 
 ### **`--output-style`** <span class="tag is-warning">Sass only</span>
 

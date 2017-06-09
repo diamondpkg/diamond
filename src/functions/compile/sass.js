@@ -8,6 +8,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const bleubird = require('bluebird');
 const plugin = require('../../importers');
+const CleanCSS = require('clean-css');
 
 global.compileCommand = true;
 
@@ -87,7 +88,6 @@ module.exports = function* fn(data, filename, options) {
     if (cli) {
       log.disableProgress();
       log.resume();
-      log.error('sass', error.message);
       log.error('sass', error.stack);
       log.error('not ok');
       process.exit(1);
@@ -100,21 +100,17 @@ module.exports = function* fn(data, filename, options) {
     try {
       css = yield postProcessor(css);
     } catch (err) {
-      if (cli && typeof err === 'string') {
+      if (cli) {
         log.disableProgress();
         log.resume();
-        log.error('post install', err);
-        log.error('not ok');
-        process.exit(1);
-      } else if (cli) {
-        log.disableProgress();
-        log.resume();
-        log.error('post install', err.message);
+        log.error('post install', err.stack);
         log.error('not ok');
         process.exit(1);
       } else throw err;
     }
   }
+
+  if (options.minify) css = (yield new CleanCSS({ compatibility: 'ie7', returnPromise: true }).minify(css)).styles;
 
   return css;
 };

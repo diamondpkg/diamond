@@ -15,6 +15,8 @@ module.exports = co.wrap(function* fn(filename, options) {
   yield fs.ensureDir('./diamond/packages');
   yield fs.ensureFile('./diamond/.internal/packages.lock');
 
+  if (!options) options = {};
+
   const data = yield fs.readFile(filename, 'utf8');
 
   if (/\.sass|\.scss/.test(filename)) {
@@ -39,12 +41,16 @@ module.exports.sass = co.wrap(function* fn(data, options) {
   yield fs.ensureDir('./diamond/packages');
   yield fs.ensureFile('./diamond/.internal/packages.lock');
 
+  if (!options) options = {};
+
   return yield compileSass(data, options.filename, options);
 });
 
 module.exports.less = co.wrap(function* fn(data, options) {
   yield fs.ensureDir('./diamond/packages');
   yield fs.ensureFile('./diamond/.internal/packages.lock');
+
+  if (!options) options = {};
 
   return yield compileLess(data, options.filename, options);
 });
@@ -54,7 +60,10 @@ module.exports.stylus = co.wrap(function* fn(data, options) {
   yield fs.ensureDir('./diamond/packages');
   yield fs.ensureFile('./diamond/.internal/packages.lock');
 
+  if (!options) options = {};
+
   return yield compileStyl(data, options.filename, options);
 });
 
 module.exports.styl = module.exports.stylus;
+module.exports.scss = module.exports.sass;

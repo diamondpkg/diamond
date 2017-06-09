@@ -285,7 +285,7 @@ module.exports = (pkg, options) => new Promise(co.wrap(function* fn(resolve) {
         setInterval(pulse, 100);
 
         log.gauge.show({ section: 'compiling', logline: pkg.main }, 0);
-        const css = yield compile(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), { outputStyle: 'compressed' });
+        const css = yield compile(path.join(process.cwd(), 'diamond/packages', pkg.path, pkg.main), { minify: true });
 
         yield [
           fs.writeFile(path.join('./diamond/packages', pkg.path, 'diamond/dist/main.css'), css),
