@@ -50,7 +50,7 @@ diamond compile --output out.css in.sass
 
   The output style for the file, can be one of: `nested, expanded, compact, compressed`.
 
-### ***`--postcss <plugin>`*
+### **`--postcss <plugin>`**
 
   Runs PostCSS with the specified plugins after compilation. Multiple plugins can be used at once. The specified plugin must be installed.
 
