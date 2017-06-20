@@ -8,6 +8,7 @@ const log = require('npmlog');
 const fs = require('fs-extra');
 const plugin = require('../../importers');
 const CleanCSS = require('clean-css');
+const postcss = require('postcss');
 
 module.exports = function* fn(data, filename, options) {
   let packageJson;
@@ -39,6 +40,7 @@ module.exports = function* fn(data, filename, options) {
 
   let css = result.css.toString();
 
+  if (options.postcss) css = (yield postcss(options.postcss).process(css)).css;
   if (options.minify) css = (yield new CleanCSS({ compatibility: 'ie7', returnPromise: true }).minify(css)).styles;
 
   return css;

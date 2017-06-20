@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const log = require('npmlog');
 const fs = require('fs-extra');
 const chokidar = require('chokidar');
@@ -30,6 +31,10 @@ exports.builder = {
     desc: 'Minifies CSS',
     boolean: true,
   },
+  postcss: {
+    desc: 'use a PostCSS plugin',
+    array: true,
+  },
 };
 
 exports.handler = (args) => {
@@ -41,22 +46,53 @@ exports.handler = (args) => {
 
   if (args.watch) global.cli = false;
 
-  compile(args.file, { outputStyle: args.outputStyle, minify: args.minify }).then((css) => {
-    if (args.watch) {
-      fs.writeFileSync(args.output, css);
-      log.notice('compiled');
-    } else if (args.output) {
-      fs.writeFileSync(args.output, css);
-      process.exit(0);
-    } else {
-      process.stdout.write(css);
-      process.exit(0);
+  const postcss = [];
+
+  for (const plugin of args.postcss) {
+    let plug = null;
+    try {
+      plug = require(plugin)();
+    } catch (err) {
+      let p = process.cwd();
+      while (p !== path.parse(p).root) {
+        p = path.join(p, '..');
+        try {
+          plug = require(path.join(process.cwd(), 'node_modules', plugin))();
+          break;
+        } catch (_) { } // eslint-disable-line
+      }
     }
+
+    if (plug) postcss.push(plug);
+    else {
+      log.error('postcss', `plugin not found '${plugin}'`);
+      log.error('postcss', `run 'npm install ${plugin}'`);
+      log.error('not ok');
+      process.exit(1);
+    }
+  }
+
+  compile(args.file, {
+    outputStyle: args.outputStyle,
+    minify: args.minify,
+    postcss: postcss,
   })
-  .catch((err) => {
-    log.error('compile', err.message);
-    log.error('compile', err.stack);
-  });
+    .then((css) => {
+      if (args.watch) {
+        fs.writeFileSync(args.output, css);
+        log.notice('compiled');
+      } else if (args.output) {
+        fs.writeFileSync(args.output, css);
+        process.exit(0);
+      } else {
+        process.stdout.write(css);
+        process.exit(0);
+      }
+    })
+    .catch((err) => {
+      log.error('compile', err.message);
+      log.error('compile', err.stack);
+    });
 
   if (args.watch) {
     chokidar.watch('.', {

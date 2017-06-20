@@ -51,6 +51,7 @@
     "node-sass": "^4.5.3",
     "npmlog": "^4.0.2",
     "os-name": "^2.0.1",
+    "postcss": "^6.0.2",
     "prompt": "^1.0.0",
     "proper-lockfile": "^2.0.0",
     "raven": "^1.2.1",

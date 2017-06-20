@@ -8,6 +8,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const plugin = require('../../importers');
 const CleanCSS = require('clean-css');
+const postcss = require('postcss');
 
 global.compileCommand = true;
 
@@ -74,6 +75,7 @@ module.exports = function* fn(data, filename, options) {
     }
   }
 
+  if (options.postcss) css = (yield postcss(options.postcss).process(css)).css;
   if (options.minify) css = (yield new CleanCSS({ compatibility: 'ie7', returnPromise: true }).minify(css)).styles;
 
   return css;
