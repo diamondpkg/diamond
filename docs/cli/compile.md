@@ -4,7 +4,7 @@ diamond compile <input>
 diamond compile --output <output> <input>
 
 alias: diamond c
-common options: [-o|--output] [--output-style] [-w|--watch] [-m|--minify]
+common options: [-o|--output] [--output-style] [-w|--watch] [-m|--minify] [--postcss <plugin>]
 ```
 
 ## Description
@@ -49,3 +49,12 @@ diamond compile --output out.css in.sass
 ### **`--output-style`** <span class="tag is-warning">Sass only</span>
 
   The output style for the file, can be one of: `nested, expanded, compact, compressed`.
+
+### ***`--postcss <plugin>`*
+
+  Runs PostCSS with the specified plugins after compilation. Multiple plugins can be used at once. The specified plugin must be installed.
+
+  #### Example:
+  ```
+diamond c in.sass --postcss autoprefixer --postcss cssnano
+  ```
