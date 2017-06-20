@@ -48,7 +48,7 @@ exports.handler = (args) => {
 
   const postcss = [];
 
-  for (const plugin of args.postcss) {
+  for (const plugin of args.postcss || []) {
     let plug = null;
     try {
       plug = require(plugin)();
