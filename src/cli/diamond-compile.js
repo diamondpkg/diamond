@@ -103,7 +103,7 @@ exports.handler = (args) => {
         '.git',
       ],
     }).on('all', () => {
-      compile(args.file, { outputStyle: args.outputStyle })
+      compile(args.file, { outputStyle: args.outputStyle, minify: args.minify, postcss: postcss })
         .then((css) => {
           fs.writeFileSync(args.output, css);
           log.notice('compiled');
